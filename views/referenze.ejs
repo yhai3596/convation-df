@@ -1,0 +1,42 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Case studies' : 'Referenze' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('ref.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('ref.intro_body') %></p>
+  </div>
+</section>
+
+<!-- 案例行：照片 + 场景 + 搭配方案（DESIGN.md §6）-->
+<section class="sect">
+  <div class="container">
+    <% for (let i = 1; i <= 3; i++) { %>
+    <article class="ref-row fade-up">
+      <div class="img-slot ref-img"><% if (ctImg('home.case' + i + '_img')) { %><img src="<%= ctImg('home.case' + i + '_img') %>" alt="<%= ct('home.case' + i + '_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Photo coming soon' : 'Foto in arrivo' %></span><% } %></div>
+      <div>
+        <span class="tag"><%= ct('home.case' + i + '_place') %></span>
+        <h2 style="font-size:23px;margin:12px 0 10px"><%= ct('home.case' + i + '_title') %></h2>
+        <p style="margin:0;font-size:15px;line-height:1.65"><%= ct('ref.case' + i + '_desc') %></p>
+        <p style="margin:16px 0 0"><a class="card-link" href="<%= lp('/contatti') %>"><%= en ? 'I want something similar →' : 'Voglio un impianto così →' %></a></p>
+      </div>
+    </article>
+    <% } %>
+  </div>
+</section>
+
+<!-- 页尾 CTA -->
+<section class="sect band-light sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h3 style="font-size:24px;margin:0 0 6px"><%= en ? 'Your system could be next' : 'Il prossimo impianto può essere il tuo' %></h3>
+      <p style="margin:0;font-size:15px"><%= ct('home.contact_body') %></p>
+    </div>
+    <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

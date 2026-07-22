@@ -1,0 +1,42 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Technical documents' : 'Documentazione tecnica' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('doc.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('doc.intro_body') %></p>
+  </div>
+</section>
+
+<!-- 三类文档（公开为主，占位行等真实 PDF）-->
+<section class="sect">
+  <div class="container grid-cards3">
+    <% const cats = en
+      ? [['Data sheets', 'Capacities, sound levels, dimensions and energy classes for each model.'], ['Catalogues', 'Full range catalogues of the brands we carry.'], ['Manuals', 'Installation and user manuals, warranty terms.']]
+      : [['Schede tecniche', 'Potenze, rumorosità, dimensioni e classi energetiche di ogni modello.'], ['Cataloghi', 'I cataloghi gamma completi dei marchi che trattiamo.'], ['Manuali', 'Manuali di installazione e d\'uso, condizioni di garanzia.']]; %>
+    <% cats.forEach(c => { %>
+    <div class="card fade-up">
+      <span class="card-title"><%= c[0] %></span>
+      <p class="card-body"><%= c[1] %></p>
+      <div class="doc-bars" aria-hidden="true"><i></i><i></i><i></i></div>
+      <span class="tag"><%= en ? 'Files being uploaded' : 'File in caricamento' %></span>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- 价格表登录门（预留，DESIGN.md §6）-->
+<section class="sect band-dark sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h2 style="font-size:24px;margin:0 0 8px"><%= en ? 'Price lists — installers only' : 'Listini — solo installatori' %></h2>
+      <p style="margin:0;font-size:15px"><%= ct('doc.gate_note') %></p>
+    </div>
+    <a class="btn btn-primary" href="<%= lp('/area-installatori') %>"><%= en ? 'Register' : 'Registrati' %></a>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

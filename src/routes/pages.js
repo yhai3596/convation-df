@@ -22,10 +22,15 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/chi-siamo', (req, res) => wip(req, res, {
-  title: t(req, 'Chi siamo · Convation', 'About us · Convation'),
-  name: t(req, 'Chi siamo', 'About us'),
-}));
+router.get('/chi-siamo', (req, res) => {
+  res.render('chi-siamo', {
+    title: t(req, 'Chi siamo · Convation', 'About us · Convation'),
+    active: '',
+    metaDesc: t(req,
+      'Convation è un\'azienda registrata in Italia specializzata in climatizzazione: vendiamo, installiamo e assistiamo climatizzatori e pompe di calore.',
+      'Convation is a company registered in Italy specialised in HVAC: we sell, install and service air conditioners and heat pumps.'),
+  });
+});
 
 router.get('/prodotti', (req, res) => {
   res.render('prodotti', {
@@ -37,15 +42,25 @@ router.get('/prodotti', (req, res) => {
   });
 });
 
-router.get('/documentazione', (req, res) => wip(req, res, {
-  title: t(req, 'Documentazione tecnica · Convation', 'Technical documents · Convation'),
-  name: t(req, 'Documentazione tecnica', 'Technical documents'),
-}));
+router.get('/documentazione', (req, res) => {
+  res.render('documentazione', {
+    title: t(req, 'Documentazione tecnica · Convation', 'Technical documents · Convation'),
+    active: '',
+    metaDesc: t(req,
+      'Schede tecniche, cataloghi e manuali di climatizzatori e pompe di calore. Listini riservati agli installatori registrati.',
+      'Data sheets, catalogues and manuals for air conditioners and heat pumps. Price lists reserved for registered installers.'),
+  });
+});
 
-router.get('/referenze', (req, res) => wip(req, res, {
-  title: t(req, 'Referenze e installazioni · Convation', 'Projects and installations · Convation'),
-  active: 'referenze', name: t(req, 'Referenze', 'Projects'),
-}));
+router.get('/referenze', (req, res) => {
+  res.render('referenze', {
+    title: t(req, 'Referenze e installazioni · Convation', 'Projects and installations · Convation'),
+    active: 'referenze',
+    metaDesc: t(req,
+      'Le nostre installazioni di climatizzatori e pompe di calore: contesto, soluzione scelta e schema d\'impianto per ogni intervento.',
+      'Our air conditioner and heat pump installations: context, chosen solution and system layout for each job.'),
+  });
+});
 
 router.get('/consulenza', (req, res) => wip(req, res, {
   title: t(req, 'Consulenza e assistente AI · Convation', 'Consulting and AI assistant · Convation'),

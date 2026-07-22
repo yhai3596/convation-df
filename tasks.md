@@ -24,7 +24,7 @@
 - [x] T2.1 partials：nav（6 项+Area installatori 按钮，sticky 72→60px）、footer（墨青四栏+法务占位）、head/tail —— commit cdb2780
 - [x] T2.2 Home 10 区（DESIGN.md §6 顺序）—— 双语注册表 src/registry.js（~50 键，后台可改）+ ctFor 接线；fade-up 420ms/数字滚动 900ms/data-open-assistant 落 site.js；IT+EN 双端 200、关键文案 curl 实证、浏览器 a11y 树走查零控制台报错
 - [x] T2.3 Prodotti 分类页（两大类图文反排+要点清单+配件预留位+品牌占位六格+页尾深色 CTA；产品详情模板待真实目录数据到货再建，入 T5.3 催收）
-- [ ] T2.4 Chi siamo / Referenze / Documentazione
+- [x] T2.4 Chi siamo（故事+数字浅底/三承诺/资质在途占位）/ Referenze（案例行=照片+场景+方案，复用 home 案例键+新增方案键）/ Documentazione（三类文档占位卡+价格表登录门→Area installatori）
 - [ ] T2.5 Notizie（文章列表+详情+评论，数据层沿用骨架 posts）
 - [ ] T2.6 FAQ（三组问答+JSON-LD FAQPage）/ Consulenza（整页 AI 对话+人工通道+询价表单）
 - [ ] T2.7 Strumenti（工具卡片，先 hvac.geopro.cc）/ Assistenza（质保/保养/报修通道）

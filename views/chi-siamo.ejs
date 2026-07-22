@@ -1,0 +1,73 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'About us' : 'Chi siamo' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('chi.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('chi.intro_body') %></p>
+  </div>
+</section>
+
+<!-- 品牌故事 + 数字（文字先行，§8：团队照后补）-->
+<section class="sect">
+  <div class="container why-grid">
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'Our story' : 'La nostra storia' %></span>
+      <% ct('chi.story_body').split('\n').filter(Boolean).forEach(p => { %>
+      <p style="font-size:15.5px;line-height:1.7"><%- p %></p>
+      <% }) %>
+    </div>
+    <div class="stats-row stats-ink fade-up">
+      <% for (let i = 1; i <= 4; i++) { %>
+      <div><span class="stat-v"><%= ct('home.stat' + i + '_value') %></span><span class="stat-l"><%= ct('home.stat' + i + '_label') %></span></div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- 三个承诺 -->
+<section class="sect band-light">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'Our promises' : 'I nostri impegni' %></span>
+      <h2><%= en ? 'What you can expect from us' : 'Cosa puoi aspettarti da noi' %></h2>
+    </div>
+    <div class="grid-cards3">
+      <% for (let i = 1; i <= 3; i++) { %>
+      <div class="card fade-up">
+        <span class="card-title"><%= ct('chi.value' + i + '_title') %></span>
+        <p class="card-body"><%= ct('chi.value' + i + '_body') %></p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- 资质（文件后补，诚实占位）-->
+<section class="sect sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:680px">
+      <h3 style="font-size:22px;margin:0 0 6px"><%= en ? 'Qualifications and compliance' : 'Qualifiche e requisiti' %> <span class="tag" style="vertical-align:middle;margin-left:8px"><%= en ? 'Documents being uploaded' : 'Documenti in caricamento' %></span></h3>
+      <p style="margin:0;font-size:15px"><%= ct('chi.cred_body') %></p>
+    </div>
+  </div>
+</section>
+
+<!-- 页尾 CTA -->
+<section class="sect band-dark">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h2 style="margin:0 0 8px"><%= en ? 'Put us to the test' : 'Mettici alla prova' %></h2>
+      <p style="margin:0;font-size:15.5px"><%= ct('home.contact_body') %></p>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+      <button type="button" class="btn btn-secondary btn-on-dark" data-open-assistant><%= ct('home.cta_ai') %></button>
+    </div>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

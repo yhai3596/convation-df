@@ -1,14 +1,47 @@
-<nav class="nav site-nav">
-  <a href="/" class="nav-brand" style="text-decoration:none;color:inherit;display:flex;align-items:baseline;gap:10px">Alan<span style="color:var(--color-accent)">.</span><span style="font-family:'Lora','Noto Serif SC',serif;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--color-neutral-600)">HVAC × AI</span></a>
-  <% const navItems = [['首页','/'],['工具集','/tools'],['企业AI服务','/services'],['AI课程','/courses'],['案例·培训','/cases'],['AI资讯','/blog'],['关于','/about']]; %>
-  <% for (const [label, href] of navItems) { %>
-  <a href="<%= href %>"<%- active === label ? ' aria-current="page"' : '' %>><%= label %></a>
-  <% } %>
-  <% if (user) { %>
-  <span style="font-size:13px;color:var(--color-neutral-600);white-space:nowrap">你好，<%= user.name %></span>
-  <% if (user.role === 'admin') { %><a href="/admin" style="font-size:13px">后台</a><% } %>
-  <a href="#" id="nav-logout" style="font-size:13px">退出</a>
-  <% } else { %>
-  <a class="btn btn-primary" href="/login" style="text-decoration:none">登录 · Sign in</a>
-  <% } %>
-</nav>
+<%
+// 主导航 6 项 + Area installatori 按钮（DESIGN.md §6）；次级页走页脚
+const NAV = [
+  ['prodotti',   '/prodotti',               'Prodotti',    'Products'],
+  ['detrazioni', '/detrazioni-e-incentivi', 'Detrazioni',  'Incentives'],
+  ['referenze',  '/referenze',              'Referenze',   'Projects'],
+  ['notizie',    '/notizie',                'Notizie',     'News'],
+  ['assistenza', '/assistenza',             'Assistenza',  'Support'],
+  ['contatti',   '/contatti',               'Contatti',    'Contact'],
+];
+const isEn = locale === 'en';
+const areaLabel = isEn ? 'Installer area' : 'Area installatori';
+%>
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="brand" href="<%= lp('/') %>" aria-label="Convation — Home">
+      <img src="/assets/logo.jpg" alt="Convation" class="brand-logo">
+    </a>
+    <nav class="main-nav" aria-label="<%= isEn ? 'Main navigation' : 'Navigazione principale' %>">
+      <% for (const [key, href, it, en] of NAV) { %>
+      <a href="<%= lp(href) %>"<%- active === key ? ' aria-current="page"' : '' %>><%= isEn ? en : it %></a>
+      <% } %>
+    </nav>
+    <div class="header-actions">
+      <span class="lang-switch" aria-label="Lingua / Language">
+        <% if (isEn) { %><a href="<%= altHref %>" lang="it">IT</a><b>EN</b><% } else { %><b>IT</b><a href="<%= altHref %>" lang="en">EN</a><% } %>
+      </span>
+      <a class="btn btn-secondary btn-area" href="<%= lp('/area-installatori') %>"><%= areaLabel %></a>
+      <% if (user) { %>
+      <% if (user.role === 'admin') { %><a href="/admin" class="hdr-mini">Admin</a><% } %>
+      <a href="#" id="nav-logout" class="hdr-mini"><%= isEn ? 'Sign out' : 'Esci' %></a>
+      <% } %>
+      <button type="button" class="burger" id="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-drawer" id="nav-drawer" hidden>
+    <% for (const [key, href, it, en] of NAV) { %>
+    <a href="<%= lp(href) %>"<%- active === key ? ' aria-current="page"' : '' %>><%= isEn ? en : it %></a>
+    <% } %>
+    <a class="btn btn-secondary" href="<%= lp('/area-installatori') %>" style="justify-content:center;margin-top:8px"><%= areaLabel %></a>
+    <div class="drawer-lang">
+      <% if (isEn) { %><a href="<%= altHref %>">Italiano</a> · <b>English</b><% } else { %><b>Italiano</b> · <a href="<%= altHref %>">English</a><% } %>
+    </div>
+  </div>
+</header>

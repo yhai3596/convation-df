@@ -1,0 +1,12 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="container" style="padding:110px 20px 140px;text-align:center;min-height:46vh">
+  <span class="kicker"><%= locale === 'en' ? 'Page under construction' : 'Pagina in costruzione' %></span>
+  <h1 style="font-size:clamp(30px,4vw,44px)"><%= pageName %></h1>
+  <p style="max-width:520px;margin:12px auto 28px"><%= locale === 'en'
+    ? 'This section is being prepared. In the meantime, feel free to reach out — we reply quickly.'
+    : 'Questa sezione è in preparazione. Nel frattempo, contattaci pure — rispondiamo in fretta.' %></p>
+  <a class="btn btn-secondary" href="<%= lp('/') %>"><%= locale === 'en' ? 'Back to home' : 'Torna alla home' %></a>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

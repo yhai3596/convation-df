@@ -1,4 +1,45 @@
-<footer class="site-footer">
-  <span>© 2026 Alan · HVAC × AI</span>
-  <span style="display:flex;gap:20px"><a href="/about" style="color:inherit">联系方式</a><a href="/admin" style="color:inherit">管理后台</a></span>
+<%
+const isEnF = locale === 'en';
+const F = isEnF ? {
+  tagline: 'Sales, installation and service of air conditioners and heat pumps for homes and businesses in Italy.',
+  col2: 'Company', col3: 'Products & services', col4: 'Contact',
+  links2: [['/chi-siamo', 'About us'], ['/referenze', 'Projects'], ['/notizie', 'News'], ['/faq', 'FAQ']],
+  links3: [['/prodotti', 'Products'], ['/documentazione', 'Technical documents'], ['/strumenti', 'HVAC tools'], ['/assistenza', 'Support & warranty'], ['/detrazioni-e-incentivi', 'Tax incentives']],
+  links4: [['/contatti', 'Contact us'], ['/consulenza', 'Ask our AI assistant'], ['/area-installatori', 'Installer area']],
+  privacy: 'Privacy policy', cookies: 'Cookie policy',
+} : {
+  tagline: 'Vendita, installazione e assistenza di climatizzatori e pompe di calore per la casa e per l\'impresa, in tutta Italia.',
+  col2: 'Azienda', col3: 'Prodotti e servizi', col4: 'Contatti',
+  links2: [['/chi-siamo', 'Chi siamo'], ['/referenze', 'Referenze'], ['/notizie', 'Notizie'], ['/faq', 'Domande frequenti']],
+  links3: [['/prodotti', 'Prodotti'], ['/documentazione', 'Documentazione tecnica'], ['/strumenti', 'Strumenti HVAC'], ['/assistenza', 'Assistenza e garanzia'], ['/detrazioni-e-incentivi', 'Detrazioni e incentivi']],
+  links4: [['/contatti', 'Contattaci'], ['/consulenza', 'Chiedi all\'assistente AI'], ['/area-installatori', 'Area installatori']],
+  privacy: 'Privacy policy', cookies: 'Cookie policy',
+};
+%>
+<footer class="footer band-dark">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <span class="footer-brand">CONVATION</span>
+        <p class="footer-tagline"><%= F.tagline %></p>
+      </div>
+      <div>
+        <span class="footer-h"><%= F.col2 %></span>
+        <% for (const [h, l] of F.links2) { %><a href="<%= lp(h) %>"><%= l %></a><% } %>
+      </div>
+      <div>
+        <span class="footer-h"><%= F.col3 %></span>
+        <% for (const [h, l] of F.links3) { %><a href="<%= lp(h) %>"><%= l %></a><% } %>
+      </div>
+      <div>
+        <span class="footer-h"><%= F.col4 %></span>
+        <% for (const [h, l] of F.links4) { %><a href="<%= lp(h) %>"><%= l %></a><% } %>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>© <%= new Date().getFullYear() %> Convation S.r.l. — <%= isEnF ? 'All rights reserved' : 'Tutti i diritti riservati' %></span>
+      <span>Sede legale: [da completare] · P.IVA: [da completare] · PEC: [da completare] · REA: [da completare]</span>
+      <span class="footer-legal-links"><a href="<%= lp('/privacy') %>"><%= F.privacy %></a> · <a href="<%= lp('/cookie') %>"><%= F.cookies %></a> · <a href="/admin" rel="nofollow">Admin</a></span>
+    </div>
+  </div>
 </footer>

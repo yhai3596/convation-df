@@ -18,8 +18,7 @@
 - [x] T1.2 npm install + 本地 8203 冒烟（HTTP 200 + 字体切片 200，commit 前验证）
 - [x] T1.3 ds.css 重写 token 层 = DESIGN.md §3–§7 真值（commit ee1185a）
 - [x] T1.4 清除 alan 主题机制：theme.js 删除、site.css/assistant.ejs 衬线清零、head.ejs 换字体链+favicon（commit ee1185a）
-- [ ] T1.5 i18n 机制：意语默认 + /en/ 前缀路由中间件；文案走键值层（it/en 两套），后台可改
-  - 完成标准: 同一 view 渲染两语言；hreflang 互指；后台英/中界面不受影响
+- [x] T1.5 i18n 机制（commit 98eeeb3）：/ 与 /en 双挂载；ctFor(locale) 回退链；lp()/altHref 助手；hreflang 标签留待 T4.2
 
 ### Phase 2: 前台 13 页（每页一个可验证单元，逐页 commit）
 - [ ] T2.1 partials：nav（6 项+Area installatori 按钮，sticky 72→60px）、footer（墨青四栏+法务占位）、head/tail

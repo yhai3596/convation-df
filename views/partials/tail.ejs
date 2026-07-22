@@ -1,6 +1,7 @@
 <% if (typeof noAssistant === 'undefined' || !noAssistant) { %>
 <%- include('assistant') %>
 <% } %>
+<script src="/js/site.js?v=<%= assetVer %>" defer></script>
 <script src="/js/analytics.js?v=<%= assetVer %>" defer></script>
 <script src="/js/assistant.js?v=<%= assetVer %>" defer></script>
 </body>

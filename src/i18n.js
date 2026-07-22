@@ -2,6 +2,7 @@
 // 同一个 pages router 挂载在 '/' 与 '/en' 两处，由 req.baseUrl 判定语言；
 // 文案经 content.ctFor(locale) 取值，回退链 key.{locale} → key.it → key。
 const siteContent = require('./content');
+const { supportChannels } = require('./support');
 
 const SUPPORTED = ['it', 'en'];
 const DEFAULT_LOCALE = 'it';
@@ -22,6 +23,8 @@ function middleware(req, res, next) {
   res.locals.ctBr = c.ctBr;
   res.locals.ctImg = c.ctImg;
   res.locals.ctRaw = c.raw;
+  // 移动端速联条（页脚渲染）：读一次 settings，未配置通道自动隐藏
+  res.locals.speedDial = supportChannels(locale);
   next();
 }
 

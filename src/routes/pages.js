@@ -2,22 +2,9 @@
 // 13 页先以 wip 占位打通全站骨架，逐页替换为正式视图（进度见 tasks.md Phase 2）。
 const express = require('express');
 const { marked } = require('marked');
-const { db, getSetting } = require('../db');
-
-// 客服通道（T3.2：后台 settings 配置；未配置的通道自动隐藏）
-function supportChannels(req) {
-  const en = req.locale === 'en';
-  const list = [];
-  const phone = getSetting('support_phone', '');
-  const info = getSetting('support_email_info', '');
-  const svc = getSetting('support_email_service', '');
-  const wa = getSetting('support_whatsapp', '');
-  if (phone) list.push({ label: en ? 'Phone' : 'Telefono', value: phone, href: 'tel:' + phone.replace(/\s+/g, '') });
-  if (wa) list.push({ label: 'WhatsApp', value: wa, href: 'https://wa.me/' + wa.replace(/\D/g, '') });
-  if (info) list.push({ label: en ? 'Email (info)' : 'Email (informazioni)', value: info, href: 'mailto:' + info });
-  if (svc) list.push({ label: en ? 'Email (after-sales)' : 'Email (assistenza)', value: svc, href: 'mailto:' + svc });
-  return list;
-}
+const { db } = require('../db');
+const { supportChannels: channelsFor } = require('../support');
+const supportChannels = req => channelsFor(req.locale);
 
 const router = express.Router();
 const t = (req, it, en) => (req.locale === 'en' ? en : it);

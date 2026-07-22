@@ -89,13 +89,15 @@ app.use('/api/agent', require('./src/routes/agent-api')); // 外部 Agent（Bear
 app.use('/api', require('./src/routes/api'));
 app.use('/', require('./src/routes/admin'));
 
-app.use((req, res) => res.status(404).render('404', { title: '页面不存在 · Alan', active: '' }));
+// 兜底 404/500 也过 i18n（footer 依赖 locale/lp/speedDial 等 locals）
+app.use(i18n.middleware, (req, res) => res.status(404).render('404', { title: 'Pagina non trovata · Convation', active: '' }));
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error('[error]', err);
-  if (req.path.startsWith('/api')) return res.status(500).json({ error: '服务器开小差了，请稍后再试' });
-  res.status(500).render('404', { title: '出错了 · Alan', active: '', message: '服务器开小差了，请稍后再试。' });
+  if (req.path.startsWith('/api')) return res.status(500).json({ error: 'Errore del server, riprova più tardi' });
+  i18n.middleware(req, res, () =>
+    res.status(500).render('404', { title: 'Errore · Convation', active: '', message: 'Qualcosa è andato storto, riprova più tardi.' }));
 });
 
 app.listen(PORT, HOST, () => {

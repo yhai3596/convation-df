@@ -43,3 +43,12 @@ const F = isEnF ? {
     </div>
   </div>
 </footer>
+<!-- 移动端速联条（T2.9）：通道读后台 settings，未配置自动隐藏；Preventivo/AI 恒在 -->
+<nav class="speed-dial" aria-label="<%= isEnF ? 'Quick contact' : 'Contatto rapido' %>">
+  <% const sdList = (typeof speedDial !== 'undefined' && speedDial) || []; %>
+  <% const sdPhone = sdList.find(c => c.key === 'phone'); const sdWa = sdList.find(c => c.key === 'whatsapp'); %>
+  <% if (sdPhone) { %><a href="<%= sdPhone.href %>"><span class="sd-ico">✆</span><%= isEnF ? 'Call' : 'Chiama' %></a><% } %>
+  <% if (sdWa) { %><a href="<%= sdWa.href %>" target="_blank" rel="noopener"><span class="sd-ico">✉</span>WhatsApp</a><% } %>
+  <a href="<%= lp('/contatti') %>"><span class="sd-ico">✎</span><%= isEnF ? 'Quote' : 'Preventivo' %></a>
+  <button type="button" data-open-assistant><span class="sd-ico">✦</span><%= isEnF ? 'AI help' : 'Aiuto AI' %></button>
+</nav>

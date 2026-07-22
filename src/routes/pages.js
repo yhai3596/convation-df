@@ -2,6 +2,7 @@
 // 13 页先以 wip 占位打通全站骨架，逐页替换为正式视图（进度见 tasks.md Phase 2）。
 const express = require('express');
 const { marked } = require('marked');
+const { db } = require('../db');
 
 const router = express.Router();
 const t = (req, it, en) => (req.locale === 'en' ? en : it);
@@ -67,15 +68,37 @@ router.get('/consulenza', (req, res) => wip(req, res, {
   name: t(req, 'Consulenza', 'Consulting'),
 }));
 
-router.get('/notizie', (req, res) => wip(req, res, {
-  title: t(req, 'Notizie dal settore · Convation', 'Industry news · Convation'),
-  active: 'notizie', name: t(req, 'Notizie', 'News'),
-}));
+router.get('/notizie', (req, res) => {
+  const cat = (req.query.cat || '').slice(0, 40);
+  const cats = db.prepare("SELECT DISTINCT category FROM posts WHERE status='published' AND lang=?").all(req.locale).map(r => r.category);
+  const posts = cat
+    ? db.prepare("SELECT * FROM posts WHERE status='published' AND lang=? AND category=? ORDER BY published_at DESC").all(req.locale, cat)
+    : db.prepare("SELECT * FROM posts WHERE status='published' AND lang=? ORDER BY published_at DESC").all(req.locale);
+  res.render('notizie', {
+    title: t(req, 'Notizie e guide HVAC · Convation', 'HVAC news and guides · Convation'),
+    active: 'notizie', posts, cats, cat,
+    metaDesc: t(req,
+      'Notizie e guide su climatizzatori, pompe di calore, incentivi e manutenzione, curate da Convation.',
+      'News and guides on air conditioners, heat pumps, incentives and maintenance, curated by Convation.'),
+  });
+});
 
-router.get('/notizie/:slug', (req, res) => wip(req, res, {
-  title: t(req, 'Notizie · Convation', 'News · Convation'),
-  active: 'notizie', name: t(req, 'Notizie', 'News'),
-}));
+router.get('/notizie/:slug', (req, res) => {
+  const post = db.prepare("SELECT * FROM posts WHERE slug=? AND status='published'").get(req.params.slug);
+  if (!post) return res.status(404).render('404', { title: t(req, 'Pagina non trovata · Convation', 'Page not found · Convation'), active: '' });
+  db.prepare('UPDATE posts SET views = views + 1 WHERE id=?').run(post.id);
+  post.views += 1;
+  const all = db.prepare('SELECT * FROM comments WHERE post_id=? ORDER BY created_at, id').all(post.id);
+  const comments = all.filter(c => !c.parent_id).map(c => ({ ...c, replies: all.filter(r => r.parent_id === c.id) }));
+  res.render('notizia', {
+    title: `${post.title} · Convation`,
+    active: 'notizie', post,
+    contentHtml: marked.parse(post.content_md || ''),
+    comments,
+    commentCount: comments.length,
+    metaDesc: (post.excerpt || '').slice(0, 160),
+  });
+});
 
 router.get('/faq', (req, res) => wip(req, res, {
   title: t(req, 'Domande frequenti · Convation', 'FAQ · Convation'),

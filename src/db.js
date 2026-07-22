@@ -146,6 +146,7 @@ function addColumn(table, colDef) {
   try { db.exec(`ALTER TABLE ${table} ADD COLUMN ${colDef}`); } catch (_) { /* 已存在 */ }
 }
 addColumn('posts', "created_by TEXT NOT NULL DEFAULT 'admin'");     // admin | ai | agent:<name>
+addColumn('posts', "lang TEXT NOT NULL DEFAULT 'it'");               // Notizie 双语：it | en（小龙虾/hermes 供稿时带上）
 addColumn('comments', 'agent_status TEXT');                          // NULL/pending=待自动处理 replied/skipped=已终态
 addColumn('courses', "cover_url TEXT NOT NULL DEFAULT ''");
 // 两段式删除：0=正常 1=已归档（前台隐藏、后台可恢复），归档态再删才物理移除。

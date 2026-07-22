@@ -191,6 +191,20 @@ const REGISTRY = [
   ...bi('doc.gate_note', '文档页', '价格表门说明', TA,
     'I listini e i documenti commerciali sono riservati agli installatori registrati.',
     'Price lists and commercial documents are reserved for registered installers.'),
+
+  // —— Notizie ——
+  ...bi('notizie.intro_title', '资讯页', '页首标题', T,
+    'Notizie e guide dal mondo HVAC',
+    'News and guides from the HVAC world'),
+  ...bi('notizie.intro_body', '资讯页', '页首介绍', TA,
+    'Incentivi, tecnologie, manutenzione e consumi: articoli pratici per chi deve scegliere o gestire un impianto, senza gergo inutile.',
+    'Incentives, technology, maintenance and running costs: practical articles for anyone choosing or managing a system, without needless jargon.'),
+  ...bi('notizie.empty', '资讯页', '空状态', TA,
+    'I primi articoli sono in preparazione: torna a trovarci tra qualche giorno.',
+    'The first articles are being prepared: check back in a few days.'),
+  ...bi('notizie.subscribe_note', '资讯页', '订阅框说明', TA,
+    'Una mail quando pubblichiamo qualcosa che vale il tuo tempo. Niente spam.',
+    'One email when we publish something worth your time. No spam.'),
 ];
 
 module.exports = { REGISTRY };

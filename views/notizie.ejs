@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'News' : 'Notizie' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('notizie.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('notizie.intro_body') %></p>
+    <% if (cats.length) { %>
+    <div class="pill-row fade-up">
+      <a class="pill<%= !cat ? ' pill-on' : '' %>" href="<%= lp('/notizie') %>"><%= en ? 'All' : 'Tutte' %></a>
+      <% for (const c of cats) { %>
+      <a class="pill<%= cat === c ? ' pill-on' : '' %>" href="<%= lp('/notizie') %>?cat=<%= encodeURIComponent(c) %>"><%= c %></a>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="sect" style="padding-top:clamp(28px,4vw,44px)">
+  <div class="container grid-blog">
+    <div style="display:flex;flex-direction:column">
+      <% if (posts.length === 0) { %>
+      <p style="padding:32px 0;color:var(--color-neutral-600);font-size:15px"><%= ct('notizie.empty') %></p>
+      <% } %>
+      <% for (const p of posts) { %>
+      <a href="<%= lp('/notizie/' + p.slug) %>" style="display:block;color:inherit;padding:26px 0;border-bottom:1px solid var(--color-divider)">
+        <span class="kicker" style="margin-bottom:8px"><%= fmtDate(p.published_at) %> · <%= p.category %></span>
+        <h2 style="font-size:25px;line-height:1.25;margin:0"><%= p.title %></h2>
+        <p style="font-size:14.5px;line-height:1.65;margin:8px 0 0;max-width:62ch"><%= p.excerpt %></p>
+        <span style="display:inline-block;margin-top:12px;font-size:12.5px;color:var(--color-neutral-600)"><%= en ? 'Read in' : 'Lettura' %> <%= p.read_minutes %> min<% if (p.views > 0) { %> · <%= fmtNum(p.views) %> <%= en ? 'views' : 'letture' %><% } %></span>
+      </a>
+      <% } %>
+    </div>
+    <aside style="padding-top:26px">
+      <div class="card">
+        <span class="card-title" style="font-size:16px"><%= en ? 'Newsletter' : 'Newsletter' %></span>
+        <p class="card-body"><%= ct('notizie.subscribe_note') %></p>
+        <input class="input" type="email" id="nz-sub-email" placeholder="nome@email.it" aria-label="Email">
+        <button type="button" class="btn btn-primary" id="nz-sub-btn" style="margin-top:10px"><%= en ? 'Subscribe' : 'Iscriviti' %></button>
+        <p class="form-ok" id="nz-sub-msg" style="min-height:0"></p>
+      </div>
+    </aside>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<script>
+document.getElementById('nz-sub-btn').addEventListener('click', function () {
+  var email = document.getElementById('nz-sub-email').value.trim();
+  var msg = document.getElementById('nz-sub-msg');
+  var en = <%= en ? 'true' : 'false' %>;
+  fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      msg.className = res.ok ? 'form-ok' : 'form-error';
+      msg.textContent = res.ok ? (en ? 'Subscribed.' : 'Iscrizione riuscita.') : (res.d.error || (en ? 'Something went wrong' : 'Qualcosa è andato storto'));
+    })
+    .catch(function () { msg.className = 'form-error'; msg.textContent = en ? 'Network error, retry later' : 'Errore di rete, riprova più tardi'; });
+});
+</script>
+<%- include('partials/tail') %>

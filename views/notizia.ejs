@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<article class="container-narrow" style="padding-top:clamp(36px,5vw,56px)">
+  <p style="margin:0 0 6px"><a class="card-link" href="<%= lp('/notizie') %>">← <%= en ? 'All news' : 'Tutte le notizie' %></a></p>
+  <span class="kicker"><%= fmtDate(post.published_at) %> · <%= post.category %></span>
+  <h1 style="font-size:clamp(28px,3.4vw,42px);line-height:1.15;margin:10px 0 0"><%= post.title %></h1>
+  <p style="margin:12px 0 0;font-size:12.5px;color:var(--color-neutral-600)"><%= en ? 'Read in' : 'Lettura' %> <%= post.read_minutes %> min · <%= fmtNum(post.views) %> <%= en ? 'views' : 'letture' %></p>
+  <div class="article-body"><%- contentHtml %></div>
+</article>
+
+<!-- 评论（顶层+回复；agent 回复带徽标；发表需登录）-->
+<section class="container-narrow" style="padding-bottom:clamp(48px,6vw,72px)">
+  <hr class="hairline">
+  <h2 style="font-size:21px;margin:28px 0 18px"><%= en ? 'Comments' : 'Commenti' %> (<%= commentCount %>)</h2>
+  <% if (comments.length === 0) { %>
+  <p style="font-size:14.5px;color:var(--color-neutral-600)"><%= en ? 'No comments yet. Start the conversation.' : 'Ancora nessun commento. Inizia tu la conversazione.' %></p>
+  <% } %>
+  <% for (const c of comments) { %>
+  <div style="padding:16px 0;border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;align-items:baseline;gap:12px;font-size:13.5px">
+      <strong><%= c.author_name %></strong>
+      <span style="color:var(--color-neutral-600)"><%= fmtDate(c.created_at) %></span>
+    </div>
+    <p style="margin:8px 0 0;font-size:14.5px;line-height:1.65"><%= c.body %></p>
+    <% for (const r of c.replies) { %>
+    <div style="margin:12px 0 0 22px;padding:12px 16px;background:var(--color-neutral-100);border-radius:var(--radius-md)">
+      <div style="display:flex;align-items:baseline;gap:10px;font-size:13px">
+        <strong><%= r.author_name %></strong>
+        <% if (r.is_agent) { %><span class="tag"><%= en ? 'Convation team' : 'Team Convation' %></span><% } %>
+        <span style="color:var(--color-neutral-600)"><%= fmtDate(r.created_at) %></span>
+      </div>
+      <p style="margin:6px 0 0;font-size:14px;line-height:1.6"><%= r.body %></p>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <div style="margin-top:24px">
+    <% if (user) { %>
+    <textarea class="input" id="nz-comment" rows="3" placeholder="<%= en ? 'Write a comment…' : 'Scrivi un commento…' %>"></textarea>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+      <button type="button" class="btn btn-primary" id="nz-comment-btn"><%= en ? 'Post comment' : 'Pubblica' %></button>
+      <p class="form-error" id="nz-comment-msg" style="min-height:0;margin:0"></p>
+    </div>
+    <% } else { %>
+    <p style="font-size:14.5px"><a href="<%= lp('/login') %>?next=<%= encodeURIComponent(lp('/notizie/' + post.slug)) %>"><%= en ? 'Sign in' : 'Accedi' %></a> <%= en ? 'to join the conversation.' : 'per partecipare alla conversazione.' %></p>
+    <% } %>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<% if (user) { %>
+<script>
+document.getElementById('nz-comment-btn').addEventListener('click', function () {
+  var body = document.getElementById('nz-comment').value.trim();
+  var msg = document.getElementById('nz-comment-msg');
+  var en = <%= en ? 'true' : 'false' %>;
+  if (!body) { msg.textContent = en ? 'Write something first' : 'Scrivi prima qualcosa'; return; }
+  fetch('/api/comments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ post_id: <%= post.id %>, body: body }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      if (res.ok) { location.reload(); }
+      else { msg.textContent = res.d.error || (en ? 'Could not post' : 'Invio non riuscito'); }
+    })
+    .catch(function () { msg.textContent = en ? 'Network error' : 'Errore di rete'; });
+});
+</script>
+<% } %>
+<%- include('partials/tail') %>

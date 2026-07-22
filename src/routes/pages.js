@@ -27,10 +27,15 @@ router.get('/chi-siamo', (req, res) => wip(req, res, {
   name: t(req, 'Chi siamo', 'About us'),
 }));
 
-router.get('/prodotti', (req, res) => wip(req, res, {
-  title: t(req, 'Prodotti — Climatizzatori e pompe di calore · Convation', 'Products — Air conditioners and heat pumps · Convation'),
-  active: 'prodotti', name: t(req, 'Prodotti', 'Products'),
-}));
+router.get('/prodotti', (req, res) => {
+  res.render('prodotti', {
+    title: t(req, 'Prodotti — Climatizzatori e pompe di calore · Convation', 'Products — Air conditioners and heat pumps · Convation'),
+    active: 'prodotti',
+    metaDesc: t(req,
+      'Climatizzatori mono e multi split e pompe di calore aria-acqua dei migliori marchi: selezionati, installati e assistiti da Convation.',
+      'Mono and multi split air conditioners and air-to-water heat pumps from leading brands: selected, installed and serviced by Convation.'),
+  });
+});
 
 router.get('/documentazione', (req, res) => wip(req, res, {
   title: t(req, 'Documentazione tecnica · Convation', 'Technical documents · Convation'),

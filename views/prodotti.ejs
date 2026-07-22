@@ -1,0 +1,98 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<!-- 页首 -->
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Products' : 'Prodotti' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('prodotti.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('prodotti.intro_body') %></p>
+    <div class="pill-row fade-up">
+      <a class="pill" href="#climatizzatori"><%= en ? 'Air conditioners' : 'Climatizzatori' %></a>
+      <a class="pill" href="#pompe-di-calore"><%= en ? 'Heat pumps' : 'Pompe di calore' %></a>
+      <a class="pill" href="#accessori"><%= en ? 'Accessories' : 'Accessori' %></a>
+    </div>
+  </div>
+</section>
+
+<!-- 类目一 · Climatizzatori -->
+<section class="sect" id="climatizzatori">
+  <div class="container cat-grid">
+    <div class="fade-up">
+      <h2><%= ct('home.prod1_title') %></h2>
+      <p style="font-size:15.5px"><%= ct('prodotti.cat1_body') %></p>
+      <ul class="check-list">
+        <% ct('prodotti.cat1_points').split('\n').filter(Boolean).forEach(p => { %><li><%- p %></li><% }) %>
+      </ul>
+      <div class="hero-ctas" style="margin-top:22px">
+        <a class="btn btn-secondary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+        <a class="card-link" style="align-self:center" href="<%= lp('/documentazione') %>"><%= en ? 'Data sheets →' : 'Schede tecniche →' %></a>
+      </div>
+    </div>
+    <div class="cat-visual fade-up">
+      <div class="img-slot"><% if (ctImg('prodotti.cat1_img')) { %><img src="<%= ctImg('prodotti.cat1_img') %>" alt="<%= ct('home.prod1_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Image coming soon' : 'Immagine in arrivo' %></span><% } %></div>
+    </div>
+  </div>
+</section>
+
+<!-- 类目二 · Pompe di calore（浅灰带，图文反排）-->
+<section class="sect band-light" id="pompe-di-calore">
+  <div class="container cat-grid cat-flip">
+    <div class="cat-visual fade-up">
+      <div class="img-slot"><% if (ctImg('prodotti.cat2_img')) { %><img src="<%= ctImg('prodotti.cat2_img') %>" alt="<%= ct('home.prod2_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Image coming soon' : 'Immagine in arrivo' %></span><% } %></div>
+    </div>
+    <div class="fade-up">
+      <h2><%= ct('home.prod2_title') %></h2>
+      <p style="font-size:15.5px"><%= ct('prodotti.cat2_body') %></p>
+      <ul class="check-list">
+        <% ct('prodotti.cat2_points').split('\n').filter(Boolean).forEach(p => { %><li><%- p %></li><% }) %>
+      </ul>
+      <div class="hero-ctas" style="margin-top:22px">
+        <a class="btn btn-secondary" href="<%= lp('/detrazioni-e-incentivi') %>"><%= en ? 'Check the incentives' : 'Scopri gli incentivi' %></a>
+        <a class="card-link" style="align-self:center" href="<%= lp('/documentazione') %>"><%= en ? 'Data sheets →' : 'Schede tecniche →' %></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 配件（预留位）-->
+<section class="sect sect-slim" id="accessori">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h3 style="font-size:22px;margin:0 0 6px"><%= en ? 'Accessories and components' : 'Accessori e componenti' %> <span class="tag" style="vertical-align:middle;margin-left:8px"><%= en ? 'In preparation' : 'In preparazione' %></span></h3>
+      <p style="margin:0;font-size:15px"><%= ct('prodotti.acc_body') %></p>
+    </div>
+  </div>
+</section>
+
+<!-- 品牌区（占位）-->
+<section class="sect band-light">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'Brands' : 'Marchi' %></span>
+      <h2><%= en ? 'The brands we carry' : 'I marchi che trattiamo' %></h2>
+    </div>
+    <div class="brand-row fade-up" aria-hidden="true">
+      <% for (let i = 0; i < 6; i++) { %><div class="brand-box"><span><%= en ? 'Brand' : 'Marchio' %></span></div><% } %>
+    </div>
+    <p class="fade-up" style="text-align:center;max-width:62ch;margin:26px auto 0;font-size:14.5px"><%= ct('prodotti.brands_note') %> <a href="<%= lp('/area-installatori') %>"><%= en ? 'Installer area →' : 'Area installatori →' %></a></p>
+  </div>
+</section>
+
+<!-- 页尾 CTA（深色带）-->
+<section class="sect band-dark">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h2 style="margin:0 0 8px"><%= ct('prodotti.cta_title') %></h2>
+      <p style="margin:0;font-size:15.5px"><%= ct('prodotti.cta_body') %></p>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+      <button type="button" class="btn btn-secondary btn-on-dark" data-open-assistant><%= ct('home.cta_ai') %></button>
+    </div>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

@@ -56,24 +56,30 @@ router.get('/status', (req, res) => {
 });
 
 // —— 发布内容：审核制开启时落草稿 ——
+// lang 决定文章出现在意语版（it，默认）还是英语版（en）Notizie；category 直接渲染为前台分类 pill，须用对应语言书写
+const romeDate = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date());
+const slugify = s => String(s).normalize('NFKD').replace(/\p{M}+/gu, '')
+  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'post';
 router.post('/posts', (req, res) => {
-  const { title = '', category = '行业观察', excerpt = '', content_md = '', read_minutes = 5 } = req.body || {};
+  const { title = '', category = 'Settore', excerpt = '', content_md = '', read_minutes = 5, lang = 'it' } = req.body || {};
   const t = String(title).trim();
   if (!t) return res.status(400).json({ error: '缺少标题 title' });
   if (!String(content_md).trim()) return res.status(400).json({ error: '缺少正文 content_md' });
+  const lg = String(lang).trim().toLowerCase();
+  if (lg !== 'it' && lg !== 'en') return res.status(400).json({ error: 'lang 仅支持 it / en' });
 
   const review = agentModes().contentReview;
   const status = review ? 'draft' : 'published';
-  const publishedAt = review ? null : db.prepare("SELECT date('now','+8 hours') d").get().d;
-  const slug = `post-${Date.now().toString(36)}`;
+  const publishedAt = review ? null : romeDate();
+  const slug = `${slugify(t)}-${Date.now().toString(36).slice(-5)}`;
   const rm = Math.max(1, Math.min(120, Number(read_minutes) || 5));
-  const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,published_at,created_by)
-    VALUES (?,?,?,?,?,?,?,?,?)`)
-    .run(slug, t, String(category).trim() || '行业观察', String(excerpt).trim().slice(0, 300), String(content_md), rm, status, publishedAt, `agent:${req.agentName}`);
-  logActivity(`agent:${req.agentName}`, 'post_create', `post#${r.lastInsertRowid}`, `${t.slice(0, 50)} → ${status === 'draft' ? '草稿待审' : '直接发布'}`, true);
+  const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,published_at,created_by,lang)
+    VALUES (?,?,?,?,?,?,?,?,?,?)`)
+    .run(slug, t, String(category).trim() || 'Settore', String(excerpt).trim().slice(0, 300), String(content_md), rm, status, publishedAt, `agent:${req.agentName}`, lg);
+  logActivity(`agent:${req.agentName}`, 'post_create', `post#${r.lastInsertRowid}`, `[${lg}] ${t.slice(0, 50)} → ${status === 'draft' ? '草稿待审' : '直接发布'}`, true);
   res.json({
-    ok: true, id: r.lastInsertRowid, slug, status,
-    note: status === 'draft' ? '内容审核制开启：已存为草稿，待 Alan 后台审核发布' : '已直接发布',
+    ok: true, id: r.lastInsertRowid, slug, status, lang: lg,
+    note: status === 'draft' ? '内容审核制开启：已存为草稿，待后台审核发布' : '已直接发布',
   });
 });
 
@@ -104,8 +110,8 @@ router.post('/comments/:id/reply', (req, res) => {
   if (c.agent_status === 'replied') return res.status(409).json({ error: '该评论已有自动回复' });
 
   const r = db.prepare(`INSERT INTO comments(post_id,user_id,author_name,body,parent_id,is_agent,agent_label,agent_status)
-    VALUES (?,NULL,'Alan',?,?,1,?,'replied')`)
-    .run(c.post_id, body, c.id, `AI 自动回复 · via ${req.agentName}`);
+    VALUES (?,NULL,'Convation',?,?,1,?,'replied')`)
+    .run(c.post_id, body, c.id, `AI · via ${req.agentName}`);
   db.prepare("UPDATE comments SET agent_status='replied' WHERE id=?").run(c.id);
   logActivity(`agent:${req.agentName}`, 'comment_reply', `comment#${c.id}`, body.slice(0, 60), true);
   res.json({ ok: true, reply_id: r.lastInsertRowid });

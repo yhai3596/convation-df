@@ -166,85 +166,10 @@ const getSetting = (k, d = null) => {
 const setSetting = (k, v) =>
   db.prepare('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value').run(k, String(v));
 
-// ---------- 内容种子（来自设计稿，站点初始内容；后续在管理后台维护） ----------
-function seedContent() {
-  if (db.prepare('SELECT COUNT(*) c FROM posts').get().c > 0) return;
-
-  const insPost = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,published_at)
-    VALUES (@slug,@title,@category,@excerpt,@content_md,@read_minutes,'published',@published_at)`);
-  insPost.run({
-    slug: 'hvac-ai-landing-stuck-where',
-    title: '暖通制造企业的 AI 落地，卡在哪一步？',
-    category: '行业观察',
-    excerpt: '调研了十几家暖通企业后，我发现问题从来不是"没有工具"，而是业务与数据之间缺一个翻译者。这篇文章聊聊三种典型的卡点，以及各自的解法。',
-    content_md: [
-      '调研了十几家暖通企业之后，我发现 AI 落地的问题从来不是"没有工具"。工具从来都不缺——缺的是业务与数据之间的那个翻译者。这篇文章聊聊我看到的三种典型卡点。',
-      '',
-      '## 卡点一：数据在，但没人问对问题',
-      '',
-      '大多数企业的 ERP 和 MES 里躺着足够多的数据，问题是提问的方式仍然是十年前的报表思维。AI 最擅长回答的问题，往往还没有被提出来。',
-      '',
-      '## 卡点二：试点很热闹，流程没改变',
-      '',
-      '演示环境里的准确率再高，只要业务流程没有为 AI 让出一个位置，试点结束后一切照旧。',
-      '',
-      '## 卡点三：把 AI 当项目，而不是能力',
-      '',
-      '项目会结项，能力不会。真正落地的企业，都是把 AI 变成了岗位技能与日常工具。',
-    ].join('\n'),
-    read_minutes: 8,
-    published_at: '2026-07-08',
-  });
-  insPost.run({
-    slug: 'ahri-competitive-analysis-workflow',
-    title: '用 AI 做 AHRI 竞品分析：我的完整工作流',
-    category: '工具方法',
-    excerpt: '从数据抓取到差异化定位，一条可以直接照抄的分析流水线——也是站内「AHRI 竞品分析」工具背后的方法论。',
-    content_md: '从数据抓取、清洗对齐，到参数对比与差异化定位，这条流水线也是站内「AHRI 竞品分析」工具背后的方法论。\n\n> 完整正文整理中——可在管理后台「内容管理」中编辑发布。',
-    read_minutes: 12,
-    published_at: '2026-06-24',
-  });
-  insPost.run({
-    slug: 'patent-ai-what-engineers-do',
-    title: '专利检索交给 AI 之后，工程师该干什么',
-    category: '专利',
-    excerpt: 'AI 辅助专利分析不是替代，而是把人从检索里解放出来做判断。写给还在手动翻专利库的工程师们。',
-    content_md: 'AI 辅助专利分析不是替代，而是把人从检索里解放出来做判断：技术路线的取舍、权利要求的策略、竞争格局的解读。\n\n> 完整正文整理中——可在管理后台「内容管理」中编辑发布。',
-    read_minutes: 6,
-    published_at: '2026-06-10',
-  });
-  insPost.run({
-    slug: 'three-charts-for-management',
-    title: '给管理层讲 AI，我只讲这三张图',
-    category: '课程笔记',
-    excerpt: '企业内训里最有效的三个心智模型：能力边界图、结合点地图、推进路线图。',
-    content_md: '企业内训里最有效的三个心智模型：能力边界图（AI 能做什么/不能做什么）、结合点地图（业务里哪些环节接得上）、推进路线图（先做什么后做什么）。\n\n> 完整正文整理中——可在管理后台「内容管理」中编辑发布。',
-    read_minutes: 5,
-    published_at: '2026-05-28',
-  });
-
-  const insTool = db.prepare('INSERT INTO tools(no,name,description,status,url) VALUES (?,?,?,?,?)');
-  insTool.run(1, 'HVAC Tool', '暖通工程计算与选型辅助工具：制冷剂物性、焓湿图、水力与能耗计算等，持续扩充中。', 'live', 'https://hvac.geopro.cc');
-  insTool.run(2, 'AHRI 竞品分析', '基于 AHRI 认证数据的竞品数据查询与竞品动态跟踪。', 'live', 'https://ahri.geopro.cc');
-  insTool.run(3, '北美市场竞品分析', '面向北美暖通市场的竞品情报与分析。具体功能介绍待产品文档补充。', 'live', '');
-  insTool.run(4, '专利 AI 辅助助手', 'AI 辅助的专利技术交底书撰写系统：从技术要点到交底书初稿。', 'live', 'https://aipatent.lovable.app');
-  insTool.run(5, '企业财报解读', '企业财报解读与财务分析训练室：读懂三大报表、拆解关键财务指标，边学边练。', 'live', 'https://finstar.geopro.cc');
-
-  const insCourse = db.prepare('INSERT INTO courses(no,title,description,lectures,price_cents,status,tag,kicker) VALUES (?,?,?,?,?,?,?,?)');
-  insCourse.run(1, '制造业 AI 入门：从业务出发', '给非技术背景的管理者与业务骨干：AI 能做什么、不能做什么、怎么选第一个落地场景。', 12, 29900, 'live', '热门', '已上线 · 12 讲');
-  insCourse.run(2, 'AI 竞品分析实战工作流', '以 AHRI 与北美市场为例，手把手搭建一条 AI 驱动的竞品情报流水线。', 8, 49900, 'live', '进阶', '已上线 · 8 讲');
-  insCourse.run(3, '专利工作中的 AI 助手', 'AI 辅助专利检索、分析与撰写的完整方法。上线后通知我 →', null, null, 'coming', '', '筹备中');
-
-  const insCase = db.prepare('INSERT INTO cases(org,title,description,metric_value,metric_label,sort) VALUES (?,?,?,?,?,?)');
-  insCase.run('某暖通设备制造企业 · 华东', 'AI 竞品情报体系：从人工月报到自动周报',
-    '基于 AHRI 数据搭建竞品分析流水线，市场部从每月手工整理一次竞品，变为每周自动生成对比报告。', '85%', '情报整理工时下降', 1);
-  insCase.run('某压缩机企业 · 出海北美', '北美市场进入前的 AI 竞品扫描',
-    '对目标细分市场的主要竞品做参数、渠道与定价的系统性扫描，支撑产品定义与定价决策。', '6 周', '完成全部扫描', 2);
-  insCase.run('某零部件企业 · 研发部门', '专利工作流引入 AI 辅助',
-    '检索、对比与交底书初稿由 AI 辅助完成，工程师专注技术判断与权利要求策略。', '3×', '专利产出效率', 3);
-
-  if (getSetting('agent_autoreply') === null) setSetting('agent_autoreply', '1');
-}
+// ---------- 内容种子 ----------
+// Convation：Notizie 初始为空态（空态文案已在前台就位），内容由 Agent API（小龙虾/Hermes）供稿或后台创建。
+// alan 骨架的中文种子文/工具/课程/案例已清除，空表不再重播。
+function seedContent() {}
 
 // 运行配置默认值（每次启动补齐缺失项，不覆盖已有值）
 function seedDefaults() {

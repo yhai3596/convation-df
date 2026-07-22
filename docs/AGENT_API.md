@@ -1,6 +1,8 @@
 # Agent API — 外部 Agent（小龙虾 / Hermes CLI）接入文档
 
-Alan 平台对外暴露一套**令牌认证**的 Agent API，供外部 CLI Agent（小龙虾发文、Hermes 值守）自动发布内容、监控并回复评论。站内已有一个**内置自动化 Worker** 常驻处理评论——外部 Agent 是可选增强，不是必需。
+Convation 官网对外暴露一套**令牌认证**的 Agent API，供外部 CLI Agent（小龙虾发文、Hermes 值守）自动向 Notizie 供稿、监控并回复评论。站内已有一个**内置自动化 Worker** 常驻处理评论——外部 Agent 是可选增强，不是必需。
+
+**语言约定**：前台是意/英双语站。发文必带 `lang`（`it` 意语版 / `en` 英语版，默认 `it`），文章只出现在对应语言版的 Notizie；`title/excerpt/content_md/category` 都要用该语言书写（`category` 会原样渲染成前台分类标签）。
 
 ## 认证
 
@@ -10,7 +12,7 @@ Alan 平台对外暴露一套**令牌认证**的 Agent API，供外部 CLI Agent
 Authorization: Bearer alan_xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-- 基址：`https://geopro.cc/api/agent`
+- 基址：`https://www.convation.it/api/agent`
 - 限流：每令牌 240 次 / 10 分钟
 - 每次调用刷新令牌 `last_used` 与全局 Agent 心跳，并写入后台「活动日志」
 
@@ -18,7 +20,7 @@ Authorization: Bearer alan_xxxxxxxxxxxxxxxxxxxxxxxx
 
 ### GET /status — 状态与队列（自适应用）
 ```bash
-curl -H "Authorization: Bearer $TOKEN" https://geopro.cc/api/agent/status
+curl -H "Authorization: Bearer $TOKEN" https://www.convation.it/api/agent/status
 ```
 返回当前模式与待处理量，外部 Agent 据此决定是否发文/回帖：
 ```json
@@ -29,31 +31,32 @@ curl -H "Authorization: Bearer $TOKEN" https://geopro.cc/api/agent/status
 ```
 
 ### POST /posts — 发布文章
-受**内容审核制**约束：开启时一律落草稿（`status:"draft"`），等 Alan 后台一键发布。
+受**内容审核制**约束：开启时一律落草稿（`status:"draft"`），等后台一键发布。
 ```bash
-curl -X POST https://geopro.cc/api/agent/posts \
+curl -X POST https://www.convation.it/api/agent/posts \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"title":"标题","category":"行业观察","excerpt":"摘要","content_md":"# 正文\n...","read_minutes":8}'
+  -d '{"lang":"it","title":"Pompe di calore: guida agli incentivi 2026","category":"Incentivi","excerpt":"Cosa cambia e come muoversi.","content_md":"# Guida\n...","read_minutes":8}'
 ```
-返回 `{ "ok": true, "id": 12, "slug": "...", "status": "draft", "note": "..." }`
+字段：`lang` `it`/`en`（默认 `it`，其余值 400）；`category` 默认 `Settore`；slug 由标题自动生成（意语变音符转写 + 时间戳后缀，SEO 友好）；发布日期按 Europe/Rome。
+返回 `{ "ok": true, "id": 12, "slug": "pompe-di-calore-guida-...", "status": "draft", "lang": "it", "note": "..." }`
 
 ### GET /comments — 拉取评论队列
 ```bash
-curl -H "Authorization: Bearer $TOKEN" "https://geopro.cc/api/agent/comments?status=pending&limit=20"
+curl -H "Authorization: Bearer $TOKEN" "https://www.convation.it/api/agent/comments?status=pending&limit=20"
 ```
-`status`：`pending`（未处理，默认）/ `skipped`（转人工）/ `all`。每条含文章上下文（`post_id/post_slug/post_title`），供生成针对性回复。
+`status`：`pending`（未处理，默认）/ `skipped`（转人工）/ `all`。每条含文章上下文（`post_id/post_slug/post_title`），供生成针对性回复。**回复语言跟随评论所在文章的语言**（意语文章意语回，英语文章英语回）。
 
 ### POST /comments/:id/reply — 提交回复
-**评论回复全自动**：直接上线，标注「AI 自动回复 · via <令牌名>」。
+**评论回复全自动**：直接上线，前台显示为 `Convation` + „Team Convation" 徽标。
 ```bash
-curl -X POST https://geopro.cc/api/agent/comments/34/reply \
+curl -X POST https://www.convation.it/api/agent/comments/34/reply \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"body":"感谢提问，AHRI 工具支持热泵品类……"}'
+  -d '{"body":"Grazie della domanda: per una pompa di calore aria-acqua..."}'
 ```
 
 ### GET /messages — 站内留言（只读，供汇总/提醒）
 ```bash
-curl -H "Authorization: Bearer $TOKEN" "https://geopro.cc/api/agent/messages?limit=20"
+curl -H "Authorization: Bearer $TOKEN" "https://www.convation.it/api/agent/messages?limit=20"
 ```
 
 ## 值守脚本示例（轮询式，最贴合 CLI Agent）
@@ -61,7 +64,7 @@ curl -H "Authorization: Bearer $TOKEN" "https://geopro.cc/api/agent/messages?lim
 ```bash
 #!/usr/bin/env bash
 # 每 5 分钟拉未回复评论 → 生成回复 → 回帖
-TOKEN="alan_xxx"; BASE="https://geopro.cc/api/agent"
+TOKEN="alan_xxx"; BASE="https://www.convation.it/api/agent"
 while true; do
   curl -s -H "Authorization: Bearer $TOKEN" "$BASE/comments?status=pending" \
   | jq -c '.comments[]' | while read -r c; do

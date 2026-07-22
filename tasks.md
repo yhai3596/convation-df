@@ -34,7 +34,7 @@
 ### Phase 3: 功能接线
 - [x] T3.1 AI 助手改皮：气泡+阳光母题 SVG、品牌蓝实底 fab、2s 弹入（reduced-motion 关）、面板蓝头；文案全双语走 data-* 属性（greet/typing/err 随 locale），assistant.js 中文清零+死主题码删除；Consulenza 页内嵌完整对话确认不做（悬浮面板即全站对话入口，避免双聊天窗）
 - [x] T3.2 客服通道：settings 四键（support_phone/email_info/email_service/whatsapp）+ src/support.js 公共模块；前台读取点全接（Consulenza/Assistenza/Contatti 卡片+移动速联条，未配置隐藏/在途提示）——后台编辑界面归 T3.5
-- [ ] T3.3 Agent API 验证：小龙虾/hermes Bearer 令牌发文→Notizie 出现（草稿审核开关沿用）
+- [x] T3.3 Agent API 双语化+全链路验证：POST /posts 新增 lang 参数（it/en 白名单，400 拒其余）+ SEO slug（标题变音符转写+时间戳后缀）+ Europe/Rome 发布日期 + 默认分类 Settore；评论回复作者 Alan→Convation、标注语言中立；docs/AGENT_API.md 更新（基址 convation.it、lang 约定、意语示例）。顺手根除 alan 种子：seedContent() 掏空 + 库内 4文/5工具/3课程/3案例按名点删，重启实证不重播、Notizie 双语空态上线。验证链=令牌认证→双语发文落草稿→模拟放行→IT/EN 列表双向隔离→详情 markdown→评论队列→回复上线（Convation+徽标）→409 防重→活动日志留痕→测试数据清场。注意：Windows Git Bash 下 curl 命令行带重音字符会按 ANSI 码页发送致乱码（实证 perch�），真实 Agent 走代码 POST 不受影响
 - [ ] T3.4 询价单/报修表单入库+可选 SMTP
 - [ ] T3.5 后台：英/中双语界面、token 同步换色、内容管理适配 13 页文案键
 
@@ -70,6 +70,12 @@
 - 单次写入 ≤10k 字符；小步 commit；杀进程先 netstat 找 PID，禁按名杀
 
 ## 执行日志
+
+### 2026-07-22 深夜 - 第 3 轮
+**当前任务**: T3.3 完成（Phase 2 全绿 + T3.1/T3.2/T3.3 全绿）
+**完成内容**: 13 页全上线（T2.3–T2.9 逐页 commit）；助手改皮双语化（87b19fc）；Agent API 双语供稿链路打通并全链路实证；alan 种子内容根除（seedContent 掏空+按名点删，重启不重播）
+**已知悬留**: fmtDate/fmtDT 仍是中式 YYYY.MM.DD + Asia/Shanghai 时区（意大利惯例 DD/MM/YYYY + Europe/Rome，归 T3.5/T5.1 一并处理）；login.ejs 仍 alan 样式；privacy/cookie 占位；admin 全未动；seedAdmin 默认管理员仍 alan 语境（归 T3.5）
+**下一步**: T3.4 询价/报修独立表 + 可选 SMTP
 
 ### 2026-07-22 晚 - 第 2 轮
 **当前任务**: T2.2 完成

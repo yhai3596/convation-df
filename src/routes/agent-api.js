@@ -57,9 +57,7 @@ router.get('/status', (req, res) => {
 
 // —— 发布内容：审核制开启时落草稿 ——
 // lang 决定文章出现在意语版（it，默认）还是英语版（en）Notizie；category 直接渲染为前台分类 pill，须用对应语言书写
-const romeDate = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date());
-const slugify = s => String(s).normalize('NFKD').replace(/\p{M}+/gu, '')
-  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'post';
+const { romeDate, slugify } = require('./../slug');
 router.post('/posts', (req, res) => {
   const { title = '', category = 'Settore', excerpt = '', content_md = '', read_minutes = 5, lang = 'it' } = req.body || {};
   const t = String(title).trim();

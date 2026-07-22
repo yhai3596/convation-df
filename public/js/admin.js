@@ -50,11 +50,13 @@
   }
 
   var SCHEMAS = {
-    post: function (d) { d = d || { title: '', category: '行业观察', excerpt: '', content_md: '', read_minutes: 5, status: 'draft' }; return [
-      field('标题', 'title', d.title), field('分类', 'category', d.category),
-      field('摘要', 'excerpt', d.excerpt, 'textarea'), field('正文（Markdown）', 'content_md', d.content_md, 'textarea'),
-      field('阅读时长（分钟）', 'read_minutes', d.read_minutes, 'number'),
-      field('状态', 'status', d.status, 'select', [['published', '已发布'], ['draft', '草稿'], ['archived', '已归档']]) ]; },
+    post: function (d) { d = d || { title: '', category: 'Settore', excerpt: '', content_md: '', read_minutes: 5, status: 'draft', lang: 'it' }; return [
+      field('标题 Title', 'title', d.title),
+      field('语言 Language（决定出现在哪个语言版 Notizie）', 'lang', d.lang || 'it', 'select', [['it', 'Italiano 意语版'], ['en', 'English 英语版']]),
+      field('分类 Category（前台原样展示，用对应语言书写）', 'category', d.category),
+      field('摘要 Excerpt', 'excerpt', d.excerpt, 'textarea'), field('正文 Markdown', 'content_md', d.content_md, 'textarea'),
+      field('阅读时长（分钟）Read minutes', 'read_minutes', d.read_minutes, 'number'),
+      field('状态 Status', 'status', d.status, 'select', [['published', '已发布 Published'], ['draft', '草稿 Draft'], ['archived', '已归档 Archived']]) ]; },
     course: function (d) { d = d || { title: '', description: '', lectures: '', price_yuan: '', status: 'live', tag: '', kicker: '', cover_url: '' }; return [
       field('课程名称', 'title', d.title), field('课程介绍', 'description', d.description, 'textarea'),
       field('讲数', 'lectures', d.lectures, 'number'), field('价格（元，留空待定）', 'price_yuan', d.price_yuan, 'number'),
@@ -155,11 +157,13 @@
   // —— AI 生成草稿 ——
   var aiBtn = document.getElementById('btn-ai-draft');
   if (aiBtn) aiBtn.addEventListener('click', function () {
-    var topic = prompt('输入文章选题（如：暖通企业如何用 AI 做竞品分析）', '');
+    var topic = prompt('输入文章选题 Topic（如：Pompe di calore e detrazioni fiscali）', '');
     if (!topic) return;
-    var outline = prompt('可选：要点/大纲（留空让 AI 自拟）', '') || '';
+    var lang = (prompt('文章语言 Language：it = 意语版 / en = 英语版', 'it') || 'it').trim().toLowerCase();
+    if (lang !== 'en') lang = 'it';
+    var outline = prompt('可选：要点/大纲 Outline（留空让 AI 自拟）', '') || '';
     aiBtn.disabled = true; aiBtn.textContent = 'AI 生成中…';
-    post('/admin/api/post-generate', { topic: topic, outline: outline }, function (ok, d) {
+    post('/admin/api/post-generate', { topic: topic, outline: outline, lang: lang }, function (ok, d) {
       aiBtn.disabled = false; aiBtn.textContent = '✎ AI 生成草稿';
       if (!ok) { alanToast(d.error || '生成失败'); return; }
       alanToast('草稿已生成：' + d.title + '（在待审草稿中审核发布）'); reloadTo('content');

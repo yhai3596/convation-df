@@ -48,25 +48,24 @@ app.use(session({
 }));
 
 // —— 模板全局 ——
+// 日期按意大利惯例 DD/MM/YYYY，时区 Europe/Rome（DB 存 UTC datetime 或纯日期）
 function fmtDate(s) {
   if (!s) return '—';
   s = String(s);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.replace(/-/g, '.');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}`;
   const d = new Date(s.replace(' ', 'T') + (/[Z+]/.test(s) ? '' : 'Z'));
-  if (Number.isNaN(d.getTime())) return s.slice(0, 10).replace(/-/g, '.');
-  return new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' })
-    .format(d).replace(/\//g, '.');
+  if (Number.isNaN(d.getTime())) return s.slice(0, 10);
+  return new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 }
 app.locals.fmtDate = fmtDate;
 app.locals.fmtDT = s => {
   if (!s) return '—';
   const d = new Date(String(s).replace(' ', 'T') + (/[Z+]/.test(String(s)) ? '' : 'Z'));
   if (Number.isNaN(d.getTime())) return String(s).slice(5, 16);
-  return new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
-    .format(d).replace(/\//g, '.');
+  return new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
 };
-app.locals.fmtNum = n => Number(n || 0).toLocaleString('en-US');
-app.locals.money = cents => (cents == null ? '—' : `¥ ${Math.round(cents / 100).toLocaleString('en-US')}`);
+app.locals.fmtNum = n => Number(n || 0).toLocaleString('it-IT');
+app.locals.money = cents => (cents == null ? '—' : `€ ${Math.round(cents / 100).toLocaleString('it-IT')}`);
 // 静态资源版本号（每次进程启动变化；autopull 部署会重启进程 → 自动刷新浏览器缓存）
 app.locals.assetVer = Date.now().toString(36);
 // 站点文案键值层（后台「页面内容」可编辑，默认值=设计稿文案）

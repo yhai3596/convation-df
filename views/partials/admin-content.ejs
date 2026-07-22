@@ -1,18 +1,10 @@
-<!-- 内容管理：草稿待审 + AI生成 + 文章/课程/工具/案例 CRUD + 删除 -->
+<!-- Notizie 文章管理：草稿待审（Agent/AI 供稿）+ 手动新建 + 归档/删除。课程/工具/案例前台无 DB 消费点（Strumenti/Impianti 走页面内容键），不设入口 -->
 <div id="tab-content" hidden>
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap">
-    <h1 style="font-weight:400;font-size:34px;margin:0">内容管理</h1>
+    <h1 style="font-weight:400;font-size:34px;margin:0">Notizie 文章 Articles</h1>
     <div style="display:flex;gap:9.2px;flex-wrap:wrap">
-      <button type="button" class="btn btn-secondary" id="btn-ai-draft">✎ AI 生成草稿</button>
-      <div style="position:relative;display:inline-block">
-        <button type="button" class="btn btn-primary" id="btn-new-content" aria-haspopup="menu" aria-expanded="false">+ 新建内容 ▾</button>
-        <div id="new-menu" role="menu" hidden style="position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:150px;padding:6px;display:flex;flex-direction:column;gap:2px;background:var(--color-bg);border:1px solid var(--color-divider);box-shadow:0 10px 30px rgba(0,0,0,.12)">
-          <button type="button" class="btn btn-ghost" role="menuitem" data-new="post" style="width:100%;justify-content:flex-start">文章</button>
-          <button type="button" class="btn btn-ghost" role="menuitem" data-new="course" style="width:100%;justify-content:flex-start">课程</button>
-          <button type="button" class="btn btn-ghost" role="menuitem" data-new="tool" style="width:100%;justify-content:flex-start">工具</button>
-          <button type="button" class="btn btn-ghost" role="menuitem" data-new="case" style="width:100%;justify-content:flex-start">案例</button>
-        </div>
-      </div>
+      <button type="button" class="btn btn-secondary" id="btn-ai-draft">✎ AI 生成草稿 AI draft</button>
+      <button type="button" class="btn btn-primary" data-new="post">+ 新建文章 New post</button>
     </div>
   </div>
 
@@ -43,52 +35,21 @@
   </div>
   <% } %>
 
-  <div style="display:flex;gap:9.2px;margin-top:20px;flex-wrap:wrap">
-    <button type="button" class="tag tag-outline" data-content-filter="all" style="cursor:pointer;background:transparent">全部</button>
-    <button type="button" class="tag tag-neutral" data-content-filter="post" style="cursor:pointer">文章</button>
-    <button type="button" class="tag tag-neutral" data-content-filter="course" style="cursor:pointer">课程</button>
-    <button type="button" class="tag tag-neutral" data-content-filter="tool" style="cursor:pointer">工具</button>
-    <button type="button" class="tag tag-neutral" data-content-filter="case" style="cursor:pointer">案例</button>
-  </div>
-
   <div class="card" style="padding:28px;margin-top:20px">
     <table class="table">
-      <thead><tr><th>标题</th><th>类型</th><th>状态</th><th>更新时间</th><th style="text-align:right">操作</th></tr></thead>
+      <thead><tr><th>标题 Title</th><th>语言</th><th>状态 Status</th><th>更新 Updated</th><th style="text-align:right">操作</th></tr></thead>
       <tbody id="content-rows">
         <% for (const p of posts) { %>
         <tr data-ctype="post">
-          <td><%= p.title %></td><td>文章</td>
+          <td><%= p.title %></td><td><span class="tag tag-neutral"><%= (p.lang || 'it').toUpperCase() %></span></td>
           <td><span class="tag <%= p.status === 'published' ? 'tag-accent' : (p.status === 'archived' ? 'tag-neutral' : 'tag-neutral') %>"><%= p.status === 'published' ? '已发布' : (p.status === 'archived' ? '已归档' : '草稿') %></span></td>
           <td class="tnum"><%= fmtDate(p.published_at || p.updated_at) %></td>
           <td style="text-align:right;white-space:nowrap"><button type="button" class="btn btn-ghost" data-edit="post" data-id="<%= p.id %>">编辑</button><button type="button" class="btn btn-ghost" data-del="post" data-id="<%= p.id %>" data-name="<%= p.title %>" data-archived="<%= p.status === 'archived' ? 1 : 0 %>" style="color:#a33d2e"><%= p.status === 'archived' ? '删除' : '下线' %></button></td>
         </tr>
         <% } %>
-        <% for (const c of courses) { %>
-        <tr data-ctype="course">
-          <td><%= c.title %></td><td>课程</td>
-          <td><% if (c.archived) { %><span class="tag tag-neutral">已归档</span><% } else { %><span class="tag <%= c.status === 'live' ? 'tag-accent' : 'tag-neutral' %>"><%= c.status === 'live' ? '已发布' : '筹备中' %></span><% } %></td>
-          <td class="tnum"><%= fmtDate(c.updated_at) %></td>
-          <td style="text-align:right;white-space:nowrap"><button type="button" class="btn btn-ghost" data-edit="course" data-id="<%= c.id %>">编辑</button><% if (c.archived) { %><button type="button" class="btn btn-ghost" data-restore="course" data-id="<%= c.id %>">恢复</button><% } %><button type="button" class="btn btn-ghost" data-del="course" data-id="<%= c.id %>" data-name="<%= c.title %>" data-archived="<%= c.archived ? 1 : 0 %>" style="color:#a33d2e"><%= c.archived ? '删除' : '下线' %></button></td>
-        </tr>
-        <% } %>
-        <% for (const t of tools) { %>
-        <tr data-ctype="tool">
-          <td><%= t.name %></td><td>工具</td>
-          <td><% if (t.archived) { %><span class="tag tag-neutral">已归档</span><% } else { %><span class="tag <%= t.status === 'live' ? 'tag-accent' : 'tag-neutral' %>"><%= t.status === 'live' ? '已发布' : '筹备中' %></span><% } %></td>
-          <td class="tnum"><%= fmtDate(t.updated_at) %></td>
-          <td style="text-align:right;white-space:nowrap"><button type="button" class="btn btn-ghost" data-edit="tool" data-id="<%= t.id %>">编辑</button><% if (t.archived) { %><button type="button" class="btn btn-ghost" data-restore="tool" data-id="<%= t.id %>">恢复</button><% } %><button type="button" class="btn btn-ghost" data-del="tool" data-id="<%= t.id %>" data-name="<%= t.name %>" data-archived="<%= t.archived ? 1 : 0 %>" style="color:#a33d2e"><%= t.archived ? '删除' : '下线' %></button></td>
-        </tr>
-        <% } %>
-        <% for (const cs of cases) { %>
-        <tr data-ctype="case">
-          <td><%= cs.title %></td><td>案例</td>
-          <td><% if (cs.archived) { %><span class="tag tag-neutral">已归档</span><% } else { %><span class="tag tag-accent"><%= cs.org %></span><% } %></td>
-          <td class="tnum">—</td>
-          <td style="text-align:right;white-space:nowrap"><button type="button" class="btn btn-ghost" data-edit="case" data-id="<%= cs.id %>">编辑</button><% if (cs.archived) { %><button type="button" class="btn btn-ghost" data-restore="case" data-id="<%= cs.id %>">恢复</button><% } %><button type="button" class="btn btn-ghost" data-del="case" data-id="<%= cs.id %>" data-name="<%= cs.title %>" data-archived="<%= cs.archived ? 1 : 0 %>" style="color:#a33d2e"><%= cs.archived ? '删除' : '下线' %></button></td>
-        </tr>
-        <% } %>
+        <% if (!posts.length) { %><tr><td colspan="5" style="color:var(--color-neutral-600);font-size:13px">还没有文章。点右上「+ 新建文章」，或等 Agent 供稿进入待审草稿。No articles yet.</td></tr><% } %>
       </tbody>
     </table>
   </div>
-  <p style="font-size:12px;color:var(--color-neutral-600);margin-top:14px">四类内容统一两段式：先点"下线"= 归档（前台立即隐藏，文章保留评论与统计），归档后再点"删除"才彻底移除。误删可在归档态点"恢复"（文章改用"编辑→状态→已发布"）。归档与课程/工具的"筹备中"是两套独立状态，互不影响。</p>
+  <p style="font-size:12px;color:var(--color-neutral-600);margin-top:14px">两段式删除：先点"下线"= 归档（前台 Notizie 立即隐藏，保留评论与统计），归档后再点"删除"才彻底移除。误删可"编辑→状态→已发布"恢复。IT/EN 各自只出现在对应语言版列表。</p>
 </div>

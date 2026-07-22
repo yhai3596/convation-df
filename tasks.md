@@ -36,7 +36,7 @@
 - [x] T3.2 客服通道：settings 四键（support_phone/email_info/email_service/whatsapp）+ src/support.js 公共模块；前台读取点全接（Consulenza/Assistenza/Contatti 卡片+移动速联条，未配置隐藏/在途提示）——后台编辑界面归 T3.5
 - [x] T3.3 Agent API 双语化+全链路验证：POST /posts 新增 lang 参数（it/en 白名单，400 拒其余）+ SEO slug（标题变音符转写+时间戳后缀）+ Europe/Rome 发布日期 + 默认分类 Settore；评论回复作者 Alan→Convation、标注语言中立；docs/AGENT_API.md 更新（基址 convation.it、lang 约定、意语示例）。顺手根除 alan 种子：seedContent() 掏空 + 库内 4文/5工具/3课程/3案例按名点删，重启实证不重播、Notizie 双语空态上线。验证链=令牌认证→双语发文落草稿→模拟放行→IT/EN 列表双向隔离→详情 markdown→评论队列→回复上线（Convation+徽标）→409 防重→活动日志留痕→测试数据清场。注意：Windows Git Bash 下 curl 命令行带重音字符会按 ANSI 码页发送致乱码（实证 perch�），真实 Agent 走代码 POST 不受影响
 - [x] T3.4 询价/报修/联系独立入库+可选 SMTP：inquiries 表（kind/name/email/phone/topic/body/lang/status）+ POST /api/inquiry（kind 白名单、意/英错误文案随 lang、限流 10/10min）+ mailer.notifyInquiry（收件人=support_email_info，SMTP 或邮箱未配置静默跳过、发送失败仅告警不阻断入库、replyTo=客户邮箱）；三表单（consulenza/assistenza/contatti）改传结构化字段，弃用 body 前缀打包。验证=curl 三态（200 入库/非法 kind 400 意语/坏邮箱 400 英语）+ 浏览器三表单实提交（成功文案回显+库内 4 行 kind/topic/lang 全对号+零控制台报错）+ 假 SMTP 实证 fail-safe（ECONNREFUSED 告警在日志、响应仍 200、行照存）→ 测试行按名点删清场。SMTP 真实凭据待用户提供（入 T5.3 催收）
-- [ ] T3.5 后台：英/中双语界面、token 同步换色、内容管理适配 13 页文案键
+- [x] T3.5 后台 Convation 化：品牌/标签双语（Convation Admin 侧栏、六 tab 中英并标、衬线字体全换 var(--font-heading)）；新增「询价线索 LEADS」面板（inquiries 列表+mailto+状态流转按钮）+ /admin/api/inquiry-status 端点（new/handled 白名单、404/400/未登录三拒）；内容管理裁为 Notizie 单类（课程/工具/案例前台无 DB 消费点，入口/筛选/表格行全撤，后端路由保留不接线）+ 语言列 IT/EN + 编辑器 lang 下拉；admin 发文/一键发布走共享 src/slug.js（意化 slug+罗马日期）+lang 入库（更新缺省保持原语言，防误重置——实测修过一次解构默认值反噬）；AI 生成草稿人设重写为 Convation Notizie 意语 prompt（it/en 可选、禁编造价格/税率、自由分类默认 Settore）；fmtDate/fmtDT/fmtNum/money 全转意式（DD/MM/YYYY + Europe/Rome + it-IT 千分位 + €）；seedAdmin 默认改 admin@convation.local/Convation。验证=两轮脚本 16/16+9/9 全过（临时换哈希登录→测毕恢复，不读凭据文件）：/admin 渲染、LEADS 入库→面板→状态流转 DB 证据、EN 文章创建/无 lang 编辑保持/前台双语隔离、发布罗马日期、测试行全清
 
 ### Phase 4: SEO/GEO
 - [ ] T4.1 每页 title/description、JSON-LD（HVACBusiness/Product/FAQPage）、语义化标题
@@ -70,6 +70,12 @@
 - 单次写入 ≤10k 字符；小步 commit；杀进程先 netstat 找 PID，禁按名杀
 
 ## 执行日志
+
+### 2026-07-23 - 第 4 轮
+**当前任务**: T3.5 完成（Phase 3 全绿）
+**完成内容**: 后台 Convation 化全套（LEADS 面板+端点、内容管理 Notizie 单类+lang、AI 草稿意语人设、意式日期、seedAdmin）；共享 src/slug.js 抽出；两轮正向证据验证 16/16+9/9
+**已知悬留**: login.ejs 仍 alan 样式（T5.1 走查一并看）；privacy/cookie 占位（T5.3 素材）；admin.js 内部标识 alanToast/alan-admin-tab 不改（不可见内部名）；课程/工具/案例后端路由保留未接线（前台无消费点，T6.1 收尾定去留）；dev 库既有管理员行仍 admin@alan-ai.local（凭据文件对应可登录，仅显示名改 Convation；生产首启即新默认）
+**下一步**: Phase 4 SEO/GEO（T4.1 JSON-LD → T4.2 hreflang/sitemap → T4.3 CMP）
 
 ### 2026-07-22 深夜 - 第 3 轮
 **当前任务**: T3.3 完成（Phase 2 全绿 + T3.1/T3.2/T3.3 全绿）

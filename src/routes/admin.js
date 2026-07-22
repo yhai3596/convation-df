@@ -40,22 +40,23 @@ router.get('/admin', requireAdmin, (req, res) => {
   const tools = db.prepare('SELECT * FROM tools ORDER BY no').all();
   const cases = db.prepare('SELECT * FROM cases ORDER BY sort').all();
   const users = analytics.usersList();
-  const submissions = db.prepare('SELECT * FROM diagnosis_submissions ORDER BY created_at DESC LIMIT 20').all();
+  const inquiries = db.prepare('SELECT * FROM inquiries ORDER BY created_at DESC LIMIT 100').all();
   const counts = {
     subscribers: db.prepare('SELECT COUNT(*) c FROM subscribers').get().c,
     messages: db.prepare('SELECT COUNT(*) c FROM messages').get().c,
-    submissions: db.prepare('SELECT COUNT(*) c FROM diagnosis_submissions').get().c,
+    inquiries: db.prepare('SELECT COUNT(*) c FROM inquiries').get().c,
+    inquiriesNew: db.prepare("SELECT COUNT(*) c FROM inquiries WHERE status='new'").get().c,
   };
   const messages = db.prepare('SELECT * FROM messages ORDER BY created_at DESC LIMIT 10').all();
 
   const llmCfg = config.llmConfig();
   res.render('admin', {
-    title: '管理后台 · Alan',
+    title: '管理后台 · Convation',
     active: '',
     range, dash,
     pvPoints: analytics.trendPoints(dash.trend, 'pv'),
     uvPoints: analytics.trendPoints(dash.trend, 'uv'),
-    posts, courses, tools, cases, users, submissions, messages, counts,
+    posts, courses, tools, cases, users, inquiries, messages, counts,
     agentStatus: agent.agentStatus(),
     mailerEnabled: mailer.enabled(),
     llmEnabled: llm.enabled(),
@@ -90,8 +91,9 @@ router.get('/admin/preview/post/:id', requireAdmin, (req, res) => {
 });
 
 // ============================================================ 内容 CRUD
+const { romeDate, slugify } = require('../slug');
 router.post('/admin/api/post', requireAdminApi, (req, res) => {
-  const { id, title = '', category = '行业观察', excerpt = '', content_md = '', read_minutes = 5, status = 'draft' } = req.body || {};
+  const { id, title = '', category = 'Settore', excerpt = '', content_md = '', read_minutes = 5, status = 'draft', lang } = req.body || {}; // lang 不设默认：更新时缺省=保持原语言
   const t = String(title).trim();
   if (!t) return res.status(400).json({ error: '请填写标题' });
   const st = ['published', 'draft', 'archived'].includes(status) ? status : 'draft';
@@ -100,16 +102,18 @@ router.post('/admin/api/post', requireAdminApi, (req, res) => {
   if (id) {
     const old = db.prepare('SELECT * FROM posts WHERE id=?').get(Number(id));
     if (!old) return res.status(404).json({ error: '文章不存在' });
-    const publishedAt = old.published_at || (st === 'published' ? db.prepare("SELECT date('now','+8 hours') d").get().d : null);
-    db.prepare(`UPDATE posts SET title=?, category=?, excerpt=?, content_md=?, read_minutes=?, status=?, published_at=?, updated_at=datetime('now') WHERE id=?`)
-      .run(t, String(category).trim() || '行业观察', String(excerpt).trim(), String(content_md), rm, st, publishedAt, old.id);
+    const lg = (lang === 'en' || lang === 'it') ? lang : (old.lang || 'it'); // 未传 lang 保持原语言，防误重置
+    const publishedAt = old.published_at || (st === 'published' ? romeDate() : null);
+    db.prepare(`UPDATE posts SET title=?, category=?, excerpt=?, content_md=?, read_minutes=?, status=?, published_at=?, lang=?, updated_at=datetime('now') WHERE id=?`)
+      .run(t, String(category).trim() || 'Settore', String(excerpt).trim(), String(content_md), rm, st, publishedAt, lg, old.id);
     return res.json({ ok: true, id: old.id });
   }
-  const slug = `post-${Date.now().toString(36)}`;
-  const publishedAt = st === 'published' ? db.prepare("SELECT date('now','+8 hours') d").get().d : null;
-  const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,published_at,created_by)
-    VALUES (?,?,?,?,?,?,?,?,'admin')`)
-    .run(slug, t, String(category).trim() || '行业观察', String(excerpt).trim(), String(content_md), rm, st, publishedAt);
+  const lg = lang === 'en' ? 'en' : 'it';
+  const slug = `${slugify(t)}-${Date.now().toString(36).slice(-5)}`;
+  const publishedAt = st === 'published' ? romeDate() : null;
+  const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,published_at,created_by,lang)
+    VALUES (?,?,?,?,?,?,?,?,'admin',?)`)
+    .run(slug, t, String(category).trim() || 'Settore', String(excerpt).trim(), String(content_md), rm, st, publishedAt, lg);
   res.json({ ok: true, id: r.lastInsertRowid });
 });
 
@@ -117,31 +121,42 @@ router.post('/admin/api/post', requireAdminApi, (req, res) => {
 router.post('/admin/api/post-publish', requireAdminApi, (req, res) => {
   const p = db.prepare('SELECT * FROM posts WHERE id=?').get(Number((req.body || {}).id));
   if (!p) return res.status(404).json({ error: '文章不存在' });
-  const publishedAt = p.published_at || db.prepare("SELECT date('now','+8 hours') d").get().d;
+  const publishedAt = p.published_at || romeDate();
   db.prepare(`UPDATE posts SET status='published', published_at=?, updated_at=datetime('now') WHERE id=?`).run(publishedAt, p.id);
   config.logActivity('admin', 'post_publish', `post#${p.id}`, p.title.slice(0, 50), true);
   res.json({ ok: true });
 });
 
+// 询价线索：处理状态流转
+router.post('/admin/api/inquiry-status', requireAdminApi, (req, res) => {
+  const { id, status } = req.body || {};
+  if (!['new', 'handled'].includes(status)) return res.status(400).json({ error: '状态无效' });
+  const r = db.prepare('UPDATE inquiries SET status=? WHERE id=?').run(status, Number(id));
+  if (!r.changes) return res.status(404).json({ error: '记录不存在' });
+  res.json({ ok: true });
+});
+
 // AI 生成文章草稿（需 LLM 配置）
 router.post('/admin/api/post-generate', requireAdminApi, async (req, res) => {
-  if (!llm.enabled()) return res.status(400).json({ error: '尚未配置 LLM——请先在「Agent 自动化」页填写 API Key 并测试连接' });
-  const { topic = '', outline = '', style = '行业观察，克制专业', length = '800' } = req.body || {};
+  if (!llm.enabled()) return res.status(400).json({ error: '尚未配置 LLM——请先在「智能助理」页填写 API Key 并测试连接' });
+  const { topic = '', outline = '', lang = 'it', length = '800' } = req.body || {};
   const tp = String(topic).trim();
   if (!tp) return res.status(400).json({ error: '请填写选题' });
+  const lg = lang === 'en' ? 'en' : 'it';
+  const langName = lg === 'en' ? 'inglese (English)' : 'italiano';
   try {
     const text = await llm.chat([
-      { role: 'system', content: `你是 Alan（暖通行业 AI 专家，20 多年制造业经验）的写作助理「小龙虾」。${agent.SITE_KNOWLEDGE}\n为 Alan 的博客撰写文章草稿。要求：中文、面向制造业/暖通从业者、观点务实不夸大、可用二级标题分段（Markdown ## ）。只输出 JSON：{"title":"标题","category":"行业观察|工具方法|专利|课程笔记 之一","excerpt":"60-90字摘要","content_md":"Markdown 正文","read_minutes":整数}` },
-      { role: 'user', content: `选题：${tp}\n要点/大纲：${String(outline).trim() || '（自拟）'}\n风格：${String(style).trim()}\n目标篇幅：约 ${Number(length) || 800} 字` },
+      { role: 'system', content: `Sei l'assistente editoriale di Convation (www.convation.it), azienda italiana di vendita, installazione e assistenza di pompe di calore e climatizzatori. ${agent.SITE_KNOWLEDGE}\nScrivi una bozza di articolo per la sezione Notizie, interamente in ${langName}, rivolta a consumatori e installatori. Regole: tono professionale e sobrio, niente esagerazioni; NON inventare prezzi, marchi, aliquote o percentuali di detrazione; usa sottotitoli Markdown (## ). Rispondi SOLO con JSON: {"title":"titolo","category":"etichetta breve in ${langName}, es. Settore / Guide / Incentivi","excerpt":"riassunto di 1-2 frasi","content_md":"testo Markdown","read_minutes":numero intero}` },
+      { role: 'user', content: `Argomento: ${tp}\nPunti/scaletta: ${String(outline).trim() || '(a tua scelta)'}\nLunghezza indicativa: ~${Number(length) || 800} parole` },
     ], { maxTokens: 3000, timeoutMs: 60000, json: true });
     const j = llm.parseJson(text);
     if (!j.title || !j.content_md) throw new Error('生成结果缺少标题或正文');
-    const slug = `post-${Date.now().toString(36)}`;
+    const slug = `${slugify(String(j.title))}-${Date.now().toString(36).slice(-5)}`;
     const rm = Math.max(1, Math.min(60, Number(j.read_minutes) || Math.round(String(j.content_md).length / 400) || 5));
-    const cat = ['行业观察', '工具方法', '专利', '课程笔记'].includes(j.category) ? j.category : '行业观察';
-    const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,created_by)
-      VALUES (?,?,?,?,?,?,'draft','ai')`)
-      .run(slug, String(j.title).slice(0, 120), cat, String(j.excerpt || '').slice(0, 300), String(j.content_md), rm);
+    const cat = String(j.category || '').trim().slice(0, 30) || 'Settore';
+    const r = db.prepare(`INSERT INTO posts(slug,title,category,excerpt,content_md,read_minutes,status,created_by,lang)
+      VALUES (?,?,?,?,?,?,'draft','ai',?)`)
+      .run(slug, String(j.title).slice(0, 120), cat, String(j.excerpt || '').slice(0, 300), String(j.content_md), rm, lg);
     config.logActivity('system:ai', 'post_create', `post#${r.lastInsertRowid}`, `AI 草稿：${String(j.title).slice(0, 50)}`, true);
     res.json({ ok: true, id: r.lastInsertRowid, title: j.title, status: 'draft' });
   } catch (e) {

@@ -5,7 +5,7 @@
   <!-- 状态总览 -->
   <div class="grid-cards4" style="margin-top:24px">
     <div class="card" style="padding:20px"><span class="card-kicker">LLM 状态</span><span style="font-size:18px;color:<%= llmEnabled ? 'var(--color-accent)' : 'var(--color-neutral-600)' %>"><%= llmEnabled ? '已连接' : '未配置' %></span><span class="card-meta"><%= llmCfgView.model %></span></div>
-    <div class="card" style="padding:20px"><span class="card-kicker">待处理评论</span><span class="tnum" style="font-family:'Cormorant Garamond',serif;font-size:30px;color:<%= queue.pending ? 'var(--color-accent)' : 'inherit' %>"><%= queue.pending %></span><span class="card-meta">已回 <%= queue.replied %> · 转人工 <%= queue.skipped %></span></div>
+    <div class="card" style="padding:20px"><span class="card-kicker">待处理评论</span><span class="tnum" style="font-family:var(--font-heading);font-size:30px;color:<%= queue.pending ? 'var(--color-accent)' : 'inherit' %>"><%= queue.pending %></span><span class="card-meta">已回 <%= queue.replied %> · 转人工 <%= queue.skipped %></span></div>
     <div class="card" style="padding:20px"><span class="card-kicker">巡检心跳</span><span style="font-size:15px" class="tnum"><%= workerLastTick ? fmtDT(workerLastTick) : '等待中' %></span><span class="card-meta">间隔 <%= agentStatus.scanIntervalMin %> 分钟</span></div>
     <div class="card" style="padding:20px"><span class="card-kicker">Agent 最近活动</span><span style="font-size:15px" class="tnum"><%= agentStatus.lastActive ? fmtDT(agentStatus.lastActive) : '暂无' %></span><span class="card-meta"><%= tokens.filter(t => !t.revoked).length %> 个有效令牌</span></div>
   </div>
@@ -55,7 +55,7 @@
           </td>
         </tr>
         <% }); %>
-        <% if (!llmProviders.length) { %><tr><td colspan="7" style="color:var(--color-neutral-600);font-size:13px">还没有配置 LLM。下方添加第一个（未配置时诊断/助手/回复走内置模板，功能正常）。</td></tr><% } %>
+        <% if (!llmProviders.length) { %><tr><td colspan="7" style="color:var(--color-neutral-600);font-size:13px">还没有配置 LLM。下方添加第一个（未配置时助手/评论回复走内置 FAQ 模板，功能正常）。</td></tr><% } %>
       </tbody>
     </table>
     <p class="form-ok" id="llm-test-msg" style="min-height:auto;margin-top:8px"></p>
@@ -72,7 +72,7 @@
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-secondary" id="llm-new-test">先测试</button><button type="button" class="btn btn-primary" id="llm-new-add">添加</button><span class="form-ok" id="llm-new-msg" style="min-height:auto"></span></div>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--color-neutral-600);margin-top:12px">端点自动识别：含 <code>anthropic</code> 走 Anthropic 格式，否则 OpenAI 格式。配好后诊断报告/助手/评论回复/AI草稿都升级为 LLM，任一路失败自动切下一路，全失败回退内置模板/FAQ。</p>
+    <p style="font-size:12px;color:var(--color-neutral-600);margin-top:12px">端点自动识别：含 <code>anthropic</code> 走 Anthropic 格式，否则 OpenAI 格式。配好后悬浮助手/评论回复/AI草稿都升级为 LLM，任一路失败自动切下一路，全失败回退内置 FAQ 模板。</p>
   </div>
 
   <!-- API 令牌 -->

@@ -198,12 +198,12 @@ function seedDefaults() {
 // ---------- 管理员种子 ----------
 function seedAdmin() {
   if (db.prepare("SELECT COUNT(*) c FROM users WHERE role='admin'").get().c > 0) return;
-  const email = process.env.ADMIN_EMAIL || 'admin@alan-ai.local';
+  const email = process.env.ADMIN_EMAIL || 'admin@convation.local';
   let password = process.env.ADMIN_PASSWORD;
   let generated = false;
   if (!password) { password = crypto.randomBytes(9).toString('base64url'); generated = true; }
   db.prepare("INSERT INTO users(email,name,password_hash,role) VALUES (?,?,?,'admin')")
-    .run(email, 'Alan', bcrypt.hashSync(password, 10));
+    .run(email, 'Convation', bcrypt.hashSync(password, 10));
   if (generated) {
     const credFile = path.join(DATA_DIR, 'admin-credentials.txt');
     fs.writeFileSync(credFile, `管理员账号（首次启动自动生成，请尽快登录后妥善保存/修改）\nemail: ${email}\npassword: ${password}\n`);

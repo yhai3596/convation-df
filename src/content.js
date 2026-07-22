@@ -1,12 +1,14 @@
 // 站点文案键值层：注册表定义每个可编辑块（key/分组/标签/类型/默认值）。
 // 默认值即设计稿文案——site_content 无记录时站点与原样完全一致；后台改哪条哪条生效。
+// Convation 注册表在 ./registry.js；下方 _LEGACY 为 alan 骨架遗留键，逐页替换后删除。
 const { db } = require('./db');
+const { REGISTRY: CONVATION_REGISTRY } = require('./registry');
 
 const T = 'text';
 const TA = 'textarea';
 const IMG = 'image';
 
-const REGISTRY = [
+const _LEGACY = [
   // —— 全站 ——
   { key: 'site.portrait', group: '全站', label: '人物照片（首页/关于/文章头像共用）', type: IMG, def: '/assets/alan.png' },
 
@@ -87,6 +89,9 @@ const REGISTRY = [
   { key: 'blog.writing_note', group: '博客', label: '"写作方式"说明', type: TA, def: '文章由我本人撰写，AI 工具辅助整理与配图。观点是我的，错误也是。' },
   { key: 'diagnosis.note', group: '诊断', label: '页头说明（邮件未配置时自动追加回访措辞）', type: T, def: '约 10 分钟 · 完成后由 Hermes Agent 生成诊断报告' },
 ];
+
+// Convation 键优先；同 key 时以 Convation 为准
+const REGISTRY = [...CONVATION_REGISTRY, ..._LEGACY.filter(l => !CONVATION_REGISTRY.some(c => c.key === l.key))];
 
 const byKey = new Map(REGISTRY.map(r => [r.key, r]));
 const stGet = db.prepare('SELECT value FROM site_content WHERE key=?');

@@ -21,8 +21,8 @@
 - [x] T1.5 i18n 机制（commit 98eeeb3）：/ 与 /en 双挂载；ctFor(locale) 回退链；lp()/altHref 助手；hreflang 标签留待 T4.2
 
 ### Phase 2: 前台 13 页（每页一个可验证单元，逐页 commit）
-- [ ] T2.1 partials：nav（6 项+Area installatori 按钮，sticky 72→60px）、footer（墨青四栏+法务占位）、head/tail
-- [ ] T2.2 Home 10 区（DESIGN.md §6 顺序：Hero/服务三卡/产品两类/深色数字带/Detrazioni 条/案例三卡/安装工深带/AI+FAQ 精选/联系速通/页脚）
+- [x] T2.1 partials：nav（6 项+Area installatori 按钮，sticky 72→60px）、footer（墨青四栏+法务占位）、head/tail —— commit cdb2780
+- [x] T2.2 Home 10 区（DESIGN.md §6 顺序）—— 双语注册表 src/registry.js（~50 键，后台可改）+ ctFor 接线；fade-up 420ms/数字滚动 900ms/data-open-assistant 落 site.js；IT+EN 双端 200、关键文案 curl 实证、浏览器 a11y 树走查零控制台报错
 - [ ] T2.3 Prodotti（两大类+详情模板，多品牌）
 - [ ] T2.4 Chi siamo / Referenze / Documentazione
 - [ ] T2.5 Notizie（文章列表+详情+评论，数据层沿用骨架 posts）
@@ -70,6 +70,12 @@
 - 单次写入 ≤10k 字符；小步 commit；杀进程先 netstat 找 PID，禁按名杀
 
 ## 执行日志
+
+### 2026-07-22 晚 - 第 2 轮
+**当前任务**: T2.2 完成
+**完成内容**: Phase 1 全绿（8397cdc/ee1185a/98eeeb3/cdb2780）；T2.2 首页 10 区上线：注册表双语键 ~50 个、home.ejs 9 区+页脚、site.css 首页样式+入场动效、site.js 三件套（fade-up/counter/助手唤起）、首页路由切 render('home')+metaDesc
+**已知悬留**: 悬浮助手仍是 alan 中文版（T3.1 改皮）；数字带数值为设计样稿值待用户确认（T5.3 催收清单）
+**下一步**: T2.3 Prodotti 页
 
 ### 2026-07-22 晚 - 第 1 轮
 **当前任务**: T1.2

@@ -1,115 +1,192 @@
 <%- include('partials/head') %>
 <%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<!-- 1 · Hero（DESIGN.md §5：左文右图，蓝几何占位）-->
+<section class="hero-sect">
+  <div class="grid-hero2">
+    <div class="fade-up">
+      <span class="kicker">Vendita · Installazione · Assistenza</span>
+      <h1 class="hero-h1"><%- ctBr('home.hero_title') %></h1>
+      <p class="hero-sub"><%= ct('home.hero_body') %></p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+        <button type="button" class="btn btn-secondary" data-open-assistant><%= ct('home.cta_ai') %></button>
+      </div>
+      <ul class="hero-chips">
+        <li><%= en ? 'F-Gas certified technicians' : 'Tecnici certificati F-Gas' %></li>
+        <li><%= en ? 'Official brands' : 'Marchi ufficiali' %></li>
+        <li><%= en ? 'Dedicated support' : 'Assistenza dedicata' %></li>
+      </ul>
+    </div>
+    <div class="hero-visual fade-up" aria-hidden="true">
+      <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="20" height="11" rx="1.6"/><circle cx="8.8" cy="12" r="3.4"/><path d="M8.8 9.8v4.4M6.9 10.9l3.8 2.2M10.7 10.9l-3.8 2.2M16.6 9.5h3M16.6 12h3M16.6 14.5h3"/></svg>
+      <span><%= en ? 'Product photo — coming soon' : 'Foto prodotto — in arrivo' %></span>
+    </div>
+  </div>
+</section>
 
-<div class="container">
-
-  <section class="grid-hero">
-    <div>
-      <h1 style="font-weight:400;font-size:clamp(38px,4.8vw,72px);line-height:1.12;letter-spacing:-0.01em;margin:0"><%- ctBr('home.hero_title') %></h1>
-      <p style="font-size:17px;line-height:28px;max-width:56ch;margin:36px 0 0;color:color-mix(in srgb, var(--color-text) 82%, transparent)"><%- ct('home.hero_body') %></p>
-      <p style="font-size:13px;line-height:22px;letter-spacing:0.04em;margin:14px 0 0;color:var(--color-neutral-600)"><%- ct('home.hero_note_en') %></p>
-      <div style="display:flex;gap:13.8px;flex-wrap:wrap;margin-top:36px">
-        <a class="btn btn-primary" href="/diagnosis" style="text-decoration:none" data-track="cta_click" data-track-meta="hero_diagnosis">预约企业 AI 诊断</a>
-        <a class="btn btn-ghost" href="/tools" style="text-decoration:none" data-track="cta_click" data-track-meta="hero_tools">浏览工具集 →</a>
+<!-- 2 · 服务三卡 -->
+<section class="sect">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'What we do' : 'Cosa facciamo' %></span>
+      <h2><%= en ? 'One partner, three jobs done right' : 'Un solo interlocutore, tre mestieri fatti bene' %></h2>
+    </div>
+    <div class="grid-cards3">
+      <div class="card card-hover fade-up">
+        <svg class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19.6 12.7 12.7 19.6a1.8 1.8 0 0 1-2.6 0L4 13.4V4h9.4l6.2 6.1a1.8 1.8 0 0 1 0 2.6Z"/><circle cx="8.3" cy="8.3" r="1.2"/></svg>
+        <span class="card-title"><%= ct('home.svc1_title') %></span>
+        <p class="card-body"><%= ct('home.svc1_body') %></p>
+        <a class="card-link" href="<%= lp('/prodotti') %>"><%= en ? 'See the products →' : 'Vedi i prodotti →' %></a>
+      </div>
+      <div class="card card-hover fade-up">
+        <svg class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 5.6L3 17.6V21h3.4l5.7-5.7a4.5 4.5 0 0 0 5.6-6l-2.5 2.5-2.1-.4-.4-2.1 2-2Z"/></svg>
+        <span class="card-title"><%= ct('home.svc2_title') %></span>
+        <p class="card-body"><%= ct('home.svc2_body') %></p>
+        <a class="card-link" href="<%= lp('/referenze') %>"><%= en ? 'See our installations →' : 'Guarda le installazioni →' %></a>
+      </div>
+      <div class="card card-hover fade-up">
+        <svg class="card-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a3 3 0 0 1-3 3h-3"/></svg>
+        <span class="card-title"><%= ct('home.svc3_title') %></span>
+        <p class="card-body"><%= ct('home.svc3_body') %></p>
+        <a class="card-link" href="<%= lp('/assistenza') %>"><%= en ? 'How support works →' : 'Come funziona l\'assistenza →' %></a>
       </div>
     </div>
-    <figure style="margin:0;width:min(380px,100%);justify-self:end">
-      <img src="<%- ctImg('site.portrait') || '/assets/alan.png' %>" alt="Alan 演讲照片" style="width:100%;aspect-ratio:876/970;object-fit:cover;mix-blend-mode:multiply;filter:sepia(0.18) saturate(0.85) contrast(1.04);-webkit-mask-image:radial-gradient(92% 74% at 50% 38%, black 32%, rgba(0,0,0,0.6) 58%, transparent 81%);mask-image:radial-gradient(92% 74% at 50% 38%, black 32%, rgba(0,0,0,0.6) 58%, transparent 81%)">
-    </figure>
-  </section>
+  </div>
+</section>
 
-  <hr class="hairline">
+<!-- 3 · 产品两大类（浅灰带）-->
+<section class="sect band-light">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'Products' : 'Prodotti' %></span>
+      <h2><%= en ? 'Comfort in every season' : 'Comfort in ogni stagione' %></h2>
+    </div>
+    <div class="grid-cards2">
+      <div class="card card-hover prod-card fade-up">
+        <div class="img-slot"><% if (ctImg('home.prod1_img')) { %><img src="<%= ctImg('home.prod1_img') %>" alt="<%= ct('home.prod1_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Image coming soon' : 'Immagine in arrivo' %></span><% } %></div>
+        <div class="prod-txt">
+          <span class="card-title" style="font-size:21px"><%= ct('home.prod1_title') %></span>
+          <p class="card-body"><%= ct('home.prod1_body') %></p>
+          <a class="card-link" href="<%= lp('/prodotti') %>"><%= en ? 'Explore →' : 'Scopri →' %></a>
+        </div>
+      </div>
+      <div class="card card-hover prod-card fade-up">
+        <div class="img-slot"><% if (ctImg('home.prod2_img')) { %><img src="<%= ctImg('home.prod2_img') %>" alt="<%= ct('home.prod2_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Image coming soon' : 'Immagine in arrivo' %></span><% } %></div>
+        <div class="prod-txt">
+          <span class="card-title" style="font-size:21px"><%= ct('home.prod2_title') %></span>
+          <p class="card-body"><%= ct('home.prod2_body') %></p>
+          <a class="card-link" href="<%= lp('/prodotti') %>"><%= en ? 'Explore →' : 'Scopri →' %></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <section style="padding:70px 0">
-    <div class="grid-stats">
+<!-- 4 · 为什么选我们 + 数字条（深色带，数字滚动）-->
+<section class="sect band-dark">
+  <div class="container why-grid">
+    <div class="fade-up">
+      <span class="kicker" style="color:var(--color-accent-300)"><%= en ? 'Why us' : 'Perché noi' %></span>
+      <h2><%= ct('home.why_title') %></h2>
+      <p style="font-size:16px;max-width:44ch"><%= ct('home.why_body') %></p>
+    </div>
+    <div class="stats-row fade-up">
       <% for (let i = 1; i <= 4; i++) { %>
-      <div><p style="font-family:'Cormorant Garamond','Noto Serif SC',serif;font-weight:400;font-size:clamp(36px,3.6vw,52px);line-height:56px;font-feature-settings:'tnum' 1;<%= i === 1 ? 'color:var(--color-accent);' : '' %>margin:0"><%- ct('home.stat' + i + '_value') %></p><p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 70%, transparent);margin:14px 0 0"><%- ct('home.stat' + i + '_label') %></p></div>
+      <div><span class="stat-v" data-count="<%= ct('home.stat' + i + '_value') %>"><%= ct('home.stat' + i + '_value') %></span><span class="stat-l"><%= ct('home.stat' + i + '_label') %></span></div>
       <% } %>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr class="hairline">
+<!-- 5 · Detrazioni 导流条 -->
+<section class="sect sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h3 style="font-size:24px;margin:0 0 6px"><%= ct('home.detra_title') %></h3>
+      <p style="margin:0;font-size:15px"><%= ct('home.detra_body') %></p>
+    </div>
+    <a class="btn btn-secondary" href="<%= lp('/detrazioni-e-incentivi') %>"><%= en ? 'Check the incentives' : 'Scopri gli incentivi' %></a>
+  </div>
+</section>
 
-  <section style="padding:84px 0 70px">
-    <span class="kicker">01 — 这里有什么 · What lives here</span>
-    <div class="grid-pillars" style="margin-top:14px">
-      <% const pillarLinks = [['/tools', '进入工具集 →'], ['/services', '了解服务 →'], ['/courses', '查看课程 →']]; %>
+<!-- 6 · 案例三卡（浅灰带）-->
+<section class="sect band-light">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'Our work' : 'Referenze' %></span>
+      <h2><%= en ? 'Installed, tested, delivered' : 'Installato, collaudato, consegnato' %></h2>
+    </div>
+    <div class="grid-cards3">
       <% for (let i = 1; i <= 3; i++) { %>
-      <div class="pillar">
-        <h2 style="font-weight:400;font-size:26px;line-height:28px;margin:0"><%- ct('home.pillar' + i + '_title') %></h2>
-        <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%- ct('home.pillar' + i + '_body') %></p>
-        <a href="<%= pillarLinks[i - 1][0] %>" style="display:inline-block;margin-top:20px;font-size:14px"><%= pillarLinks[i - 1][1] %></a>
-      </div>
-      <% } %>
-    </div>
-  </section>
-
-  <hr class="hairline">
-
-  <section class="grid-teaser">
-    <div>
-      <span class="kicker">02 — 企业 AI 诊断 · AI Readiness</span>
-      <h2 style="font-weight:400;font-size:34px;line-height:42px;margin:0"><%- ctBr('home.teaser_title') %></h2>
-      <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;max-width:44ch;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%- ct('home.teaser_body') %></p>
-      <a class="btn btn-primary" href="/diagnosis" style="text-decoration:none;margin-top:28px" data-track="cta_click" data-track-meta="teaser_diagnosis">开始诊断 →</a>
-    </div>
-    <div class="card" style="background:var(--color-neutral-100);padding:28px">
-      <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent)">诊断报告 · 样例</span>
-      <div style="display:flex;flex-direction:column;gap:13.8px;margin-top:9.2px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider);padding-bottom:13.8px"><span style="font-size:14px">AI 成熟度评级</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--color-accent);font-feature-settings:'tnum' 1">L2 / L5</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider);padding-bottom:13.8px"><span style="font-size:14px">识别的 AI 结合点</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-feature-settings:'tnum' 1">7 处</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14px">建议推进路径</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-feature-settings:'tnum' 1">3 阶段</span></div>
-      </div>
-    </div>
-  </section>
-
-  <hr class="hairline">
-
-  <section style="padding:70px 0 84px">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:28px;flex-wrap:wrap">
-      <span class="kicker" style="margin-bottom:0">03 — AI 资讯 · The Journal</span>
-      <a href="/blog" style="font-size:14px">全部文章 →</a>
-    </div>
-    <div class="grid-cards3" style="margin-top:28px">
-      <% for (const p of posts) { %>
-      <a href="/article/<%= p.slug %>" class="card" style="text-decoration:none;color:inherit;padding:20px">
-        <span class="card-kicker" style="font-feature-settings:'tnum' 1"><%= fmtDate(p.published_at) %> · <%= p.category %></span>
-        <span class="card-title" style="font-size:19px"><%= p.title %></span>
-        <span class="card-body"><%= p.excerpt %></span>
-        <span class="card-meta">阅读 <%= p.read_minutes %> 分钟</span>
+      <a class="card card-hover case-card fade-up" href="<%= lp('/referenze') %>">
+        <div class="img-slot"><% if (ctImg('home.case' + i + '_img')) { %><img src="<%= ctImg('home.case' + i + '_img') %>" alt="<%= ct('home.case' + i + '_title') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><span><%= en ? 'Photo coming soon' : 'Foto in arrivo' %></span><% } %></div>
+        <div class="case-txt">
+          <span class="card-title" style="font-size:16.5px"><%= ct('home.case' + i + '_title') %></span>
+          <span class="tag" style="margin-top:10px"><%= ct('home.case' + i + '_place') %></span>
+        </div>
       </a>
       <% } %>
     </div>
-  </section>
+    <p style="text-align:center;margin:30px 0 0"><a class="card-link" href="<%= lp('/referenze') %>"><%= en ? 'All case studies →' : 'Tutte le referenze →' %></a></p>
+  </div>
+</section>
 
-  <hr class="hairline">
+<!-- 7 · 安装工深带（B 端出口 ×4）-->
+<section class="sect band-dark">
+  <div class="container">
+    <div class="fade-up" style="max-width:680px">
+      <span class="kicker" style="color:var(--color-accent-300)"><%= en ? 'For professionals' : 'Per i professionisti' %></span>
+      <h2><%= en ? 'Are you an installer? Work with us' : 'Sei un installatore? Lavora con noi' %></h2>
+      <p style="font-size:16px"><%= en
+        ? 'Trade prices, technical documentation, professional tools and direct supply on the brands we carry. Register to access the installer area.'
+        : 'Prezzi riservati, documentazione tecnica, strumenti professionali e fornitura diretta sui marchi che trattiamo. Registrati per accedere all\'area installatori.' %></p>
+    </div>
+    <div class="inst-links fade-up">
+      <a href="<%= lp('/documentazione') %>"><span><%= en ? 'Catalogues' : 'Cataloghi' %></span><span>→</span></a>
+      <a href="<%= lp('/documentazione') %>"><span><%= en ? 'Data sheets' : 'Schede tecniche' %></span><span>→</span></a>
+      <a href="<%= lp('/strumenti') %>"><span><%= en ? 'HVAC tools' : 'Strumenti HVAC' %></span><span>→</span></a>
+      <a href="<%= lp('/area-installatori') %>" class="inst-cta"><span><%= en ? 'Register' : 'Registrati' %></span><span>→</span></a>
+    </div>
+  </div>
+</section>
 
-  <section style="padding:70px 0 56px">
-    <h3 style="font-weight:400;font-size:26px;line-height:28px;margin:0"><%- ct('home.contact_title') %></h3>
-    <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;max-width:58ch;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('home.contact_body') %></p>
-    <form id="home-subscribe" style="display:flex;gap:13.8px;align-items:stretch;max-width:480px;margin-top:28px">
-      <input class="input" type="email" id="home-subscribe-email" placeholder="you@example.com" aria-label="Email address" style="flex:1">
-      <button type="submit" class="btn btn-primary">联系我</button>
-    </form>
-    <p class="form-ok" id="home-subscribe-msg" style="margin-top:9px"></p>
-    <p style="font-size:13px;margin:9px 0 0;color:var(--color-neutral-600)">也可以到<a href="/about">「关于」页留言</a>，说明来意。</p>
-  </section>
+<!-- 8 · AI 助理 + FAQ 精选（导流 /faq 与 /consulenza）-->
+<section class="sect">
+  <div class="container ai-grid">
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'AI assistant' : 'Assistente AI' %></span>
+      <h2><%= ct('home.ai_title') %></h2>
+      <p style="font-size:15.5px"><%= ct('home.ai_body') %></p>
+      <div class="hero-ctas" style="margin-top:20px">
+        <button type="button" class="btn btn-primary" data-open-assistant><%= en ? 'Try it now' : 'Provalo ora' %></button>
+        <a class="btn btn-secondary" href="<%= lp('/consulenza') %>"><%= en ? 'Consulting service' : 'Servizio di consulenza' %></a>
+      </div>
+    </div>
+    <div class="fade-up">
+      <% for (let i = 1; i <= 3; i++) { %>
+      <details class="faq-item"<%= i === 1 ? ' open' : '' %>>
+        <summary><%= ct('home.faq' + i + '_q') %></summary>
+        <p><%= ct('home.faq' + i + '_a') %></p>
+      </details>
+      <% } %>
+      <p style="margin:16px 0 0"><a class="card-link" href="<%= lp('/faq') %>"><%= en ? 'All questions →' : 'Tutte le domande →' %></a></p>
+    </div>
+  </div>
+</section>
 
-  <%- include('partials/footer') %>
-</div>
+<!-- 9 · 联系速通条（浅灰带；迷你表单 T3.4 接 SMTP 后补）-->
+<section class="sect band-light sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h3 style="font-size:24px;margin:0 0 6px"><%= ct('home.contact_title') %></h3>
+      <p style="margin:0;font-size:15px"><%= ct('home.contact_body') %></p>
+    </div>
+    <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+  </div>
+</section>
 
-<script>
-document.getElementById('home-subscribe').addEventListener('submit', function (e) {
-  e.preventDefault();
-  var email = document.getElementById('home-subscribe-email').value.trim();
-  var msg = document.getElementById('home-subscribe-msg');
-  fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
-    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-    .then(function (res) {
-      msg.className = res.ok ? 'form-ok' : 'form-error';
-      msg.textContent = res.ok ? '已收到，我会回复到这个邮箱。' : (res.d.error || '提交失败');
-    })
-    .catch(function () { msg.className = 'form-error'; msg.textContent = '网络异常，请稍后再试'; });
-});
-</script>
+</main>
+<%- include('partials/footer') %>
 <%- include('partials/tail') %>

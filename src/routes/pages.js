@@ -10,12 +10,17 @@ function wip(req, res, { title, active = '', name }) {
   res.render('wip', { title, active, pageName: name });
 }
 
-router.get('/', (req, res) => wip(req, res, {
-  title: t(req,
-    'Convation — Climatizzatori e pompe di calore: vendita, installazione, assistenza',
-    'Convation — Air conditioning and heat pumps: sales, installation, service'),
-  active: 'home', name: 'Home',
-}));
+router.get('/', (req, res) => {
+  res.render('home', {
+    title: t(req,
+      'Convation — Climatizzatori e pompe di calore: vendita, installazione, assistenza',
+      'Convation — Air conditioning and heat pumps: sales, installation, service'),
+    active: 'home',
+    metaDesc: t(req,
+      'Convation vende, installa e assiste climatizzatori e pompe di calore in Italia: tecnici certificati F-Gas, marchi ufficiali, preventivo gratuito in 24 ore.',
+      'Convation sells, installs and services air conditioners and heat pumps in Italy: F-Gas certified technicians, official brands, free quote within 24 hours.'),
+  });
+});
 
 router.get('/chi-siamo', (req, res) => wip(req, res, {
   title: t(req, 'Chi siamo · Convation', 'About us · Convation'),

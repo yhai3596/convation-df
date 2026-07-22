@@ -1,0 +1,74 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Contact' : 'Contatti' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('contatti.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('contatti.intro_body') %></p>
+  </div>
+</section>
+
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container ai-grid">
+    <!-- 表单 -->
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'Write to us' : 'Scrivici' %></span>
+      <form id="ct-form" style="margin-top:8px">
+        <div class="grid-form2">
+          <input class="input" id="ct-name" placeholder="<%= en ? 'Name' : 'Nome' %>" maxlength="40" required>
+          <input class="input" id="ct-email" type="email" placeholder="Email" maxlength="80" required>
+        </div>
+        <input class="input" id="ct-phone" style="margin-top:14px" placeholder="<%= en ? 'Phone (optional)' : 'Telefono (facoltativo)' %>" maxlength="30">
+        <textarea class="input" id="ct-body" rows="5" style="margin-top:14px" placeholder="<%= en ? 'How can we help?' : 'Come possiamo aiutarti?' %>" required></textarea>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:14px">
+          <button type="submit" class="btn btn-primary"><%= en ? 'Send message' : 'Invia messaggio' %></button>
+          <p class="form-error" id="ct-msg" style="min-height:0;margin:0"></p>
+        </div>
+      </form>
+    </div>
+    <!-- 通道 + 法务 -->
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'Direct channels' : 'Canali diretti' %></span>
+      <% if (channels.length) { %>
+      <div style="display:grid;gap:12px;margin:8px 0 24px">
+        <% for (const ch of channels) { %>
+        <a class="card card-hover" style="padding:16px 20px" href="<%= ch.href %>"><strong><%= ch.label %></strong> · <%= ch.value %></a>
+        <% } %>
+      </div>
+      <% } else { %>
+      <p style="font-size:14.5px;margin:8px 0 24px"><%= ct('consulenza.human_pending') %></p>
+      <% } %>
+      <p style="margin:0 0 24px"><button type="button" class="btn btn-secondary" data-open-assistant><%= ct('home.cta_ai') %></button></p>
+      <div class="card" style="background:var(--color-neutral-100);border-color:transparent">
+        <span class="card-title" style="font-size:14.5px">Convation S.r.l.</span>
+        <p class="card-body" style="font-size:13.5px">
+          <%= en ? 'Registered office' : 'Sede legale' %>: [da completare]<br>
+          P.IVA: [da completare]<br>
+          PEC: [da completare] · REA: [da completare]
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<script>
+document.getElementById('ct-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var en = <%= en ? 'true' : 'false' %>;
+  var msg = document.getElementById('ct-msg');
+  var phone = document.getElementById('ct-phone').value.trim();
+  var body = '[' + (en ? 'Contact' : 'Contatto') + ']' + (phone ? ' tel: ' + phone : '') + '\n' + document.getElementById('ct-body').value.trim();
+  fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('ct-name').value.trim(), email: document.getElementById('ct-email').value.trim(), body: body }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      msg.className = res.ok ? 'form-ok' : 'form-error';
+      msg.textContent = res.ok ? (en ? 'Sent. We reply within 24 working hours.' : 'Inviato. Rispondiamo entro 24 ore lavorative.') : (res.d.error || (en ? 'Could not send' : 'Invio non riuscito'));
+      if (res.ok) document.getElementById('ct-form').reset();
+    })
+    .catch(function () { msg.className = 'form-error'; msg.textContent = en ? 'Network error' : 'Errore di rete'; });
+});
+</script>
+<%- include('partials/tail') %>

@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Incentives' : 'Detrazioni e incentivi' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('detra.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('detra.intro_body') %></p>
+  </div>
+</section>
+
+<!-- 两大激励 + 规则常变声明 -->
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container grid-cards3">
+    <div class="card fade-up">
+      <span class="card-title"><%= ct('detra.i1_title') %></span>
+      <p class="card-body"><%= ct('detra.i1_body') %></p>
+    </div>
+    <div class="card fade-up">
+      <span class="card-title"><%= ct('detra.i2_title') %></span>
+      <p class="card-body"><%= ct('detra.i2_body') %></p>
+    </div>
+    <div class="card fade-up" style="background:var(--color-accent-100);border-color:transparent">
+      <span class="card-title" style="font-size:15.5px"><%= en ? 'Rules change often' : 'Le regole cambiano spesso' %></span>
+      <p class="card-body"><%= ct('detra.note') %></p>
+    </div>
+  </div>
+</section>
+
+<!-- 我们怎么帮你走完流程 -->
+<section class="sect band-light">
+  <div class="container">
+    <div class="sect-head fade-up">
+      <span class="kicker"><%= en ? 'How we handle it' : 'Come la gestiamo noi' %></span>
+      <h2><%= en ? 'Incentives handled, in three steps' : 'Incentivi gestiti, in tre passi' %></h2>
+    </div>
+    <div class="grid-cards3">
+      <% const steps = en
+        ? [['1 · Requirements check', 'During the site survey we check which incentive fits your case and whether you qualify.'],
+           ['2 · Paperwork by us', 'Forms, technical documents and submissions: we prepare and file what is needed.'],
+           ['3 · Written into the quote', 'The effect of the incentive is written in your quote in black and white — no verbal promises.']]
+        : [['1 · Verifica dei requisiti', 'Durante il sopralluogo controlliamo quale incentivo si applica al tuo caso e se hai i requisiti.'],
+           ['2 · Pratiche a carico nostro', 'Moduli, documenti tecnici e invii: prepariamo e presentiamo noi quello che serve.'],
+           ['3 · Nero su bianco nel preventivo', 'L\'effetto dell\'incentivo è scritto nel preventivo, nero su bianco — niente promesse a voce.']]; %>
+      <% steps.forEach(s => { %>
+      <div class="card fade-up" style="background:var(--color-surface)">
+        <span class="card-title" style="font-size:16px;color:var(--color-accent)"><%= s[0] %></span>
+        <p class="card-body"><%= s[1] %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sect band-dark sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h2 style="font-size:24px;margin:0 0 8px"><%= en ? 'Find out what you qualify for' : 'Scopri cosa ti spetta' %></h2>
+      <p style="margin:0;font-size:15px"><%= en ? 'A short conversation is enough for a first answer.' : 'Basta una breve conversazione per una prima risposta.' %></p>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="<%= lp('/contatti') %>"><%= ct('home.cta_quote') %></a>
+      <button type="button" class="btn btn-secondary btn-on-dark" data-open-assistant><%= ct('home.cta_ai') %></button>
+    </div>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

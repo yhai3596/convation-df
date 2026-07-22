@@ -1,0 +1,116 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Installer area' : 'Area installatori' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('area.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('area.intro_body') %></p>
+  </div>
+</section>
+
+<% if (user) { %>
+<!-- 已登录：会员面板 + 资质审核预留位 -->
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container-narrow">
+    <div class="card fade-up">
+      <span class="card-title"><%= en ? 'Welcome back' : 'Bentornato' %>, <%= user.name %></span>
+      <p class="card-body"><%= ct('area.verify_note') %></p>
+      <div class="hero-ctas" style="margin-top:14px">
+        <a class="btn btn-secondary" href="<%= lp('/documentazione') %>"><%= en ? 'Documents' : 'Documentazione' %></a>
+        <a class="btn btn-secondary" href="<%= lp('/strumenti') %>"><%= en ? 'Tools' : 'Strumenti' %></a>
+        <button type="button" class="btn btn-ghost" id="ai-logout"><%= en ? 'Sign out' : 'Esci' %></button>
+      </div>
+    </div>
+  </div>
+</section>
+<% } else { %>
+<!-- 未登录：好处清单 + 注册/登录 -->
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container ai-grid">
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'Why register' : 'Perché registrarsi' %></span>
+      <ul class="check-list" style="margin-top:12px">
+        <li><%= en ? 'Trade prices and reserved price lists' : 'Prezzi riservati e listini dedicati' %></li>
+        <li><%= en ? 'Complete technical documentation' : 'Documentazione tecnica completa' %></li>
+        <li><%= en ? 'Professional tools, new ones first' : 'Strumenti professionali, in anteprima' %></li>
+        <li><%= en ? 'Priority lane on support and spare parts' : 'Corsia preferenziale su assistenza e ricambi' %></li>
+      </ul>
+      <p style="font-size:13.5px;color:var(--color-neutral-600);margin-top:18px;max-width:48ch"><%= ct('area.verify_note') %></p>
+    </div>
+    <div class="fade-up">
+      <div class="card">
+        <span class="card-title" style="font-size:16px"><%= en ? 'Register' : 'Registrati' %></span>
+        <form id="ai-reg" style="margin-top:10px">
+          <input class="input" id="rg-name" placeholder="<%= en ? 'Name or company' : 'Nome o azienda' %>" maxlength="40" required>
+          <input class="input" id="rg-email" type="email" style="margin-top:10px" placeholder="Email" maxlength="80" required>
+          <input class="input" id="rg-pass" type="password" style="margin-top:10px" placeholder="<%= en ? 'Password (min 8 characters)' : 'Password (min 8 caratteri)' %>" minlength="8" required>
+          <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:12px;color:var(--color-neutral-600)">
+            <input type="checkbox" id="rg-agree" style="margin-top:3px" required>
+            <span><%= en ? 'I accept the' : 'Accetto la' %> <a href="/privacy" target="_blank">privacy policy</a></span>
+          </label>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:14px">
+            <button type="submit" class="btn btn-primary"><%= en ? 'Create account' : 'Crea account' %></button>
+            <p class="form-error" id="rg-msg" style="min-height:0;margin:0"></p>
+          </div>
+        </form>
+        <hr class="hairline" style="margin:18px 0">
+        <details>
+          <summary style="cursor:pointer;font-size:14px;font-weight:600"><%= en ? 'Already registered? Sign in' : 'Già registrato? Accedi' %></summary>
+          <form id="ai-login" style="margin-top:12px">
+            <input class="input" id="lg-email" type="email" placeholder="Email" maxlength="80" required>
+            <input class="input" id="lg-pass" type="password" style="margin-top:10px" placeholder="Password" required>
+            <div style="display:flex;gap:14px;align-items:center;margin-top:14px">
+              <button type="submit" class="btn btn-secondary"><%= en ? 'Sign in' : 'Accedi' %></button>
+              <p class="form-error" id="lg-msg" style="min-height:0;margin:0"></p>
+            </div>
+          </form>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+</main>
+<%- include('partials/footer') %>
+<script>
+(function () {
+  var en = <%= en ? 'true' : 'false' %>;
+  function post(url, data) {
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); });
+  }
+  var reg = document.getElementById('ai-reg');
+  if (reg) reg.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = document.getElementById('rg-msg');
+    post('/api/auth/register', {
+      name: document.getElementById('rg-name').value.trim(),
+      email: document.getElementById('rg-email').value.trim(),
+      password: document.getElementById('rg-pass').value,
+      agree: document.getElementById('rg-agree').checked,
+    }).then(function (res) {
+      if (res.ok) location.reload();
+      else msg.textContent = en ? 'Registration failed: check the fields (email valid? password 8+ chars? email already used?)' : 'Registrazione non riuscita: controlla i campi (email valida? password 8+ caratteri? email già usata?)';
+    }).catch(function () { msg.textContent = en ? 'Network error' : 'Errore di rete'; });
+  });
+  var login = document.getElementById('ai-login');
+  if (login) login.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = document.getElementById('lg-msg');
+    post('/api/auth/login', {
+      email: document.getElementById('lg-email').value.trim(),
+      password: document.getElementById('lg-pass').value,
+    }).then(function (res) {
+      if (res.ok) location.reload();
+      else msg.textContent = en ? 'Wrong email or password' : 'Email o password non corretti';
+    }).catch(function () { msg.textContent = en ? 'Network error' : 'Errore di rete'; });
+  });
+  var out = document.getElementById('ai-logout');
+  if (out) out.addEventListener('click', function () {
+    post('/api/auth/logout', {}).then(function () { location.reload(); });
+  });
+})();
+</script>
+<%- include('partials/tail') %>

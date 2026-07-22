@@ -277,6 +277,42 @@ const REGISTRY = [
   ...bi('assistenza.p3_body', '售后页', '支柱3 · 介绍', TA,
     'Diagnosi sul posto, ricambi originali e tempi dichiarati. Se il guasto è banale, te lo diciamo: niente interventi inutili.',
     'On-site diagnosis, original spare parts and stated lead times. If the fault is trivial, we tell you: no pointless interventions.'),
+
+  // —— Detrazioni e incentivi（不写具体税率，规则常变）——
+  ...bi('detra.intro_title', '税惠页', '页首标题', T,
+    'Detrazioni e incentivi, senza mal di testa',
+    'Incentives and deductions, without the headache'),
+  ...bi('detra.intro_body', '税惠页', '页首介绍', TA,
+    'Per pompe di calore e climatizzatori efficienti lo Stato prevede incentivi e detrazioni. Ti diciamo cosa spetta nel tuo caso e prepariamo noi le pratiche.',
+    'For efficient heat pumps and air conditioners the State provides incentives and tax deductions. We tell you what applies to your case and handle the paperwork.'),
+  ...bi('detra.i1_title', '税惠页', '激励1 · 标题', T, 'Conto Termico', 'Conto Termico'),
+  ...bi('detra.i1_body', '税惠页', '激励1 · 介绍', TA,
+    'Contributo diretto per chi sostituisce il vecchio impianto con una pompa di calore efficiente: rimborso in tempi brevi, particolarmente interessante nelle sostituzioni.',
+    'A direct grant for replacing an old system with an efficient heat pump: paid back quickly, especially attractive for replacements.'),
+  ...bi('detra.i2_title', '税惠页', '激励2 · 标题', T, 'Detrazioni fiscali', 'Tax deductions'),
+  ...bi('detra.i2_body', '税惠页', '激励2 · 介绍', TA,
+    'Detrazione in dichiarazione dei redditi per gli interventi di efficientamento: recuperi una parte della spesa in più anni.',
+    'A deduction in your tax return for efficiency works: you recover part of the cost over several years.'),
+  ...bi('detra.note', '税惠页', '规则常变声明', TA,
+    'Aliquote e requisiti vengono aggiornati quasi ogni anno: prima del preventivo verifichiamo sempre le regole in vigore sul tuo caso specifico. Nessuna promessa da volantino.',
+    'Rates and requirements change almost every year: before quoting we always check the rules in force for your specific case. No flyer promises.'),
+
+  // —— Contatti ——
+  ...bi('contatti.intro_title', '联系页', '页首标题', T, 'Parliamone', 'Let\'s talk'),
+  ...bi('contatti.intro_body', '联系页', '页首介绍', TA,
+    'Preventivi, assistenza, collaborazioni: scrivici o chiamaci. Rispondiamo entro 24 ore lavorative.',
+    'Quotes, support, partnerships: write or call us. We reply within 24 working hours.'),
+
+  // —— Area installatori ——
+  ...bi('area.intro_title', '安装工页', '页首标题', T,
+    'Lavoriamo con chi installa',
+    'We work with installers'),
+  ...bi('area.intro_body', '安装工页', '页首介绍', TA,
+    'Se installi climatizzatori e pompe di calore, Convation è il tuo fornitore: prezzi riservati, documenti tecnici, strumenti e una filiera che risponde.',
+    'If you install air conditioners and heat pumps, Convation is your supplier: trade prices, technical documents, tools and a supply chain that answers.'),
+  ...bi('area.verify_note', '安装工页', '资质审核预留说明', TA,
+    'Dopo la registrazione ti chiederemo partita IVA e certificazione F-Gas per attivare listini e documenti riservati: la verifica comparirà qui a breve.',
+    'After registration we will ask for your VAT number and F-Gas certification to activate trade prices and reserved documents: verification will appear here soon.'),
 ];
 
 module.exports = { REGISTRY };

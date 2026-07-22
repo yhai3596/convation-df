@@ -152,20 +152,36 @@ router.get('/assistenza', (req, res) => {
   });
 });
 
-router.get('/detrazioni-e-incentivi', (req, res) => wip(req, res, {
-  title: t(req, 'Detrazioni e incentivi per climatizzazione · Convation', 'Tax incentives for HVAC · Convation'),
-  active: 'detrazioni', name: t(req, 'Detrazioni e incentivi', 'Tax incentives'),
-}));
+router.get('/detrazioni-e-incentivi', (req, res) => {
+  res.render('detrazioni', {
+    title: t(req, 'Detrazioni e incentivi per pompe di calore e climatizzatori · Convation', 'Incentives for heat pumps and air conditioners · Convation'),
+    active: 'detrazioni',
+    metaDesc: t(req,
+      'Conto Termico e detrazioni fiscali per pompe di calore e climatizzatori: verifichiamo i requisiti e prepariamo le pratiche al posto tuo.',
+      'Conto Termico and tax deductions for heat pumps and air conditioners: we check your eligibility and handle the paperwork for you.'),
+  });
+});
 
-router.get('/contatti', (req, res) => wip(req, res, {
-  title: t(req, 'Contatti · Convation', 'Contact · Convation'),
-  active: 'contatti', name: t(req, 'Contatti', 'Contact'),
-}));
+router.get('/contatti', (req, res) => {
+  res.render('contatti', {
+    title: t(req, 'Contatti · Convation', 'Contact · Convation'),
+    active: 'contatti',
+    channels: supportChannels(req),
+    metaDesc: t(req,
+      'Contatta Convation per preventivi e assistenza su climatizzatori e pompe di calore: rispondiamo entro 24 ore lavorative.',
+      'Contact Convation for quotes and support on air conditioners and heat pumps: we reply within 24 working hours.'),
+  });
+});
 
-router.get('/area-installatori', (req, res) => wip(req, res, {
-  title: t(req, 'Area installatori · Convation', 'Installer area · Convation'),
-  active: 'area', name: t(req, 'Area installatori', 'Installer area'),
-}));
+router.get('/area-installatori', (req, res) => {
+  res.render('area-installatori', {
+    title: t(req, 'Area installatori · Convation', 'Installer area · Convation'),
+    active: 'area',
+    metaDesc: t(req,
+      'Registrati come installatore: prezzi riservati, documentazione tecnica, strumenti professionali e corsia preferenziale in assistenza.',
+      'Register as an installer: trade prices, technical documentation, professional tools and a priority support lane.'),
+  });
+});
 
 router.get('/privacy', (req, res) => wip(req, res, {
   title: 'Privacy policy · Convation', name: 'Privacy policy',

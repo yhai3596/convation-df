@@ -28,7 +28,7 @@
 - [x] T2.5 Notizie：posts 表加 lang 列（幂等迁移）；列表页（分类 pill+订阅框+空态文案）/详情页（markdown 正文+评论树+agent 徽标+登录门评论框）；验证=插测试文→列表/详情/分类/EN 空态（lang 过滤反向证据）→删清
 - [x] T2.6 FAQ（三组九问手风琴+JSON-LD FAQPage，ctRaw 未转义输出，json.loads 校验通过）/ Consulenza（AI 通道 CTA+可问清单、人工通道读 settings 未配置显在途提示、询价表单落 messages 表实证入库）；整页内嵌对话待 T3.1 助手改皮时一并处理
 - [x] T2.7 Strumenti（HVAC Toolbox 外链卡+两张 In arrivo 虚线占位卡+安装工导流条；工具改 DB 管理留给 T3.5 定夺）/ Assistenza（三支柱+报修三步+人工通道 settings 读取+报修表单→messages）
-- [ ] T2.8 Detrazioni e incentivi / Contatti（表单+法务）/ Area installatori（注册登录，资质审核预留位）
+- [x] T2.8 Detrazioni（两激励卡+规则常变声明，不写具体税率+三步代办）/ Contatti（表单→messages+通道+法务占位卡）/ Area installatori（登录态面板/注册+登录表单+P.IVA/F-Gas 资质审核预留说明；注册→会话→面板全链路实证后删测试号）
 - [ ] T2.9 移动端底部速联条（读后台 settings，未配置通道自动隐藏）
 
 ### Phase 3: 功能接线

@@ -59,9 +59,15 @@ document.getElementById('ct-form').addEventListener('submit', function (e) {
   e.preventDefault();
   var en = <%= en ? 'true' : 'false' %>;
   var msg = document.getElementById('ct-msg');
-  var phone = document.getElementById('ct-phone').value.trim();
-  var body = '[' + (en ? 'Contact' : 'Contatto') + ']' + (phone ? ' tel: ' + phone : '') + '\n' + document.getElementById('ct-body').value.trim();
-  fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('ct-name').value.trim(), email: document.getElementById('ct-email').value.trim(), body: body }) })
+  var payload = {
+    kind: 'contatto',
+    name: document.getElementById('ct-name').value.trim(),
+    email: document.getElementById('ct-email').value.trim(),
+    phone: document.getElementById('ct-phone').value.trim(),
+    body: document.getElementById('ct-body').value.trim(),
+    lang: en ? 'en' : 'it'
+  };
+  fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
     .then(function (res) {
       msg.className = res.ok ? 'form-ok' : 'form-error';

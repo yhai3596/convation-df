@@ -84,13 +84,16 @@ document.getElementById('qz-form').addEventListener('submit', function (e) {
   e.preventDefault();
   var en = <%= en ? 'true' : 'false' %>;
   var msg = document.getElementById('qz-msg');
-  var name = document.getElementById('qz-name').value.trim();
-  var email = document.getElementById('qz-email').value.trim();
-  var phone = document.getElementById('qz-phone').value.trim();
-  var type = document.getElementById('qz-type').value;
-  var text = document.getElementById('qz-body').value.trim();
-  var body = '[' + (en ? 'Quote' : 'Preventivo') + ' · ' + type + ']' + (phone ? ' tel: ' + phone : '') + '\n' + text;
-  fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, email: email, body: body }) })
+  var payload = {
+    kind: 'preventivo',
+    name: document.getElementById('qz-name').value.trim(),
+    email: document.getElementById('qz-email').value.trim(),
+    phone: document.getElementById('qz-phone').value.trim(),
+    topic: document.getElementById('qz-type').value,
+    body: document.getElementById('qz-body').value.trim(),
+    lang: en ? 'en' : 'it'
+  };
+  fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
     .then(function (res) {
       msg.className = res.ok ? 'form-ok' : 'form-error';

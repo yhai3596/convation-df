@@ -148,6 +148,28 @@ router.post('/message', rateLimit('msg', 10, 600e3), (req, res) => {
   res.json({ ok: true });
 });
 
+// —— 询价 / 报修 / 联系（Convation 前台三表单，独立入库 + 可选 SMTP 提醒） ——
+const INQUIRY_KINDS = ['preventivo', 'riparazione', 'contatto'];
+router.post('/inquiry', rateLimit('inq', 10, 600e3), (req, res) => {
+  const { kind = '', name = '', email = '', phone = '', topic = '', body = '', lang = 'it' } = req.body || {};
+  const lg = lang === 'en' ? 'en' : 'it';
+  const err = (it, en) => res.status(400).json({ error: lg === 'en' ? en : it });
+  if (!INQUIRY_KINDS.includes(kind)) return err('Richiesta non valida', 'Invalid request');
+  const n = String(name).trim();
+  if (!n || n.length > 40) return err('Inserisci il tuo nome', 'Please enter your name');
+  const em = String(email).trim().toLowerCase();
+  if (!EMAIL_RE.test(em)) return err('Inserisci un indirizzo email valido', 'Please enter a valid email');
+  const text = String(body).trim();
+  if (text.length < 2 || text.length > 2000) return err('Scrivi qualche dettaglio in più', 'Please add a few more details');
+  const inq = { kind, name: n, email: em, phone: String(phone).trim().slice(0, 30), topic: String(topic).trim().slice(0, 60), body: text, lang: lg };
+  const r = db.prepare('INSERT INTO inquiries(kind,name,email,phone,topic,body,lang) VALUES (?,?,?,?,?,?,?)')
+    .run(inq.kind, inq.name, inq.email, inq.phone, inq.topic, inq.body, inq.lang);
+  res.json({ ok: true, id: r.lastInsertRowid });
+  // 邮件提醒不阻塞响应；SMTP/收件箱未配置时静默跳过，失败仅告警（记录已入库）
+  Promise.resolve().then(() => mailer.notifyInquiry(inq))
+    .catch(e => console.warn('[mailer] 询价提醒异常：', e.message));
+});
+
 router.post('/course-interest', rateLimit('ci', 20, 600e3), (req, res) => {
   const { course_id, sid = '' } = req.body || {};
   const c = db.prepare('SELECT id,title FROM courses WHERE id=?').get(Number(course_id));

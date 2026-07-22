@@ -114,6 +114,18 @@ CREATE TABLE IF NOT EXISTS messages (
   body TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS inquiries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,                  -- preventivo | riparazione | contatto
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  topic TEXT NOT NULL DEFAULT '',      -- 询价品类（Climatizzatore/Pompa di calore/…）等表单附加维度
+  body TEXT NOT NULL,
+  lang TEXT NOT NULL DEFAULT 'it',
+  status TEXT NOT NULL DEFAULT 'new',  -- new | handled（后台处理状态）
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS sessions (sid TEXT PRIMARY KEY, sess TEXT NOT NULL, expire INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS site_content (

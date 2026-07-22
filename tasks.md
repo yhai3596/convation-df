@@ -35,7 +35,7 @@
 - [x] T3.1 AI 助手改皮：气泡+阳光母题 SVG、品牌蓝实底 fab、2s 弹入（reduced-motion 关）、面板蓝头；文案全双语走 data-* 属性（greet/typing/err 随 locale），assistant.js 中文清零+死主题码删除；Consulenza 页内嵌完整对话确认不做（悬浮面板即全站对话入口，避免双聊天窗）
 - [x] T3.2 客服通道：settings 四键（support_phone/email_info/email_service/whatsapp）+ src/support.js 公共模块；前台读取点全接（Consulenza/Assistenza/Contatti 卡片+移动速联条，未配置隐藏/在途提示）——后台编辑界面归 T3.5
 - [x] T3.3 Agent API 双语化+全链路验证：POST /posts 新增 lang 参数（it/en 白名单，400 拒其余）+ SEO slug（标题变音符转写+时间戳后缀）+ Europe/Rome 发布日期 + 默认分类 Settore；评论回复作者 Alan→Convation、标注语言中立；docs/AGENT_API.md 更新（基址 convation.it、lang 约定、意语示例）。顺手根除 alan 种子：seedContent() 掏空 + 库内 4文/5工具/3课程/3案例按名点删，重启实证不重播、Notizie 双语空态上线。验证链=令牌认证→双语发文落草稿→模拟放行→IT/EN 列表双向隔离→详情 markdown→评论队列→回复上线（Convation+徽标）→409 防重→活动日志留痕→测试数据清场。注意：Windows Git Bash 下 curl 命令行带重音字符会按 ANSI 码页发送致乱码（实证 perch�），真实 Agent 走代码 POST 不受影响
-- [ ] T3.4 询价单/报修表单入库+可选 SMTP
+- [x] T3.4 询价/报修/联系独立入库+可选 SMTP：inquiries 表（kind/name/email/phone/topic/body/lang/status）+ POST /api/inquiry（kind 白名单、意/英错误文案随 lang、限流 10/10min）+ mailer.notifyInquiry（收件人=support_email_info，SMTP 或邮箱未配置静默跳过、发送失败仅告警不阻断入库、replyTo=客户邮箱）；三表单（consulenza/assistenza/contatti）改传结构化字段，弃用 body 前缀打包。验证=curl 三态（200 入库/非法 kind 400 意语/坏邮箱 400 英语）+ 浏览器三表单实提交（成功文案回显+库内 4 行 kind/topic/lang 全对号+零控制台报错）+ 假 SMTP 实证 fail-safe（ECONNREFUSED 告警在日志、响应仍 200、行照存）→ 测试行按名点删清场。SMTP 真实凭据待用户提供（入 T5.3 催收）
 - [ ] T3.5 后台：英/中双语界面、token 同步换色、内容管理适配 13 页文案键
 
 ### Phase 4: SEO/GEO

@@ -57,4 +57,37 @@ async function sendDiagnosisReport(to, company, report) {
   }
 }
 
-module.exports = { enabled, sendDiagnosisReport };
+// —— Convation：询价/报修/联系 提醒邮件 ——
+// 收件人 = 后台 settings 的 support_email_info；SMTP 未配置或邮箱未配置时静默跳过（记录始终入库）。
+const INQ_KIND = { preventivo: 'Preventivo', riparazione: 'Riparazione', contatto: 'Contatto' };
+async function notifyInquiry(inq) {
+  if (!enabled()) return false;
+  const { getSetting } = require('./db'); // 惰性引入，避免模块加载顺序问题
+  const to = (getSetting('support_email_info') || '').trim();
+  if (!to) return false;
+  const kind = INQ_KIND[inq.kind] || inq.kind;
+  const lines = [
+    `Tipo: ${kind}${inq.topic ? ' · ' + inq.topic : ''}`,
+    `Nome: ${inq.name}`,
+    `Email: ${inq.email}`,
+    inq.phone ? `Telefono: ${inq.phone}` : null,
+    `Lingua: ${inq.lang}`,
+    '',
+    inq.body,
+  ].filter(x => x !== null);
+  try {
+    await transport.sendMail({
+      from: `"Convation" <${FROM}>`,
+      to,
+      replyTo: inq.email,
+      subject: `[Convation] ${kind}${inq.topic ? ' · ' + inq.topic : ''} — ${inq.name}`,
+      text: lines.join('\n'),
+    });
+    return true;
+  } catch (e) {
+    console.warn('[mailer] 询价提醒发送失败：', e.message);
+    return false;
+  }
+}
+
+module.exports = { enabled, sendDiagnosisReport, notifyInquiry };

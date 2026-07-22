@@ -167,6 +167,12 @@ a{color:var(--color-accent)}a:hover{color:var(--color-accent-400)}
 }
 @media (max-width:560px){.brand-row{grid-template-columns:repeat(2,1fr)}}
 
+/* AI 助手气泡：页面加载 2s 后弹入一次（§9），hover 微浮 */
+#assistant-fab{opacity:0;transform:translateY(16px) scale(.9);animation:fab-in .5s cubic-bezier(.34,1.4,.64,1) 2s forwards;transition:transform .18s ease,box-shadow .18s ease}
+#assistant-fab:hover{transform:translateY(-2px)}
+@keyframes fab-in{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){#assistant-fab{opacity:1;transform:none;animation:none}}
+
 /* 入场动效：420ms 一次性上浮（§9 少量点缀档；reduced-motion 直接显示） */
 .fade-up{opacity:0;transform:translateY(14px);transition:opacity .42s ease-out,transform .42s ease-out}
 .fade-up.in{opacity:1;transform:none}

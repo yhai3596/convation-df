@@ -1,7 +1,13 @@
-// 悬浮智能客户助手（全站挂载）：开合对话、快捷问题、主题切换、调用 /api/assistant
+// 悬浮 AI 助手（全站挂载）：开合对话、快捷问题、调用 /api/assistant；文案从 #assistant-root data-* 读（随 locale）
 (function () {
   var root = document.getElementById('assistant-root');
   if (!root) return;
+  var L = {
+    greet: root.getAttribute('data-greet') || 'Ciao!',
+    typing: root.getAttribute('data-typing') || '…',
+    err: root.getAttribute('data-err') || 'Errore, riprova più tardi.',
+    neterr: root.getAttribute('data-neterr') || 'Errore di rete.',
+  };
   var panel = document.getElementById('assistant-panel');
   var fab = document.getElementById('assistant-fab');
   var msgsEl = document.getElementById('assistant-msgs');
@@ -30,7 +36,7 @@
       panel.removeAttribute('hidden');
       if (!greeted) {
         greeted = true;
-        bubble('ai', '你好，我是 Alan 的智能客户助手。可以帮你了解工具、课程，或预约企业 AI 诊断。');
+        bubble('ai', L.greet);
       }
       if (input) input.focus();
     } else {
@@ -47,33 +53,28 @@
     if (!text || busy) return;
     busy = true;
     bubble('me', text);
-    var typing = bubble('ai', '正在输入…');
+    var typing = bubble('ai', L.typing);
     fetch('/api/assistant', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text, sid: window.AlanTrack ? AlanTrack.sid : '', path: location.pathname })
     }).then(function (r) { return r.json(); }).then(function (d) {
-      typing.textContent = d.reply || d.error || '抱歉，出了点问题，请稍后再试。';
+      typing.textContent = d.reply || d.error || L.err;
       busy = false;
     }).catch(function () {
-      typing.textContent = '网络异常，请稍后再试。';
+      typing.textContent = L.neterr;
       busy = false;
     });
   }
 
   root.addEventListener('click', function (e) {
     var q = e.target.closest ? e.target.closest('[data-quick]') : null;
-    if (q) { ask(q.getAttribute('data-quick')); return; }
-    var t = e.target.closest ? e.target.closest('[data-theme-opt]') : null;
-    if (t && window.AlanTheme) { AlanTheme.apply(t.getAttribute('data-theme-opt')); }
+    if (q) { ask(q.getAttribute('data-quick')); }
   });
 
   function sendDraft() { var v = input.value; input.value = ''; ask(v); }
   if (sendBtn) sendBtn.addEventListener('click', sendDraft);
   if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendDraft(); });
-
-  // 同步主题选中态
-  if (window.AlanTheme) AlanTheme.apply(AlanTheme.current());
 })();
 
 // 轻提示

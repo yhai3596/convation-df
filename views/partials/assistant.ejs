@@ -1,27 +1,47 @@
-<!-- 智能客户助手（全站悬浮，人工可接管） -->
-<div id="assistant-root" style="position:fixed;right:24px;bottom:24px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:13.8px;font-family:var(--font-body)">
-  <div id="assistant-panel" class="elev-lg" hidden style="width:min(340px,calc(100vw - 48px));display:flex;flex-direction:column;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:13.8px;padding:13.8px 18px;border-bottom:1px solid var(--color-divider)">
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <span style="font-family:var(--font-heading);font-weight:600;font-size:16px">智能客户助手</span>
-        <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600)">AI Concierge · 人工可接管</span>
+<!-- 悬浮 AI 助手（全站常驻，DESIGN.md §6：logo 对话气泡+阳光母题；文案随 locale） -->
+<% const AL = (typeof locale !== 'undefined' && locale) === 'en' ? {
+  title: 'Convation assistant', sub: 'AI · a person can take over', close: 'Close',
+  q1: 'I want a quote', q2: 'Which incentives apply to me?', q3: 'I have a fault',
+  ph: 'Write your question…', send: 'Send', open: 'Open the Convation assistant',
+  greet: 'Hi, I\'m the Convation assistant. Ask me about products, installation, incentives or service — anytime.',
+  typing: 'Typing…', err: 'Sorry, something went wrong. Please try again later.', neterr: 'Network error, please try again later.',
+} : {
+  title: 'Assistente Convation', sub: 'AI · una persona può subentrare', close: 'Chiudi',
+  q1: 'Voglio un preventivo', q2: 'Che incentivi mi spettano?', q3: 'Ho un guasto',
+  ph: 'Scrivi la tua domanda…', send: 'Invia', open: 'Apri l\'assistente Convation',
+  greet: 'Ciao, sono l\'assistente Convation. Chiedimi di prodotti, installazione, incentivi o assistenza — a qualsiasi ora.',
+  typing: 'Sto scrivendo…', err: 'Scusa, qualcosa è andato storto. Riprova più tardi.', neterr: 'Errore di rete, riprova più tardi.',
+}; %>
+<div id="assistant-root" data-greet="<%= AL.greet %>" data-typing="<%= AL.typing %>" data-err="<%= AL.err %>" data-neterr="<%= AL.neterr %>"
+  style="position:fixed;right:24px;bottom:24px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--font-body)">
+  <div id="assistant-panel" class="elev-lg" hidden style="width:min(340px,calc(100vw - 48px));display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;background:var(--color-accent);color:#fff">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-family:var(--font-heading);font-weight:700;font-size:15.5px"><%= AL.title %></span>
+        <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,.75)"><%= AL.sub %></span>
       </div>
-      <button type="button" id="assistant-close" class="btn btn-icon btn-secondary" aria-label="关闭">
+      <button type="button" id="assistant-close" aria-label="<%= AL.close %>" style="background:none;border:0;color:#fff;cursor:pointer;padding:6px;display:grid;place-items:center">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
       </button>
     </div>
-    <div id="assistant-msgs" style="display:flex;flex-direction:column;gap:13.8px;padding:18px;max-height:280px;overflow-y:auto"></div>
-    <div style="display:flex;flex-wrap:wrap;gap:9.2px;padding:0 18px 13.8px">
-      <button type="button" class="tag tag-outline" data-quick="预约 AI 诊断" style="cursor:pointer;background:transparent">预约 AI 诊断</button>
-      <button type="button" class="tag tag-outline" data-quick="工具怎么用" style="cursor:pointer;background:transparent">工具怎么用</button>
-      <button type="button" class="tag tag-outline" data-quick="课程咨询" style="cursor:pointer;background:transparent">课程咨询</button>
+    <div id="assistant-msgs" style="display:flex;flex-direction:column;gap:12px;padding:16px;max-height:280px;overflow-y:auto"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px">
+      <button type="button" class="tag tag-outline" data-quick="<%= AL.q1 %>" style="cursor:pointer;background:transparent"><%= AL.q1 %></button>
+      <button type="button" class="tag tag-outline" data-quick="<%= AL.q2 %>" style="cursor:pointer;background:transparent"><%= AL.q2 %></button>
+      <button type="button" class="tag tag-outline" data-quick="<%= AL.q3 %>" style="cursor:pointer;background:transparent"><%= AL.q3 %></button>
     </div>
-    <div style="display:flex;gap:9.2px;padding:13.8px 18px;border-top:1px solid var(--color-divider)">
-      <input class="input" id="assistant-input" type="text" placeholder="输入你的问题……" style="flex:1">
-      <button type="button" id="assistant-send" class="btn btn-primary">发送</button>
+    <div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--color-divider)">
+      <input class="input" id="assistant-input" type="text" placeholder="<%= AL.ph %>" style="flex:1">
+      <button type="button" id="assistant-send" class="btn btn-primary"><%= AL.send %></button>
     </div>
   </div>
-  <button type="button" id="assistant-fab" class="elev-md" aria-label="打开智能客户助手" style="width:54px;height:54px;border-radius:50%;cursor:pointer;display:grid;place-items:center;background:var(--color-bg);border:1px solid var(--color-accent);color:var(--color-accent)">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
+  <button type="button" id="assistant-fab" class="elev-md" aria-label="<%= AL.open %>"
+    style="width:56px;height:56px;border-radius:50%;cursor:pointer;display:grid;place-items:center;background:var(--color-accent);border:0;color:#fff">
+    <!-- 对话气泡 + 阳光母题（logo 元素） -->
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a7.5 8 0 0 1-7.5 8H8l-4.5 3 1.2-4.6A8 8 0 1 1 21 11.5Z"/>
+      <circle cx="12" cy="11" r="2.6"/>
+      <path d="M12 6.2v1.3M12 14.5v1.3M7.8 11h1.3M14.9 11h1.3M9.2 8.2l.9.9M13.9 12.9l.9.9M14.8 8.2l-.9.9M10.1 12.9l-.9.9"/>
+    </svg>
   </button>
 </div>

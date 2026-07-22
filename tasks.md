@@ -32,8 +32,8 @@
 - [x] T2.9 移动端速联条：src/support.js 公共通道模块（pages.js/i18n 共用）；页脚渲染 Chiama/WhatsApp（配置驱动）+Preventivo/Aiuto AI（恒在）；助手气泡/toast 抬升避让；顺手修掉 server 级 404/500 兜底（补 i18n locals+去 alan 中文标题）。验证=settings 置入→出现→撤销→隐藏 双向实证 + 404 页正常渲染
 
 ### Phase 3: 功能接线
-- [ ] T3.1 AI 助手气泡改皮：logo 气泡+阳光母题图标，2s 弹入动效，全站常驻
-- [ ] T3.2 客服通道 settings 键值（info 邮箱/售后邮箱/电话/WhatsApp）+ 前台读取点接线
+- [x] T3.1 AI 助手改皮：气泡+阳光母题 SVG、品牌蓝实底 fab、2s 弹入（reduced-motion 关）、面板蓝头；文案全双语走 data-* 属性（greet/typing/err 随 locale），assistant.js 中文清零+死主题码删除；Consulenza 页内嵌完整对话确认不做（悬浮面板即全站对话入口，避免双聊天窗）
+- [x] T3.2 客服通道：settings 四键（support_phone/email_info/email_service/whatsapp）+ src/support.js 公共模块；前台读取点全接（Consulenza/Assistenza/Contatti 卡片+移动速联条，未配置隐藏/在途提示）——后台编辑界面归 T3.5
 - [ ] T3.3 Agent API 验证：小龙虾/hermes Bearer 令牌发文→Notizie 出现（草稿审核开关沿用）
 - [ ] T3.4 询价单/报修表单入库+可选 SMTP
 - [ ] T3.5 后台：英/中双语界面、token 同步换色、内容管理适配 13 页文案键

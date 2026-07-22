@@ -1,53 +1,62 @@
-// 站内 Agent（设计稿中的「小龙虾」职责）：智能助手应答 + 评论自动回复。
+// 站内 Agent：悬浮助手应答 + 评论自动回复（Convation 版）。
 // 默认内置 FAQ 知识库；配置 LLM 后自动升级为知识库约束下的生成式回答，失败回退 FAQ。
+// 语言纪律：助手回复跟随访客语言（it/en，由调用方传入）；评论回复跟随文章语言。
 const { db, getSetting, setSetting } = require('./db');
 const llm = require('./llm');
 const { logActivity, agentModes } = require('./config');
 
-const SITE_KNOWLEDGE = `站点：Alan 个人品牌平台（HVAC × AI）。站主 Alan：暖通行业 AI 专家，20 多年制造业从业经验，帮助企业 AI 应用落地。
-板块：
-- 工具集（/tools）：HVAC Tool（暖通计算与选型，已上线）、AHRI 竞品分析、北美市场竞品分析、专利 AI 辅助助手，注册登录后在线使用。
-- 企业 AI 服务（/services）：AI 现状诊断（免费，问卷+AI 报告+解读）、AI 落地咨询（按项目）、企业内训（按场次）。
-- 企业 AI 诊断（/diagnosis）：5 题问卷约 10 分钟，无需准备材料，提交后生成诊断报告（AI 成熟度 L1-L5、AI 结合点、3 阶段路径）。
-- AI 课程（/courses）：《制造业 AI 入门：从业务出发》12 讲 ¥299、《AI 竞品分析实战工作流》8 讲 ¥499，已上线；《专利工作中的 AI 助手》筹备中。
-- 案例·培训（/cases）、AI 资讯（/blog）、关于与联系（/about，可留言）。
-规则：只回答与本站/Alan 的服务相关的问题；不确定的信息不要编造，引导用户在「关于」页留言或做 AI 诊断。`;
+const SITE_KNOWLEDGE = `Sito: Convation (www.convation.it) — azienda italiana di climatizzazione: vendita, installazione e assistenza di climatizzatori e pompe di calore. Due pubblici: privati (preventivi, incentivi, assistenza) e installatori professionisti (area riservata).
+Sezioni del sito: Prodotti (/prodotti), Detrazioni e incentivi (/detrazioni), Referenze (/referenze), Notizie (/notizie), FAQ (/faq), Consulenza e preventivi (/consulenza), Assistenza e riparazioni (/assistenza), Strumenti HVAC (/strumenti), Documentazione tecnica (/documentazione), Area installatori (/area-installatori), Contatti (/contatti), Chi siamo (/chi-siamo).
+Punti fermi: sopralluogo e preventivo gratuiti; installazione a regola d'arte da installatori qualificati; assistenza anche post-vendita; supporto nelle pratiche per gli incentivi (le regole cambiano spesso: si verifica caso per caso).
+Regole: rispondi SOLO su Convation, climatizzazione e pompe di calore. NON inventare prezzi, marchi a catalogo, tempi di consegna o percentuali fiscali. Se non sai una cosa, invita a chiedere un preventivo su /consulenza o a scrivere dai /contatti.`;
 
-// 快捷问题 → 设计稿标准答案（精确匹配，保证确定性）
+// 快捷问题 → 标准答案（精确匹配，保证确定性；与 assistant.ejs 的快捷按钮文案一一对应）
 const QUICK_ANSWERS = {
-  '预约 AI 诊断': '好的。AI 诊断从一份约 10 分钟的问卷开始，完成后报告会发送到您的邮箱。您可以在「企业AI服务」页开始，或留下联系方式由 Alan 联系您。',
-  '工具怎么用': '工具集里目前有 4 款工具：HVAC Tool、AHRI 竞品分析、北美市场竞品分析、专利 AI 助手。注册登录后即可在线使用，每款工具页内有使用文档。',
-  '课程咨询': '目前已上线 2 门课程：《制造业 AI 入门》与《AI 竞品分析实战工作流》，登录后可购买学习。需要我帮您对比一下适合哪门吗？',
+  'Voglio un preventivo': 'Perfetto. Compila il modulo su /consulenza indicando metri quadri, stanze e impianto attuale: rispondiamo entro 24 ore lavorative con un sopralluogo gratuito. In alternativa lascia qui la tua domanda e ti indirizzo io.',
+  'Che incentivi mi spettano?': 'Per climatizzatori e pompe di calore esistono più strade (es. Conto Termico e detrazioni fiscali), ma regole e aliquote cambiano spesso: le verifichiamo caso per caso prima del preventivo, così i conti sono reali. Trovi una panoramica su /detrazioni.',
+  'Ho un guasto': 'Mi dispiace! Segnalalo su /assistenza indicando marca, modello e codice errore se visibile: ti richiamiamo entro 24 ore lavorative. Se l\'impianto perde acqua o senti odori anomali, spegnilo e attendi il tecnico.',
+  'I want a quote': 'Great. Fill in the form at /en/consulenza with square metres, rooms and your current system: we reply within 24 working hours with a free survey. Or ask me here and I\'ll point you in the right direction.',
+  'Which incentives apply to me?': 'For air conditioners and heat pumps there are several routes (e.g. Conto Termico and tax deductions), but rules and rates change often: we verify them case by case before quoting, so the numbers are real. See /en/detrazioni for an overview.',
+  'I have a fault': 'Sorry to hear that! Report it at /en/assistenza with brand, model and any error code: we call back within 24 working hours. If the unit leaks water or smells odd, switch it off and wait for the technician.',
 };
 
+// 关键词 FAQ（意英双语关键词，命中最多者胜；答案按语言取）
 const FAQS = [
   {
-    keys: ['ahri', '热泵', '品类', 'heat pump'],
-    answer: '支持的。AHRI 竞品分析工具目前覆盖 AHRI 目录中的热泵与单元机品类，登录后在「品类」筛选中选择 Heat Pump 即可。详细说明见工具页文档。',
+    keys: ['preventivo', 'costo', 'costa', 'prezzo', 'quote', 'price', 'cost'],
+    it: 'I prezzi dipendono da casa, impianto e installazione, quindi non diamo cifre a caso: il preventivo è gratuito e senza impegno. Compila il modulo su /consulenza e rispondiamo entro 24 ore lavorative.',
+    en: 'Prices depend on your home, the system and the installation, so we don\'t quote blind figures: the quote is free and non-binding. Fill in the form at /en/consulenza and we reply within 24 working hours.',
   },
   {
-    keys: ['诊断', '问卷', '多久', '材料', '准备'],
-    answer: '约 10 分钟，不需要提前准备材料——问卷围绕业务现状与目标，凭日常了解即可作答。完成后诊断报告会发送到您的邮箱。入口在「企业AI服务」页。',
+    keys: ['incentiv', 'detrazion', 'conto termico', 'bonus', 'agevolazion', 'deduction', 'tax'],
+    it: 'Gli incentivi esistono ma cambiano spesso: verifichiamo aliquote e requisiti caso per caso prima del preventivo, e ti supportiamo nelle pratiche. Panoramica su /detrazioni.',
+    en: 'Incentives exist but change often: we verify rates and requirements case by case before quoting, and we support you with the paperwork. Overview at /en/detrazioni.',
   },
   {
-    keys: ['课程', '价格', '多少钱', '购买', '学费'],
-    answer: '目前已上线 2 门课程：《制造业 AI 入门：从业务出发》（12 讲，¥299）与《AI 竞品分析实战工作流》（8 讲，¥499），注册登录后可购买学习。',
+    keys: ['guasto', 'errore', 'riparazion', 'rotto', 'non funziona', 'perde', 'fault', 'error', 'repair', 'broken', 'not working', 'leak'],
+    it: 'Segnala il guasto su /assistenza indicando marca, modello, codice errore e da quando succede: ti richiamiamo entro 24 ore lavorative. Interveniamo anche su impianti non installati da noi.',
+    en: 'Report the fault at /en/assistenza with brand, model, error code and when it started: we call back within 24 working hours. We also service systems we did not install.',
   },
   {
-    keys: ['工具', '怎么用', '使用', '登录'],
-    answer: '工具集里目前有 4 款工具：HVAC Tool、AHRI 竞品分析、北美市场竞品分析、专利 AI 助手。注册登录后即可在线使用，每款工具页内有使用文档。',
+    keys: ['installator', 'rivenditor', 'partner', 'listino', 'installer', 'reseller', 'trade'],
+    it: 'Se sei un installatore, registrati nell\'Area installatori (/area-installatori): accesso a documentazione, listini e condizioni dedicate. Ti chiederemo P.IVA e certificazione F-Gas per l\'abilitazione.',
+    en: 'If you are an installer, sign up in the Installer area (/en/area-installatori): access to documentation, price lists and trade terms. We will ask for your VAT number and F-Gas certification.',
   },
   {
-    keys: ['内训', '培训', '合作', '咨询', '联系', '预约'],
-    answer: '企业内训与落地咨询可以在「关于」页留言说明需求，或先完成企业 AI 诊断问卷——Alan 会主动与您联系安排一对一沟通。',
+    keys: ['tempi', 'quanto tempo', 'consegna', 'quando', 'sopralluogo', 'lead time', 'how long', 'survey'],
+    it: 'Si parte sempre dal sopralluogo gratuito; tempi di consegna e installazione dipendono dal prodotto e dalla stagione, e li trovi nero su bianco nel preventivo. Richiedilo su /consulenza.',
+    en: 'Everything starts with a free survey; delivery and installation times depend on the product and the season, and are stated clearly in your quote. Request it at /en/consulenza.',
   },
 ];
 
-const FALLBACK_REPLY = '已收到您的问题，我会转交 Alan 本人尽快回复。您也可以在「关于」页留下联系方式，或先做一份免费的企业 AI 诊断。';
+const FALLBACK = {
+  it: 'Ho ricevuto la tua domanda: la passo a una persona del team Convation, che ti risponderà appena possibile. Se preferisci, chiedi un preventivo gratuito su /consulenza o scrivici dai /contatti.',
+  en: 'I\'ve got your question and will pass it to a person on the Convation team, who will reply as soon as possible. If you prefer, ask for a free quote at /en/consulenza or write to us via /en/contatti.',
+};
 
 function heartbeat() { setSetting('agent_last_active', new Date().toISOString()); }
 
-function matchFaq(text) {
+function matchFaq(text, lang = 'it') {
   const t = String(text || '').toLowerCase();
   let best = null;
   let bestHits = 0;
@@ -55,19 +64,20 @@ function matchFaq(text) {
     const hits = f.keys.filter(k => t.includes(k.toLowerCase())).length;
     if (hits > bestHits) { best = f; bestHits = hits; }
   }
-  return bestHits > 0 ? best.answer : null;
+  return bestHits > 0 ? (lang === 'en' ? best.en : best.it) : null;
 }
 
-// 悬浮助手应答
-async function assistantReply(message) {
+// 悬浮助手应答（lang 由 API 层从访问路径推断：/en → en，默认 it）
+async function assistantReply(message, lang = 'it') {
   heartbeat();
   const msg = String(message || '').trim();
   if (QUICK_ANSWERS[msg]) return { reply: QUICK_ANSWERS[msg], via: 'faq' };
 
+  const replyLang = lang === 'en' ? 'inglese (English)' : 'italiano';
   if (llm.enabled()) {
     try {
       const reply = await llm.chat([
-        { role: 'system', content: `你是「Alan 的智能客户助手」（AI Concierge）。${SITE_KNOWLEDGE}\n回答要求：中文、克制友好、不超过 120 字；答不了就建议留言，人工可接管。` },
+        { role: 'system', content: `Sei l'assistente Convation (AI, con possibilità di passaggio a una persona).\n${SITE_KNOWLEDGE}\nRequisiti di risposta: rispondi in ${replyLang}, tono cortese e concreto, massimo 90 parole; se non puoi rispondere, suggerisci /consulenza o /contatti.` },
         { role: 'user', content: msg },
       ], { maxTokens: 300, timeoutMs: 12000 });
       return { reply, via: 'llm' };
@@ -75,33 +85,36 @@ async function assistantReply(message) {
       console.warn('[agent] 助手 LLM 失败，回退 FAQ：', e.message);
     }
   }
-  const faq = matchFaq(msg);
-  return { reply: faq || FALLBACK_REPLY, via: faq ? 'faq' : 'fallback' };
+  const faq = matchFaq(msg, lang);
+  return { reply: faq || FALLBACK[lang === 'en' ? 'en' : 'it'], via: faq ? 'faq' : 'fallback' };
 }
 
-// 评论自动回复：常见问题即时回复并标注，其余标记 skipped 转人工。
+// 评论自动回复：常见问题即时回复并标注，其余标记 skipped 转人工；回复语言跟随文章语言。
 // 无论结果如何都把评论置为终态（replied/skipped），供 Worker 去重与后台观测。
 const setCommentStatus = (id, status) => db.prepare('UPDATE comments SET agent_status=? WHERE id=?').run(status, id);
 
 async function commentAutoReply(postId, commentId, commentBody, actor = 'system:即时') {
   if (getSetting('agent_autoreply', '1') !== '1') return null; // 保持 pending，开启后由 Worker 补处理
+  const post = db.prepare('SELECT lang FROM posts WHERE id=?').get(postId);
+  const lang = post && post.lang === 'en' ? 'en' : 'it';
+  const replyLang = lang === 'en' ? 'inglese (English)' : 'italiano';
   let replyText = null;
   let via = 'faq';
 
   if (llm.enabled()) {
     try {
       const text = await llm.chat([
-        { role: 'system', content: `你是 Alan 网站的评论助理 Agent（小龙虾）。${SITE_KNOWLEDGE}\n任务：判断这条读者评论是否是可以直接回答的常见问题（工具/课程/诊断/服务相关）。只输出 JSON：{"can_answer":true/false,"reply":"若可回答给出不超过110字的中文回复，以 Alan 的口吻、克制专业"}。观点讨论、需要 Alan 本人判断的问题一律 can_answer=false。` },
-        { role: 'user', content: `读者评论：${commentBody}` },
+        { role: 'system', content: `Sei l'assistente commenti del sito Convation.\n${SITE_KNOWLEDGE}\nCompito: valuta se questo commento di un lettore è una domanda frequente a cui puoi rispondere direttamente (preventivi/incentivi/guasti/installatori/tempi). Output SOLO JSON: {"can_answer":true/false,"reply":"se rispondibile, massimo 80 parole in ${replyLang}, tono Convation cortese e concreto"}. Opinioni, casi specifici o valutazioni tecniche puntuali: can_answer=false.` },
+        { role: 'user', content: `Commento del lettore: ${commentBody}` },
       ], { maxTokens: 300, timeoutMs: 10000, json: true });
       const j = llm.parseJson(text);
       if (j.can_answer && j.reply) { replyText = String(j.reply).trim(); via = 'llm'; }
     } catch (e) {
       console.warn('[agent] 评论 LLM 失败，回退 FAQ：', e.message);
-      replyText = matchFaq(commentBody);
+      replyText = matchFaq(commentBody, lang);
     }
   } else {
-    replyText = matchFaq(commentBody);
+    replyText = matchFaq(commentBody, lang);
   }
 
   if (!replyText) {
@@ -111,7 +124,7 @@ async function commentAutoReply(postId, commentId, commentBody, actor = 'system:
   }
   heartbeat();
   const r = db.prepare(`INSERT INTO comments(post_id,user_id,author_name,body,parent_id,is_agent,agent_label,agent_status)
-    VALUES (?,NULL,'Alan',?,?,1,'AI 自动回复 · via 小龙虾','replied')`).run(postId, replyText, commentId);
+    VALUES (?,NULL,'Convation',?,?,1,'AI · Worker','replied')`).run(postId, replyText, commentId);
   setCommentStatus(commentId, 'replied');
   logActivity(actor, 'comment_reply', `comment#${commentId}`, `${via} · ${replyText.slice(0, 60)}`, true);
   return db.prepare('SELECT * FROM comments WHERE id=?').get(r.lastInsertRowid);

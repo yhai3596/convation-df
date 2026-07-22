@@ -125,9 +125,11 @@ router.get('/comments/:id/reply-status', (req, res) => {
 // —— 悬浮智能助手 ——
 router.post('/assistant', rateLimit('assist', 30, 600e3), async (req, res) => {
   const msg = String((req.body || {}).message || '').trim().slice(0, 500);
-  if (!msg) return res.status(400).json({ error: '请输入内容' });
-  analytics.record({ sid: (req.body || {}).sid || '', type: 'assistant_msg', path: (req.body || {}).path || '' });
-  const { reply, via } = await agent.assistantReply(msg);
+  const path = String((req.body || {}).path || '');
+  const lang = path === '/en' || path.startsWith('/en/') ? 'en' : 'it'; // 回复语言随访客所在语言版
+  if (!msg) return res.status(400).json({ error: lang === 'en' ? 'Please write a message' : 'Scrivi un messaggio' });
+  analytics.record({ sid: (req.body || {}).sid || '', type: 'assistant_msg', path });
+  const { reply, via } = await agent.assistantReply(msg, lang);
   res.json({ ok: true, reply, via });
 });
 

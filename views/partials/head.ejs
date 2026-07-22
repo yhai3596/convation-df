@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><%= title %></title>
 <meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'Convation — vendita, installazione e assistenza di climatizzatori e pompe di calore in Italia.' %>">
+<% if (typeof canonicalPath !== 'undefined' && typeof locale !== 'undefined') { %>
+<link rel="canonical" href="<%= siteBase + canonicalPath %>">
+<% if (typeof noHreflang === 'undefined' || !noHreflang) { %>
+<link rel="alternate" hreflang="it" href="<%= siteBase + (locale === 'it' ? canonicalPath : altHref) %>">
+<link rel="alternate" hreflang="en" href="<%= siteBase + (locale === 'en' ? canonicalPath : altHref) %>">
+<link rel="alternate" hreflang="x-default" href="<%= siteBase + (locale === 'it' ? canonicalPath : altHref) %>">
+<% } %>
+<meta property="og:site_name" content="Convation">
+<meta property="og:title" content="<%= title %>">
+<meta property="og:description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'Convation — vendita, installazione e assistenza di climatizzatori e pompe di calore in Italia.' %>">
+<meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+<meta property="og:url" content="<%= siteBase + canonicalPath %>">
+<meta property="og:locale" content="<%= locale === 'en' ? 'en_US' : 'it_IT' %>">
+<% } %>
+<% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+<script type="application/ld+json"><%- JSON.stringify(jsonLd) %></script>
+<% } %>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230F4C8C'/%3E%3Ctext x='15' y='24' font-family='Arial,sans-serif' font-size='21' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3EC%3C/text%3E%3Ccircle cx='25' cy='8' r='3' fill='%23E06B3A'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/vendor/archivo/400.css">
 <link rel="stylesheet" href="/vendor/archivo/600.css">

@@ -39,8 +39,8 @@
 - [x] T3.5 后台 Convation 化：品牌/标签双语（Convation Admin 侧栏、六 tab 中英并标、衬线字体全换 var(--font-heading)）；新增「询价线索 LEADS」面板（inquiries 列表+mailto+状态流转按钮）+ /admin/api/inquiry-status 端点（new/handled 白名单、404/400/未登录三拒）；内容管理裁为 Notizie 单类（课程/工具/案例前台无 DB 消费点，入口/筛选/表格行全撤，后端路由保留不接线）+ 语言列 IT/EN + 编辑器 lang 下拉；admin 发文/一键发布走共享 src/slug.js（意化 slug+罗马日期）+lang 入库（更新缺省保持原语言，防误重置——实测修过一次解构默认值反噬）；AI 生成草稿人设重写为 Convation Notizie 意语 prompt（it/en 可选、禁编造价格/税率、自由分类默认 Settore）；fmtDate/fmtDT/fmtNum/money 全转意式（DD/MM/YYYY + Europe/Rome + it-IT 千分位 + €）；seedAdmin 默认改 admin@convation.local/Convation。验证=两轮脚本 16/16+9/9 全过（临时换哈希登录→测毕恢复，不读凭据文件）：/admin 渲染、LEADS 入库→面板→状态流转 DB 证据、EN 文章创建/无 lang 编辑保持/前台双语隔离、发布罗马日期、测试行全清
 
 ### Phase 4: SEO/GEO
-- [ ] T4.1 每页 title/description、JSON-LD（HVACBusiness/Product/FAQPage）、语义化标题
-- [ ] T4.2 hreflang it/en、sitemap.xml、robots、llms.txt
+- [x] T4.1 SEO 页级标记：13 页 title/metaDesc 双语已在 P3 逐页落地（本轮复核）；head.ejs 新增 SEO 块（canonical + og:site_name/title/description/type/url/locale，typeof 守卫、admin 渲染不受影响）；JSON-LD 三处新增——首页 HVACBusiness（areaServed=Italy，地址/电话留 T5.3 素材到位再补，不编造）、Prodotti ItemList/Product（不挂 offer 不编价格）、文章页 Article（headline/datePublished/inLanguage/Organization 署名，ogType=article）；FAQ 页 FAQPage 已有（T2.x）。i18n.js 新增 siteBase（SITE_BASE 环境变量可覆盖）+ canonicalPath（自动去查询串）
+- [x] T4.2 hreflang/sitemap/robots/llms.txt：head 每页输出 it/en/x-default 三连（x-default→意语版）；文章页特殊处理——canonical 归属文章语言路径（跨前缀访问不漂移，实证 /en/notizie/it-slug 仍指 /notizie/…）+ 无翻译对应故 noHreflang；src/routes/seo.js 三出口——sitemap.xml（13 静态页×双语各 26 条含 xhtml:link hreflang 对 + 已发布文章按所属语言单列带 lastmod；privacy/cookie 占位页不入图）、robots.txt（Disallow /admin /login /api/ + Sitemap 行）、llms.txt（llmstxt 惯例：公司简介+9 页导引+给 AI 代理的注意事项——价格税率不公开、引导 Contatti）。验证=脚本 19/19（直插文章行→各出口全出现→点删清场）；启动日志 Alan 残留顺手改 Convation
 - [ ] T4.3 CMP 横幅（原生极简三键：拒绝/接受/偏好，意/英双语）
 
 ### Phase 5: 走查（⛔ 门禁二）

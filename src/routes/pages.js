@@ -22,6 +22,16 @@ router.get('/', (req, res) => {
     metaDesc: t(req,
       'Convation vende, installa e assiste climatizzatori e pompe di calore in Italia: tecnici certificati F-Gas, marchi ufficiali, preventivo gratuito in 24 ore.',
       'Convation sells, installs and services air conditioners and heat pumps in Italy: F-Gas certified technicians, official brands, free quote within 24 hours.'),
+    // 地址/电话/P.IVA 等法务数据到位后补进（T5.3 素材单），届时才够格 LocalBusiness 富结果
+    jsonLd: {
+      '@context': 'https://schema.org', '@type': 'HVACBusiness',
+      name: 'Convation', url: 'https://www.convation.it/',
+      description: t(req,
+        'Vendita, installazione e assistenza di climatizzatori e pompe di calore in Italia.',
+        'Sales, installation and service of air conditioners and heat pumps in Italy.'),
+      areaServed: { '@type': 'Country', name: 'Italy' },
+      knowsAbout: ['climatizzatori', 'pompe di calore', 'installazione HVAC', 'assistenza e manutenzione', 'Conto Termico e detrazioni'],
+    },
   });
 });
 
@@ -42,6 +52,14 @@ router.get('/prodotti', (req, res) => {
     metaDesc: t(req,
       'Climatizzatori mono e multi split e pompe di calore aria-acqua dei migliori marchi: selezionati, installati e assistiti da Convation.',
       'Mono and multi split air conditioners and air-to-water heat pumps from leading brands: selected, installed and serviced by Convation.'),
+    // 具体型号/价格未定（占位素材阶段），Product 只挂品类不挂 offer，不编造
+    jsonLd: {
+      '@context': 'https://schema.org', '@type': 'ItemList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, item: { '@type': 'Product', name: t(req, 'Climatizzatori mono e multi split', 'Mono and multi split air conditioners'), category: 'HVAC' } },
+        { '@type': 'ListItem', position: 2, item: { '@type': 'Product', name: t(req, 'Pompe di calore aria-acqua', 'Air-to-water heat pumps'), category: 'HVAC' } },
+      ],
+    },
   });
 });
 
@@ -96,6 +114,9 @@ router.get('/notizie/:slug', (req, res) => {
   if (!post) return res.status(404).render('404', { title: t(req, 'Pagina non trovata · Convation', 'Page not found · Convation'), active: '' });
   db.prepare('UPDATE posts SET views = views + 1 WHERE id=?').run(post.id);
   post.views += 1;
+  // 文章只属于一个语言版：canonical 指向所属语言路径（跨前缀访问不产生镜像收录），无翻译对应则不挂 hreflang 对
+  res.locals.canonicalPath = (post.lang === 'en' ? '/en' : '') + `/notizie/${post.slug}`;
+  res.locals.noHreflang = true;
   const all = db.prepare('SELECT * FROM comments WHERE post_id=? ORDER BY created_at, id').all(post.id);
   const comments = all.filter(c => !c.parent_id).map(c => ({ ...c, replies: all.filter(r => r.parent_id === c.id) }));
   res.render('notizia', {
@@ -105,6 +126,17 @@ router.get('/notizie/:slug', (req, res) => {
     comments,
     commentCount: comments.length,
     metaDesc: (post.excerpt || '').slice(0, 160),
+    ogType: 'article',
+    jsonLd: {
+      '@context': 'https://schema.org', '@type': 'Article',
+      headline: post.title,
+      description: (post.excerpt || '').slice(0, 160),
+      datePublished: post.published_at || undefined,
+      dateModified: (post.updated_at || '').slice(0, 10) || post.published_at || undefined,
+      inLanguage: post.lang === 'en' ? 'en' : 'it',
+      author: { '@type': 'Organization', name: 'Convation' },
+      publisher: { '@type': 'Organization', name: 'Convation' },
+    },
   });
 });
 

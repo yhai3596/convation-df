@@ -82,6 +82,7 @@ app.use((req, res, next) => {
 // —— 路由 ——
 const i18n = require('./src/i18n');
 const pagesRouter = require('./src/routes/pages');
+app.use(require('./src/routes/seo')); // sitemap.xml / robots.txt / llms.txt（无语言前缀）
 app.use('/en', i18n.middleware, pagesRouter); // 英语前台（/en 前缀）
 app.use('/', i18n.middleware, pagesRouter); // 意语前台（默认，无前缀）
 app.use('/api/agent', require('./src/routes/agent-api')); // 外部 Agent（Bearer 令牌）
@@ -100,6 +101,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, HOST, () => {
-  console.log(`Alan platform 已启动：http://${HOST}:${PORT}（NODE_ENV=${process.env.NODE_ENV || 'development'}）`);
+  console.log(`Convation 站点已启动：http://${HOST}:${PORT}（NODE_ENV=${process.env.NODE_ENV || 'development'}）`);
   worker.start(); // 站内自动化：评论巡检 / 积压补处理 / 心跳
 });

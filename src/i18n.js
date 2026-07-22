@@ -17,6 +17,9 @@ function middleware(req, res, next) {
   // 当前页在另一语言下的地址（语言切换按钮 + hreflang 用）
   const bare = req.path === '/' ? '/' : req.path.replace(/\/$/, '');
   res.locals.altHref = locale === 'en' ? bare : (bare === '/' ? '/en' : '/en' + bare);
+  // SEO：站点基址 + 当前页规范路径（不含查询串；head.ejs canonical/hreflang/og 用）
+  res.locals.siteBase = process.env.SITE_BASE || 'https://www.convation.it';
+  res.locals.canonicalPath = locale === 'en' ? (bare === '/' ? '/en' : '/en' + bare) : bare;
   // 本地化文案助手：覆盖 app.locals 的全局版（res.locals 优先于 app.locals）
   const c = siteContent.ctFor(locale);
   res.locals.ct = c.ct;

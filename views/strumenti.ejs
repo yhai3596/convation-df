@@ -1,0 +1,45 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'HVAC tools' : 'Strumenti HVAC' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('strumenti.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('strumenti.intro_body') %></p>
+  </div>
+</section>
+
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container grid-cards3">
+    <a class="card card-hover fade-up" href="https://hvac.geopro.cc" target="_blank" rel="noopener">
+      <span class="tag" style="align-self:flex-start">Online</span>
+      <span class="card-title" style="margin-top:10px"><%= ct('strumenti.tool1_title') %></span>
+      <p class="card-body"><%= ct('strumenti.tool1_body') %></p>
+      <span class="card-link">hvac.geopro.cc ↗</span>
+    </a>
+    <div class="card fade-up" style="border-style:dashed;background:transparent">
+      <span class="tag" style="align-self:flex-start"><%= en ? 'Coming soon' : 'In arrivo' %></span>
+      <span class="card-title" style="margin-top:10px;color:var(--color-neutral-500)"><%= en ? 'Next tool' : 'Prossimo strumento' %></span>
+      <p class="card-body"><%= ct('strumenti.more_note') %></p>
+    </div>
+    <div class="card fade-up" style="border-style:dashed;background:transparent">
+      <span class="tag" style="align-self:flex-start"><%= en ? 'Coming soon' : 'In arrivo' %></span>
+      <span class="card-title" style="margin-top:10px;color:var(--color-neutral-500)"><%= en ? 'Next tool' : 'Prossimo strumento' %></span>
+      <p class="card-body"><%= ct('strumenti.more_note') %></p>
+    </div>
+  </div>
+</section>
+
+<section class="sect band-light sect-slim">
+  <div class="container strip fade-up">
+    <div style="max-width:640px">
+      <h3 style="font-size:22px;margin:0 0 6px"><%= en ? 'Are you an installer?' : 'Sei un installatore?' %></h3>
+      <p style="margin:0;font-size:15px"><%= en ? 'Register to get documents, trade prices and new tools first.' : 'Registrati per avere documenti, prezzi riservati e i nuovi strumenti in anteprima.' %></p>
+    </div>
+    <a class="btn btn-primary" href="<%= lp('/area-installatori') %>"><%= en ? 'Register' : 'Registrati' %></a>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

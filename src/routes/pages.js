@@ -131,15 +131,26 @@ router.get('/faq', (req, res) => {
   });
 });
 
-router.get('/strumenti', (req, res) => wip(req, res, {
-  title: t(req, 'Strumenti HVAC · Convation', 'HVAC tools · Convation'),
-  name: t(req, 'Strumenti HVAC', 'HVAC tools'),
-}));
+router.get('/strumenti', (req, res) => {
+  res.render('strumenti', {
+    title: t(req, 'Strumenti HVAC · Convation', 'HVAC tools · Convation'),
+    active: '',
+    metaDesc: t(req,
+      'Strumenti di calcolo per climatizzazione e pompe di calore: dimensionamento, conversioni e verifiche rapide per installatori.',
+      'HVAC calculation tools: sizing, conversions and quick checks for installers.'),
+  });
+});
 
-router.get('/assistenza', (req, res) => wip(req, res, {
-  title: t(req, 'Assistenza e garanzia · Convation', 'Support and warranty · Convation'),
-  active: 'assistenza', name: t(req, 'Assistenza', 'Support'),
-}));
+router.get('/assistenza', (req, res) => {
+  res.render('assistenza', {
+    title: t(req, 'Assistenza e garanzia · Convation', 'Support and warranty · Convation'),
+    active: 'assistenza',
+    channels: supportChannels(req),
+    metaDesc: t(req,
+      'Garanzia, manutenzione programmata e riparazioni per climatizzatori e pompe di calore: segnala un guasto e ti richiamiamo entro 24 ore lavorative.',
+      'Warranty, scheduled maintenance and repairs for air conditioners and heat pumps: report a fault and we call back within 24 working hours.'),
+  });
+});
 
 router.get('/detrazioni-e-incentivi', (req, res) => wip(req, res, {
   title: t(req, 'Detrazioni e incentivi per climatizzazione · Convation', 'Tax incentives for HVAC · Convation'),

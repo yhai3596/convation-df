@@ -242,6 +242,41 @@ const REGISTRY = [
   ...bi('consulenza.human_pending', '咨询页', '人工通道未配置提示', TA,
     'I canali diretti (telefono, email, WhatsApp) si stanno attivando e compariranno qui. Nel frattempo lascia un messaggio: rispondiamo entro 24 ore lavorative.',
     'Direct channels (phone, email, WhatsApp) are being activated and will appear here. In the meantime leave a message: we reply within 24 working hours.'),
+
+  // —— Strumenti ——
+  ...bi('strumenti.intro_title', '工具页', '页首标题', T,
+    'Strumenti di calcolo per chi lavora nell\'HVAC',
+    'Calculation tools for HVAC professionals'),
+  ...bi('strumenti.intro_body', '工具页', '页首介绍', TA,
+    'Strumenti pratici per dimensionare, convertire e verificare: nati per i nostri tecnici, aperti a tutti gli installatori. La cassetta degli attrezzi cresce nel tempo.',
+    'Practical tools to size, convert and check: built for our technicians, open to every installer. The toolbox grows over time.'),
+  ...bi('strumenti.tool1_title', '工具页', '工具1 · 标题', T, 'HVAC Toolbox', 'HVAC Toolbox'),
+  ...bi('strumenti.tool1_body', '工具页', '工具1 · 介绍', TA,
+    'Calcolatori per climatizzazione e pompe di calore: potenze, portate, conversioni e verifiche rapide da cantiere.',
+    'Calculators for air conditioning and heat pumps: capacities, flow rates, conversions and quick on-site checks.'),
+  ...bi('strumenti.more_note', '工具页', '更多工具占位', TA,
+    'Altri strumenti sono in lavorazione e verranno pubblicati qui.',
+    'More tools are in the works and will be published here.'),
+
+  // —— Assistenza ——
+  ...bi('assistenza.intro_title', '售后页', '页首标题', T,
+    'L\'assistenza che risponde davvero',
+    'Support that actually answers'),
+  ...bi('assistenza.intro_body', '售后页', '页首介绍', TA,
+    'Garanzia, manutenzione programmata e riparazioni: un canale diretto con chi ha installato il tuo impianto, anche fuori garanzia e anche su impianti non nostri.',
+    'Warranty, scheduled maintenance and repairs: a direct channel to the people who installed your system — out of warranty too, and on systems we did not install.'),
+  ...bi('assistenza.p1_title', '售后页', '支柱1 · 标题', T, 'Garanzia', 'Warranty'),
+  ...bi('assistenza.p1_body', '售后页', '支柱1 · 介绍', TA,
+    'Garanzia del produttore sui componenti più la nostra sull\'installazione, con condizioni scritte nel preventivo.',
+    'Manufacturer\'s warranty on components plus ours on the installation, with terms written into the quote.'),
+  ...bi('assistenza.p2_title', '售后页', '支柱2 · 标题', T, 'Manutenzione programmata', 'Scheduled maintenance'),
+  ...bi('assistenza.p2_body', '售后页', '支柱2 · 介绍', TA,
+    'Controlli periodici, pulizia di filtri e scambiatori, verifica del gas: l\'impianto consuma meno e dura di più.',
+    'Periodic checks, filter and coil cleaning, refrigerant checks: the system uses less energy and lasts longer.'),
+  ...bi('assistenza.p3_title', '售后页', '支柱3 · 标题', T, 'Riparazioni', 'Repairs'),
+  ...bi('assistenza.p3_body', '售后页', '支柱3 · 介绍', TA,
+    'Diagnosi sul posto, ricambi originali e tempi dichiarati. Se il guasto è banale, te lo diciamo: niente interventi inutili.',
+    'On-site diagnosis, original spare parts and stated lead times. If the fault is trivial, we tell you: no pointless interventions.'),
 ];
 
 module.exports = { REGISTRY };

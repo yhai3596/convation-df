@@ -41,7 +41,7 @@
 ### Phase 4: SEO/GEO
 - [x] T4.1 SEO 页级标记：13 页 title/metaDesc 双语已在 P3 逐页落地（本轮复核）；head.ejs 新增 SEO 块（canonical + og:site_name/title/description/type/url/locale，typeof 守卫、admin 渲染不受影响）；JSON-LD 三处新增——首页 HVACBusiness（areaServed=Italy，地址/电话留 T5.3 素材到位再补，不编造）、Prodotti ItemList/Product（不挂 offer 不编价格）、文章页 Article（headline/datePublished/inLanguage/Organization 署名，ogType=article）；FAQ 页 FAQPage 已有（T2.x）。i18n.js 新增 siteBase（SITE_BASE 环境变量可覆盖）+ canonicalPath（自动去查询串）
 - [x] T4.2 hreflang/sitemap/robots/llms.txt：head 每页输出 it/en/x-default 三连（x-default→意语版）；文章页特殊处理——canonical 归属文章语言路径（跨前缀访问不漂移，实证 /en/notizie/it-slug 仍指 /notizie/…）+ 无翻译对应故 noHreflang；src/routes/seo.js 三出口——sitemap.xml（13 静态页×双语各 26 条含 xhtml:link hreflang 对 + 已发布文章按所属语言单列带 lastmod；privacy/cookie 占位页不入图）、robots.txt（Disallow /admin /login /api/ + Sitemap 行）、llms.txt（llmstxt 惯例：公司简介+9 页导引+给 AI 代理的注意事项——价格税率不公开、引导 Contatti）。验证=脚本 19/19（直插文章行→各出口全出现→点删清场）；启动日志 Alan 残留顺手改 Convation
-- [ ] T4.3 CMP 横幅（原生极简三键：拒绝/接受/偏好，意/英双语）
+- [x] T4.3 CMP 横幅：views/partials/cookie-banner.ejs（原生三键 Rifiuta/Preferenze/Accetta 随 locale 双语、偏好面板两行=必要 always-on + 匿名统计 checkbox、存 localStorage cv-consent、页脚新增「Preferenze cookie」入口随时改主意）挂 tail.ejs（admin 不含 tail 不受扰）；analytics.js 重写为同意闸门——未表态/拒绝=零 sid 零请求，同意即刻补发当页 pageview（cv-consent-changed 事件），撤回删 cv-sid+旧 alan-sid；管辖范围只有首方匿名统计（会话 cookie 属技术必要不需同意，站内无广告画像）。验证=内置浏览器全链路：首访横幅意语三键+零存储→无 /api/track 请求→Accetta 后 consent/sid 落库+网络 204+DB 16→17→带同意刷新再+1（合法）→横幅静默+页脚重开偏好+撤回 sid 即删→EN 版英文文案+Reject 后 /en、/prodotti 零新增（DB 停 18）→控制台零报错
 
 ### Phase 5: 走查（⛔ 门禁二）
 - [ ] T5.1 本地起服 → 内置浏览器双端截图对照 DESIGN.md，列 5 个具体问题

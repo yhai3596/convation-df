@@ -6,14 +6,14 @@ const F = isEnF ? {
   links2: [['/chi-siamo', 'About us'], ['/referenze', 'Projects'], ['/notizie', 'News'], ['/faq', 'FAQ']],
   links3: [['/prodotti', 'Products'], ['/documentazione', 'Technical documents'], ['/strumenti', 'HVAC tools'], ['/assistenza', 'Support & warranty'], ['/detrazioni-e-incentivi', 'Tax incentives']],
   links4: [['/contatti', 'Contact us'], ['/consulenza', 'Ask our AI assistant'], ['/area-installatori', 'Installer area']],
-  privacy: 'Privacy policy', cookies: 'Cookie policy',
+  privacy: 'Privacy policy', cookies: 'Cookie policy', cookiePrefs: 'Cookie preferences',
 } : {
   tagline: 'Vendita, installazione e assistenza di climatizzatori e pompe di calore per la casa e per l\'impresa, in tutta Italia.',
   col2: 'Azienda', col3: 'Prodotti e servizi', col4: 'Contatti',
   links2: [['/chi-siamo', 'Chi siamo'], ['/referenze', 'Referenze'], ['/notizie', 'Notizie'], ['/faq', 'Domande frequenti']],
   links3: [['/prodotti', 'Prodotti'], ['/documentazione', 'Documentazione tecnica'], ['/strumenti', 'Strumenti HVAC'], ['/assistenza', 'Assistenza e garanzia'], ['/detrazioni-e-incentivi', 'Detrazioni e incentivi']],
   links4: [['/contatti', 'Contattaci'], ['/consulenza', 'Chiedi all\'assistente AI'], ['/area-installatori', 'Area installatori']],
-  privacy: 'Privacy policy', cookies: 'Cookie policy',
+  privacy: 'Privacy policy', cookies: 'Cookie policy', cookiePrefs: 'Preferenze cookie',
 };
 %>
 <footer class="footer band-dark">
@@ -39,7 +39,7 @@ const F = isEnF ? {
     <div class="footer-legal">
       <span>© <%= new Date().getFullYear() %> Convation S.r.l. — <%= isEnF ? 'All rights reserved' : 'Tutti i diritti riservati' %></span>
       <span>Sede legale: [da completare] · P.IVA: [da completare] · PEC: [da completare] · REA: [da completare]</span>
-      <span class="footer-legal-links"><a href="<%= lp('/privacy') %>"><%= F.privacy %></a> · <a href="<%= lp('/cookie') %>"><%= F.cookies %></a> · <a href="/admin" rel="nofollow">Admin</a></span>
+      <span class="footer-legal-links"><a href="<%= lp('/privacy') %>"><%= F.privacy %></a> · <a href="<%= lp('/cookie') %>"><%= F.cookies %></a> · <a href="#" data-cookie-prefs><%= F.cookiePrefs %></a> · <a href="/admin" rel="nofollow">Admin</a></span>
     </div>
   </div>
 </footer>

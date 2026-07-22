@@ -1,19 +1,28 @@
 // 前端埋点：pageview / data-track 点击 / 文章完读
+// 同意闸门（CMP T4.3）：localStorage cv-consent.analytics=true 才建 sid、才发包；
+// 拒绝或未表态 = 零存储零请求；同意事件（cv-consent-changed）到达即启动并补发当页 pageview。
 (function () {
+  function allowed() {
+    try { var c = JSON.parse(localStorage.getItem('cv-consent') || 'null'); return !!(c && c.analytics); } catch (e) { return false; }
+  }
   function makeSid() {
     try {
-      var s = localStorage.getItem('alan-sid');
+      var s = localStorage.getItem('cv-sid');
       if (!s) {
         s = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()).slice(2) + '-' + Date.now();
-        localStorage.setItem('alan-sid', s);
+        localStorage.setItem('cv-sid', s);
       }
       return s;
     } catch (e) { return 'anon'; }
   }
-  var SID = makeSid();
+
+  var api = { sid: '', send: send };
+  window.AlanTrack = api; // 站内脚本沿用此全局名（login/assistant/表单读 .sid，带空值守卫）
 
   function send(type, extra) {
-    var payload = { sid: SID, type: type, path: location.pathname, ref: document.referrer || '' };
+    if (!allowed()) return;
+    if (!api.sid) api.sid = makeSid();
+    var payload = { sid: api.sid, type: type, path: location.pathname, ref: document.referrer || '' };
     if (extra) for (var k in extra) payload[k] = extra[k];
     var body = JSON.stringify(payload);
     try {
@@ -24,9 +33,14 @@
       }
     } catch (e) { /* 忽略埋点失败 */ }
   }
-  window.AlanTrack = { send: send, sid: SID };
 
-  send('pageview');
+  var pvSent = false;
+  function pageview() { if (!pvSent && allowed()) { pvSent = true; send('pageview'); } }
+  pageview();
+  window.addEventListener('cv-consent-changed', function () {
+    if (!allowed()) { api.sid = ''; return; } // 撤回：丢弃会话标识（cv-sid 已由横幅删除）
+    pageview();
+  });
 
   document.addEventListener('click', function (e) {
     var el = e.target.closest ? e.target.closest('[data-track]') : null;

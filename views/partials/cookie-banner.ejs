@@ -1,0 +1,79 @@
+<%
+// CMP 横幅（T4.3）：原生极简三键——拒绝 / 偏好 / 接受，意/英随 locale。
+// 只管一件事：匿名使用统计（首方，无广告画像）。技术必要 cookie（会话）不需同意。
+// 存储 localStorage cv-consent = {v:1, analytics:bool, ts}；analytics.js 读它决定是否埋点。
+const CB = locale === 'en' ? {
+  title: 'Cookies at Convation',
+  text: 'We use necessary technical cookies and — only with your consent — anonymous usage statistics. No advertising profiling.',
+  policy: 'Cookie policy', reject: 'Reject', prefs: 'Preferences', accept: 'Accept',
+  necessary: 'Necessary', always: 'Always on', necessaryDesc: 'Session and security. Required for the site to work.',
+  stats: 'Anonymous statistics', statsDesc: 'Help us understand which pages are useful. First-party only.',
+  save: 'Save preferences',
+} : {
+  title: 'Cookie su Convation',
+  text: 'Usiamo cookie tecnici necessari e — solo con il tuo consenso — statistiche anonime di utilizzo. Nessuna profilazione pubblicitaria.',
+  policy: 'Cookie policy', reject: 'Rifiuta', prefs: 'Preferenze', accept: 'Accetta',
+  necessary: 'Necessari', always: 'Sempre attivi', necessaryDesc: 'Sessione e sicurezza. Indispensabili per il funzionamento del sito.',
+  stats: 'Statistiche anonime', statsDesc: 'Ci aiutano a capire quali pagine sono utili. Solo prima parte.',
+  save: 'Salva preferenze',
+};
+%>
+<div id="cookie-banner" hidden role="dialog" aria-modal="false" aria-label="<%= CB.title %>"
+  style="position:fixed;left:16px;right:16px;bottom:16px;z-index:80;max-width:420px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:8px;box-shadow:0 12px 40px rgba(31,41,51,.18);padding:20px">
+  <p style="font-size:14px;font-weight:600;margin:0 0 6px"><%= CB.title %></p>
+  <p style="font-size:13px;color:var(--color-neutral-700);line-height:1.5;margin:0"><%= CB.text %>
+    <a href="<%= lp('/cookie') %>" style="color:var(--color-primary)"><%= CB.policy %></a></p>
+
+  <div id="cookie-prefs-panel" hidden style="margin-top:14px;border-top:1px solid var(--color-divider);padding-top:12px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+      <div><span style="font-size:13px;font-weight:600"><%= CB.necessary %></span>
+        <p style="font-size:12px;color:var(--color-neutral-600);margin:2px 0 0"><%= CB.necessaryDesc %></p></div>
+      <span class="tag tag-neutral" style="flex:none"><%= CB.always %></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+      <div><span style="font-size:13px;font-weight:600"><%= CB.stats %></span>
+        <p style="font-size:12px;color:var(--color-neutral-600);margin:2px 0 0"><%= CB.statsDesc %></p></div>
+      <input type="checkbox" id="cookie-stats-toggle" style="flex:none;width:18px;height:18px;accent-color:var(--color-primary)">
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <button type="button" class="btn btn-ghost" id="cookie-reject" style="flex:1;min-width:90px"><%= CB.reject %></button>
+    <button type="button" class="btn btn-ghost" id="cookie-open-prefs" style="flex:1;min-width:90px"><%= CB.prefs %></button>
+    <button type="button" class="btn btn-primary" id="cookie-accept" style="flex:1;min-width:90px"><%= CB.accept %></button>
+    <button type="button" class="btn btn-primary" id="cookie-save" hidden style="flex:1 1 100%"><%= CB.save %></button>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = 'cv-consent';
+  var banner = document.getElementById('cookie-banner');
+  var panel = document.getElementById('cookie-prefs-panel');
+  var toggle = document.getElementById('cookie-stats-toggle');
+  var saveBtn = document.getElementById('cookie-save');
+  function read() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function write(analytics) {
+    try { localStorage.setItem(KEY, JSON.stringify({ v: 1, analytics: !!analytics, ts: Date.now() })); } catch (e) {}
+    if (!analytics) { try { localStorage.removeItem('cv-sid'); localStorage.removeItem('alan-sid'); } catch (e) {} }
+    window.dispatchEvent(new CustomEvent('cv-consent-changed'));
+    hide();
+  }
+  function show(withPrefs) {
+    var c = read();
+    toggle.checked = !!(c && c.analytics);
+    panel.hidden = !withPrefs;
+    saveBtn.hidden = !withPrefs;
+    banner.hidden = false;
+  }
+  function hide() { banner.hidden = true; }
+  document.getElementById('cookie-reject').addEventListener('click', function () { write(false); });
+  document.getElementById('cookie-accept').addEventListener('click', function () { write(true); });
+  document.getElementById('cookie-open-prefs').addEventListener('click', function () { show(true); });
+  saveBtn.addEventListener('click', function () { write(toggle.checked); });
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-cookie-prefs]') : null;
+    if (el) { e.preventDefault(); show(true); }
+  });
+  if (!read()) show(false); // 首访出横幅；已表态不再打扰（页脚可随时改）
+})();
+</script>

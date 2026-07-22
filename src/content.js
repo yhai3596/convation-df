@@ -124,4 +124,19 @@ function save(key, value) {
   else stSet.run(key, v);
 }
 
-module.exports = { REGISTRY, raw, ct, ctBr, ctImg, listForAdmin, save };
+// 本地化取值工厂：回退链 key.{locale} → key.it → key（未翻译退意语，旧键继续可用）
+function ctFor(locale) {
+  const rawL = key => {
+    let v = raw(`${key}.${locale}`);
+    if (v === '' && locale !== 'it') v = raw(`${key}.it`);
+    if (v === '') v = raw(key);
+    return v;
+  };
+  return {
+    ct: key => esc(rawL(key)),
+    ctBr: key => esc(rawL(key)).replace(/\r?\n/g, '<br>'),
+    ctImg: key => { const v = rawL(key); return /^\/(uploads|assets)\/[\w\-./]+$/.test(v) ? v : ''; },
+  };
+}
+
+module.exports = { REGISTRY, raw, ct, ctBr, ctImg, ctFor, listForAdmin, save };

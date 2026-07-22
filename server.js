@@ -81,7 +81,10 @@ app.use((req, res, next) => {
 });
 
 // —— 路由 ——
-app.use('/', require('./src/routes/pages'));
+const i18n = require('./src/i18n');
+const pagesRouter = require('./src/routes/pages');
+app.use('/en', i18n.middleware, pagesRouter); // 英语前台（/en 前缀）
+app.use('/', i18n.middleware, pagesRouter); // 意语前台（默认，无前缀）
 app.use('/api/agent', require('./src/routes/agent-api')); // 外部 Agent（Bearer 令牌）
 app.use('/api', require('./src/routes/api'));
 app.use('/', require('./src/routes/admin'));

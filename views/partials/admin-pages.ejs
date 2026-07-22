@@ -1,0 +1,43 @@
+<!-- 页面内容：全站文案键值化编辑 + 图片上传（Phase F 全套CMS） -->
+<div id="tab-pages" hidden>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <h1 style="font-weight:400;font-size:34px;margin:0">页面内容</h1>
+    <span style="font-size:12px;color:var(--color-neutral-600)">改哪条存哪条 · 清空=恢复默认 · 前台即时生效</span>
+  </div>
+
+  <%
+    // 把扁平 contentList 按分组归拢
+    const groups = [];
+    const byGroup = {};
+    for (const it of contentList) { if (!byGroup[it.group]) { byGroup[it.group] = []; groups.push(it.group); } byGroup[it.group].push(it); }
+  %>
+  <% for (const g of groups) { %>
+  <div class="card" style="padding:24px;margin-top:20px">
+    <span class="card-kicker"><%= g %></span>
+    <div style="display:flex;flex-direction:column;gap:18px;margin-top:12px">
+      <% for (const it of byGroup[g]) { %>
+      <div class="content-field" data-key="<%= it.key %>" data-type="<%= it.type %>">
+        <label style="display:block;font-size:12px;color:var(--color-neutral-600);margin-bottom:5px"><%= it.label %><% if (it.overridden) { %> <span style="color:var(--color-accent)">· 已自定义</span><% } %></label>
+        <% if (it.type === 'image') { %>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="width:88px;height:66px;border:1px solid var(--color-divider);border-radius:4px;overflow:hidden;background:var(--color-neutral-100);flex:none">
+              <% const cur = it.value || it.def; %>
+              <% if (cur) { %><img class="cf-preview" src="<%= cur %>" alt="" style="width:100%;height:100%;object-fit:cover"><% } else { %><span class="cf-preview" style="display:grid;place-items:center;height:100%;font-size:11px;color:var(--color-neutral-500)">无</span><% } %>
+            </div>
+            <input type="file" class="cf-file" accept="image/*" style="font-size:13px;max-width:220px">
+            <input type="hidden" class="cf-input" value="<%= it.value %>">
+            <button type="button" class="btn btn-ghost cf-reset" style="color:#a33d2e">恢复默认</button>
+            <span class="cf-msg" style="font-size:12px;color:var(--color-accent-700)"></span>
+          </div>
+        <% } else if (it.type === 'textarea') { %>
+          <textarea class="input cf-input" style="min-height:70px"><%= it.value || it.def %></textarea>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:6px"><button type="button" class="btn btn-secondary cf-save">保存</button><button type="button" class="btn btn-ghost cf-reset" style="color:#a33d2e">恢复默认</button><span class="cf-msg" style="font-size:12px;color:var(--color-accent-700)"></span></div>
+        <% } else { %>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input class="input cf-input" style="max-width:420px" value="<%= it.value || it.def %>"><button type="button" class="btn btn-secondary cf-save">保存</button><button type="button" class="btn btn-ghost cf-reset" style="color:#a33d2e">恢复默认</button><span class="cf-msg" style="font-size:12px;color:var(--color-accent-700)"></span></div>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>

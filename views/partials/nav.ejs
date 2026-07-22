@@ -1,0 +1,14 @@
+<nav class="nav site-nav">
+  <a href="/" class="nav-brand" style="text-decoration:none;color:inherit;display:flex;align-items:baseline;gap:10px">Alan<span style="color:var(--color-accent)">.</span><span style="font-family:'Lora','Noto Serif SC',serif;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--color-neutral-600)">HVAC × AI</span></a>
+  <% const navItems = [['首页','/'],['工具集','/tools'],['企业AI服务','/services'],['AI课程','/courses'],['案例·培训','/cases'],['AI资讯','/blog'],['关于','/about']]; %>
+  <% for (const [label, href] of navItems) { %>
+  <a href="<%= href %>"<%- active === label ? ' aria-current="page"' : '' %>><%= label %></a>
+  <% } %>
+  <% if (user) { %>
+  <span style="font-size:13px;color:var(--color-neutral-600);white-space:nowrap">你好，<%= user.name %></span>
+  <% if (user.role === 'admin') { %><a href="/admin" style="font-size:13px">后台</a><% } %>
+  <a href="#" id="nav-logout" style="font-size:13px">退出</a>
+  <% } else { %>
+  <a class="btn btn-primary" href="/login" style="text-decoration:none">登录 · Sign in</a>
+  <% } %>
+</nav>

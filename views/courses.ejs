@@ -1,0 +1,67 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section style="padding:70px 0 56px">
+    <span class="kicker">AI 课程 · The Curriculum</span>
+    <h1 style="font-weight:400;font-size:clamp(38px,4.6vw,64px);line-height:1.12;margin:0"><%- ctBr('courses.hero_title') %></h1>
+    <p style="font-size:16px;line-height:28px;max-width:56ch;margin:28px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('courses.hero_body') %></p>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:56px 0 70px">
+    <div class="grid-cards3">
+      <% for (const c of courses) { %>
+      <% const coming = c.status !== 'live'; %>
+      <div class="card" style="padding:0;gap:0;overflow:hidden<%= coming ? ';border-style:dashed' : '' %>">
+        <div style="height:150px">
+          <% if (c.cover_url) { %><img src="<%= c.cover_url %>" alt="<%= c.title %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><div class="img-slot"><span><%= coming ? '筹备中' : '课程封面 · 待上传' %></span></div><% } %>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9.2px;padding:20px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span class="card-kicker" <%- coming ? 'style="color:var(--color-neutral-500)"' : '' %>><%= c.kicker %></span>
+            <% if (c.tag) { %><span class="tag <%= c.tag === '热门' ? 'tag-accent' : 'tag-neutral' %>"><%= c.tag %></span><% } %>
+          </div>
+          <h2 style="font-weight:400;font-size:22px;line-height:1.2;margin:0<%= coming ? ';color:var(--color-neutral-700)' : '' %>"><%= c.title %></h2>
+          <p class="card-body" style="font-size:13.5px;line-height:24px"><%= c.description %></p>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:9.2px">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:24px;font-feature-settings:'tnum' 1<%= coming ? ';color:var(--color-neutral-400)' : '' %>"><%= money(c.price_cents) %></span>
+            <% if (coming) { %>
+              <button type="button" class="btn btn-secondary" data-course-notify="<%= c.id %>">预约通知</button>
+            <% } else if (!user) { %>
+              <a class="btn btn-primary" href="/login?next=/courses" style="text-decoration:none">登录购买</a>
+            <% } else { %>
+              <button type="button" class="btn btn-primary" data-course-buy="<%= c.id %>">购买课程</button>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+
+<script>
+document.addEventListener('click', function (e) {
+  var notify = e.target.closest ? e.target.closest('[data-course-notify]') : null;
+  var buy = e.target.closest ? e.target.closest('[data-course-buy]') : null;
+  var btn = notify || buy;
+  if (!btn) return;
+  fetch('/api/course-interest', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ course_id: Number(btn.getAttribute(notify ? 'data-course-notify' : 'data-course-buy')), sid: window.AlanTrack ? AlanTrack.sid : '' })
+  }).catch(function () {});
+  if (notify) {
+    alanToast('已登记，课程上线后会第一时间通知你。');
+    btn.textContent = '已预约通知';
+    btn.disabled = true;
+  } else {
+    alanToast('在线支付即将开通，已记录你的购买意向——Alan 会通过注册邮箱联系你完成报名。');
+  }
+});
+</script>
+<%- include('partials/tail') %>

@@ -1,0 +1,115 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section class="grid-hero">
+    <div>
+      <h1 style="font-weight:400;font-size:clamp(38px,4.8vw,72px);line-height:1.12;letter-spacing:-0.01em;margin:0"><%- ctBr('home.hero_title') %></h1>
+      <p style="font-size:17px;line-height:28px;max-width:56ch;margin:36px 0 0;color:color-mix(in srgb, var(--color-text) 82%, transparent)"><%- ct('home.hero_body') %></p>
+      <p style="font-size:13px;line-height:22px;letter-spacing:0.04em;margin:14px 0 0;color:var(--color-neutral-600)"><%- ct('home.hero_note_en') %></p>
+      <div style="display:flex;gap:13.8px;flex-wrap:wrap;margin-top:36px">
+        <a class="btn btn-primary" href="/diagnosis" style="text-decoration:none" data-track="cta_click" data-track-meta="hero_diagnosis">预约企业 AI 诊断</a>
+        <a class="btn btn-ghost" href="/tools" style="text-decoration:none" data-track="cta_click" data-track-meta="hero_tools">浏览工具集 →</a>
+      </div>
+    </div>
+    <figure style="margin:0;width:min(380px,100%);justify-self:end">
+      <img src="<%- ctImg('site.portrait') || '/assets/alan.png' %>" alt="Alan 演讲照片" style="width:100%;aspect-ratio:876/970;object-fit:cover;mix-blend-mode:multiply;filter:sepia(0.18) saturate(0.85) contrast(1.04);-webkit-mask-image:radial-gradient(92% 74% at 50% 38%, black 32%, rgba(0,0,0,0.6) 58%, transparent 81%);mask-image:radial-gradient(92% 74% at 50% 38%, black 32%, rgba(0,0,0,0.6) 58%, transparent 81%)">
+    </figure>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:70px 0">
+    <div class="grid-stats">
+      <% for (let i = 1; i <= 4; i++) { %>
+      <div><p style="font-family:'Cormorant Garamond','Noto Serif SC',serif;font-weight:400;font-size:clamp(36px,3.6vw,52px);line-height:56px;font-feature-settings:'tnum' 1;<%= i === 1 ? 'color:var(--color-accent);' : '' %>margin:0"><%- ct('home.stat' + i + '_value') %></p><p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 70%, transparent);margin:14px 0 0"><%- ct('home.stat' + i + '_label') %></p></div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:84px 0 70px">
+    <span class="kicker">01 — 这里有什么 · What lives here</span>
+    <div class="grid-pillars" style="margin-top:14px">
+      <% const pillarLinks = [['/tools', '进入工具集 →'], ['/services', '了解服务 →'], ['/courses', '查看课程 →']]; %>
+      <% for (let i = 1; i <= 3; i++) { %>
+      <div class="pillar">
+        <h2 style="font-weight:400;font-size:26px;line-height:28px;margin:0"><%- ct('home.pillar' + i + '_title') %></h2>
+        <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%- ct('home.pillar' + i + '_body') %></p>
+        <a href="<%= pillarLinks[i - 1][0] %>" style="display:inline-block;margin-top:20px;font-size:14px"><%= pillarLinks[i - 1][1] %></a>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section class="grid-teaser">
+    <div>
+      <span class="kicker">02 — 企业 AI 诊断 · AI Readiness</span>
+      <h2 style="font-weight:400;font-size:34px;line-height:42px;margin:0"><%- ctBr('home.teaser_title') %></h2>
+      <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;max-width:44ch;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%- ct('home.teaser_body') %></p>
+      <a class="btn btn-primary" href="/diagnosis" style="text-decoration:none;margin-top:28px" data-track="cta_click" data-track-meta="teaser_diagnosis">开始诊断 →</a>
+    </div>
+    <div class="card" style="background:var(--color-neutral-100);padding:28px">
+      <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent)">诊断报告 · 样例</span>
+      <div style="display:flex;flex-direction:column;gap:13.8px;margin-top:9.2px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider);padding-bottom:13.8px"><span style="font-size:14px">AI 成熟度评级</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--color-accent);font-feature-settings:'tnum' 1">L2 / L5</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider);padding-bottom:13.8px"><span style="font-size:14px">识别的 AI 结合点</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-feature-settings:'tnum' 1">7 处</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14px">建议推进路径</span><span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-feature-settings:'tnum' 1">3 阶段</span></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:70px 0 84px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:28px;flex-wrap:wrap">
+      <span class="kicker" style="margin-bottom:0">03 — AI 资讯 · The Journal</span>
+      <a href="/blog" style="font-size:14px">全部文章 →</a>
+    </div>
+    <div class="grid-cards3" style="margin-top:28px">
+      <% for (const p of posts) { %>
+      <a href="/article/<%= p.slug %>" class="card" style="text-decoration:none;color:inherit;padding:20px">
+        <span class="card-kicker" style="font-feature-settings:'tnum' 1"><%= fmtDate(p.published_at) %> · <%= p.category %></span>
+        <span class="card-title" style="font-size:19px"><%= p.title %></span>
+        <span class="card-body"><%= p.excerpt %></span>
+        <span class="card-meta">阅读 <%= p.read_minutes %> 分钟</span>
+      </a>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:70px 0 56px">
+    <h3 style="font-weight:400;font-size:26px;line-height:28px;margin:0"><%- ct('home.contact_title') %></h3>
+    <p style="font-size:15.5px;line-height:28px;margin:20px 0 0;max-width:58ch;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('home.contact_body') %></p>
+    <form id="home-subscribe" style="display:flex;gap:13.8px;align-items:stretch;max-width:480px;margin-top:28px">
+      <input class="input" type="email" id="home-subscribe-email" placeholder="you@example.com" aria-label="Email address" style="flex:1">
+      <button type="submit" class="btn btn-primary">联系我</button>
+    </form>
+    <p class="form-ok" id="home-subscribe-msg" style="margin-top:9px"></p>
+    <p style="font-size:13px;margin:9px 0 0;color:var(--color-neutral-600)">也可以到<a href="/about">「关于」页留言</a>，说明来意。</p>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+
+<script>
+document.getElementById('home-subscribe').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var email = document.getElementById('home-subscribe-email').value.trim();
+  var msg = document.getElementById('home-subscribe-msg');
+  fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      msg.className = res.ok ? 'form-ok' : 'form-error';
+      msg.textContent = res.ok ? '已收到，我会回复到这个邮箱。' : (res.d.error || '提交失败');
+    })
+    .catch(function () { msg.className = 'form-error'; msg.textContent = '网络异常，请稍后再试'; });
+});
+</script>
+<%- include('partials/tail') %>

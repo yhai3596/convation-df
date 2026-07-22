@@ -1,0 +1,112 @@
+<!-- Agent 自动化中心：状态/队列 + 模式开关 + LLM配置 + 令牌 + 活动日志 -->
+<div id="tab-agent" hidden>
+  <h1 style="font-weight:400;font-size:34px;margin:0">智能助理 · Agent 自动化</h1>
+
+  <!-- 状态总览 -->
+  <div class="grid-cards4" style="margin-top:24px">
+    <div class="card" style="padding:20px"><span class="card-kicker">LLM 状态</span><span style="font-size:18px;color:<%= llmEnabled ? 'var(--color-accent)' : 'var(--color-neutral-600)' %>"><%= llmEnabled ? '已连接' : '未配置' %></span><span class="card-meta"><%= llmCfgView.model %></span></div>
+    <div class="card" style="padding:20px"><span class="card-kicker">待处理评论</span><span class="tnum" style="font-family:'Cormorant Garamond',serif;font-size:30px;color:<%= queue.pending ? 'var(--color-accent)' : 'inherit' %>"><%= queue.pending %></span><span class="card-meta">已回 <%= queue.replied %> · 转人工 <%= queue.skipped %></span></div>
+    <div class="card" style="padding:20px"><span class="card-kicker">巡检心跳</span><span style="font-size:15px" class="tnum"><%= workerLastTick ? fmtDT(workerLastTick) : '等待中' %></span><span class="card-meta">间隔 <%= agentStatus.scanIntervalMin %> 分钟</span></div>
+    <div class="card" style="padding:20px"><span class="card-kicker">Agent 最近活动</span><span style="font-size:15px" class="tnum"><%= agentStatus.lastActive ? fmtDT(agentStatus.lastActive) : '暂无' %></span><span class="card-meta"><%= tokens.filter(t => !t.revoked).length %> 个有效令牌</span></div>
+  </div>
+
+  <!-- 模式开关 -->
+  <div class="card" style="padding:24px;margin-top:20px">
+    <span class="card-kicker">自动化策略</span>
+    <div style="display:flex;flex-direction:column;margin-top:10px">
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) auto;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--color-divider)">
+        <span style="font-size:14px">评论自动回复</span>
+        <span style="font-size:13px;color:var(--color-neutral-600)">常见问题即时回帖并标注，其余转人工。关闭期间的评论会在开启后自动补处理</span>
+        <button type="button" class="tag <%= agentStatus.autoreply ? 'tag-accent' : 'tag-neutral' %>" data-mode-toggle="autoreply" data-on="<%= agentStatus.autoreply ? '1' : '0' %>" style="cursor:pointer"><%= agentStatus.autoreply ? '已开启' : '已关闭' %></button>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) auto;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--color-divider)">
+        <span style="font-size:14px">内容审核制</span>
+        <span style="font-size:13px;color:var(--color-neutral-600)">开启时 Agent/AI 生成的文章一律先入草稿，你审核后一键发布（推荐）</span>
+        <button type="button" class="tag <%= agentStatus.contentReview ? 'tag-accent' : 'tag-neutral' %>" data-mode-toggle="contentReview" data-on="<%= agentStatus.contentReview ? '1' : '0' %>" style="cursor:pointer"><%= agentStatus.contentReview ? '审核制' : '直接发布' %></button>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) auto;gap:16px;align-items:center;padding:14px 0">
+        <span style="font-size:14px">巡检间隔</span>
+        <span style="font-size:13px;color:var(--color-neutral-600)">站内 Worker 每隔多少分钟扫一次待处理评论（1–120）</span>
+        <div style="display:flex;gap:8px;align-items:center"><input class="input" id="scan-interval" type="number" min="1" max="120" value="<%= agentStatus.scanIntervalMin %>" style="width:80px"><button type="button" class="btn btn-secondary" id="scan-save">保存</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LLM 配置（多 provider + 故障切换）-->
+  <div class="card" style="padding:24px;margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="card-kicker">LLM 配置 · 多路故障切换</span><span style="font-size:12px;color:var(--color-neutral-600)">按顺序尝试，失败自动切下一个 · Key 只存服务端脱敏回显</span></div>
+
+    <table class="table" style="margin-top:12px" id="llm-table">
+      <thead><tr><th style="width:40px">优先</th><th>名称</th><th>模型</th><th>Base</th><th>Key</th><th>启用</th><th style="text-align:right">操作</th></tr></thead>
+      <tbody id="llm-rows">
+        <% llmProviders.forEach(function (p, i) { %>
+        <tr data-llm-id="<%= p.id %>">
+          <td class="tnum"><%= i + 1 %></td>
+          <td><%= p.name %></td>
+          <td class="tnum"><%= p.model %></td>
+          <td style="max-width:200px;white-space:normal;font-size:12px;color:var(--color-neutral-600)"><%= p.base %></td>
+          <td class="tnum"><%= p.keyMasked %></td>
+          <td><button type="button" class="tag <%= p.enabled ? 'tag-accent' : 'tag-neutral' %>" data-llm-toggle="<%= p.id %>" data-on="<%= p.enabled ? '1' : '0' %>" style="cursor:pointer"><%= p.enabled ? '启用' : '停用' %></button></td>
+          <td style="text-align:right;white-space:nowrap">
+            <button type="button" class="btn btn-ghost" data-llm-up="<%= p.id %>" title="上移">↑</button>
+            <button type="button" class="btn btn-ghost" data-llm-down="<%= p.id %>" title="下移">↓</button>
+            <button type="button" class="btn btn-ghost" data-llm-test="<%= p.id %>">测试</button>
+            <button type="button" class="btn btn-ghost" data-llm-del="<%= p.id %>" data-name="<%= p.name %>" style="color:#a33d2e">删除</button>
+          </td>
+        </tr>
+        <% }); %>
+        <% if (!llmProviders.length) { %><tr><td colspan="7" style="color:var(--color-neutral-600);font-size:13px">还没有配置 LLM。下方添加第一个（未配置时诊断/助手/回复走内置模板，功能正常）。</td></tr><% } %>
+      </tbody>
+    </table>
+    <p class="form-ok" id="llm-test-msg" style="min-height:auto;margin-top:8px"></p>
+
+    <div style="border-top:1px solid var(--color-divider);margin-top:16px;padding-top:16px">
+      <span class="card-kicker">添加 LLM</span>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;max-width:600px">
+        <div class="grid-form2">
+          <div class="field"><label>名称（如 智谱GLM / Z.AI 备用）</label><input class="input" id="llm-new-name" placeholder="智谱GLM"></div>
+          <div class="field"><label>模型</label><input class="input" id="llm-new-model" placeholder="glm-4.6 / glm-4.5-flash"></div>
+        </div>
+        <div class="field"><label>Base URL</label><input class="input" id="llm-new-base" placeholder="https://open.bigmodel.cn/api/anthropic 或 .../api/paas/v4"></div>
+        <div class="field"><label>API Key</label><input class="input" id="llm-new-key" type="password" placeholder="粘贴 key"></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-secondary" id="llm-new-test">先测试</button><button type="button" class="btn btn-primary" id="llm-new-add">添加</button><span class="form-ok" id="llm-new-msg" style="min-height:auto"></span></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--color-neutral-600);margin-top:12px">端点自动识别：含 <code>anthropic</code> 走 Anthropic 格式，否则 OpenAI 格式。配好后诊断报告/助手/评论回复/AI草稿都升级为 LLM，任一路失败自动切下一路，全失败回退内置模板/FAQ。</p>
+  </div>
+
+  <!-- API 令牌 -->
+  <div class="card" style="padding:24px;margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="card-kicker">API 令牌 · 外部 Agent（小龙虾 / Hermes CLI）接入</span><a href="/docs/agent-api" target="_blank" style="font-size:12px">接口文档 →</a></div>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><input class="input" id="token-name" placeholder="令牌名称（如 小龙虾）" style="max-width:240px"><button type="button" class="btn btn-primary" id="token-create">生成令牌</button></div>
+    <div id="token-new" hidden style="margin-top:12px;padding:14px;border:1px solid var(--color-accent);border-radius:4px;background:var(--color-accent-100)"><p style="font-size:12px;margin:0 0 6px;color:var(--color-accent-800)">令牌只显示这一次，请立即复制保存：</p><code id="token-value" style="font-size:13px;word-break:break-all"></code></div>
+    <table class="table" style="margin-top:14px">
+      <thead><tr><th>名称</th><th>状态</th><th>最近使用</th><th>创建</th><th style="text-align:right">操作</th></tr></thead>
+      <tbody id="token-rows">
+        <% for (const t of tokens) { %>
+        <tr><td><%= t.name %></td><td><span class="tag <%= t.revoked ? 'tag-neutral' : 'tag-accent' %>"><%= t.revoked ? '已吊销' : '有效' %></span></td><td class="tnum"><%= t.last_used_at ? fmtDT(t.last_used_at) : '未使用' %></td><td class="tnum"><%= fmtDate(t.created_at) %></td><td style="text-align:right"><% if (!t.revoked) { %><button type="button" class="btn btn-ghost" data-token-revoke="<%= t.id %>" style="color:#a33d2e">吊销</button><% } %></td></tr>
+        <% } %>
+        <% if (!tokens.length) { %><tr><td colspan="5" style="color:var(--color-neutral-600);font-size:13px">还没有令牌。生成后可让外部 Agent 用 Bearer 令牌调用 /api/agent/*。</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 活动日志 -->
+  <div class="card" style="padding:24px;margin-top:20px">
+    <span class="card-kicker">自动化活动日志 · 最近 30 条</span>
+    <% if (!activity.length) { %>
+    <p style="font-size:13px;color:var(--color-neutral-600);margin:12px 0 0">暂无活动记录。</p>
+    <% } else { %>
+    <table class="table" style="margin-top:12px">
+      <thead><tr><th>时间</th><th>来源</th><th>动作</th><th>对象</th><th>详情</th></tr></thead>
+      <tbody>
+        <% for (const a of activity) { %>
+        <tr><td class="tnum"><%= fmtDT(a.created_at) %></td><td><%= a.actor %></td><td><span style="color:<%= a.ok ? 'inherit' : '#a33d2e' %>"><%= a.action %></span></td><td class="tnum"><%= a.target || '—' %></td><td style="max-width:260px;white-space:normal;font-size:12px;color:var(--color-neutral-700)"><%= a.detail %></td></tr>
+        <% } %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+
+  <%- include('admin-kb') %>
+</div>

@@ -1,0 +1,32 @@
+{
+  "name": "convation-website",
+  "version": "0.1.0",
+  "description": "Convation 官网（www.convation.it）— 意/英双语暖通站点 + 管理后台 + Agent API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "set SEED_DEMO=1&& node server.js",
+    "postinstall": "node scripts/copy-fonts.js",
+    "smoke": "node scripts/smoke.js",
+    "backup": "node scripts/backup-db.js",
+    "pull-backups": "node scripts/pull-backups.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "^5.2.5",
+    "@fontsource/inter": "^5.2.5",
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.2.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "marked": "^15.0.12",
+    "multer": "^2.2.0",
+    "nodemailer": "^7.0.4"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
+

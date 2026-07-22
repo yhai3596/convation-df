@@ -1,0 +1,7 @@
+node_modules/
+data/
+.env
+public/vendor/
+public/uploads/
+*.log
+package - 副本.json

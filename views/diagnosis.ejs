@@ -1,0 +1,75 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container-narrow">
+
+  <header style="padding:56px 0 28px">
+    <a href="/services" style="font-size:13px">← 返回企业 AI 服务</a>
+    <h1 style="font-weight:400;font-size:clamp(32px,4vw,48px);line-height:1.15;margin:28px 0 0">企业 AI 诊断</h1>
+    <p style="font-size:15px;line-height:26px;margin:14px 0 0;color:color-mix(in srgb, var(--color-text) 74%, transparent)"><%- ct('diagnosis.note') %><%= mailerOn ? '并发送至您的邮箱' : '，Alan 审核后回访解读' %></p>
+  </header>
+
+  <div style="display:flex;align-items:center;gap:13.8px;padding-bottom:28px">
+    <span id="diag-step-label" style="font-size:12px;color:var(--color-neutral-600);font-feature-settings:'tnum' 1;white-space:nowrap">1 / 6</span>
+    <div style="flex:1;height:2px;background:var(--color-divider)"><div id="diag-progress" style="height:100%;background:var(--color-accent);width:17%"></div></div>
+  </div>
+
+  <section class="card" id="diag-quiz" style="padding:36px">
+    <span id="diag-kicker" style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)"></span>
+    <h2 id="diag-title" style="font-weight:400;font-size:26px;line-height:1.25;margin:9.2px 0 0"></h2>
+    <div id="diag-options" style="display:flex;flex-direction:column;gap:9.2px;margin-top:28px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:36px">
+      <button type="button" class="btn btn-ghost" id="diag-back">← 上一题</button>
+      <button type="button" class="btn btn-primary" id="diag-next" disabled>下一题 →</button>
+    </div>
+  </section>
+
+  <section class="card" id="diag-email" hidden style="padding:36px">
+    <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">最后一步</span>
+    <h2 style="font-weight:400;font-size:26px;line-height:1.25;margin:9.2px 0 0">诊断报告发送到哪里？</h2>
+    <div class="grid-form2" style="margin-top:28px">
+      <div class="field"><label>企业名称</label><input class="input" type="text" id="diag-company" placeholder="公司名称"></div>
+      <div class="field"><label>工作邮箱</label><input class="input" type="email" id="diag-email-input" placeholder="you@company.com"></div>
+    </div>
+    <p class="form-error" id="diag-error" style="margin-top:9px"></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px">
+      <button type="button" class="btn btn-ghost" id="diag-back-email">← 上一题</button>
+      <button type="button" class="btn btn-primary" id="diag-submit">生成诊断报告 →</button>
+    </div>
+  </section>
+
+  <section class="card" id="diag-done" hidden style="padding:36px">
+    <span class="tag tag-accent">报告已生成 · 在线预览</span>
+    <h2 id="diag-done-company" style="font-weight:400;font-size:30px;line-height:1.2;margin:20px 0 0"></h2>
+    <p id="diag-done-sub" style="font-size:13px;color:var(--color-neutral-600);margin:9.2px 0 0"></p>
+    <div class="grid-cards3" style="gap:20px;margin-top:28px">
+      <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:20px"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600)">AI 成熟度</span><p id="diag-level" style="font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--color-accent);font-feature-settings:'tnum' 1;margin:9px 0 0"></p></div>
+      <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:20px"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600)">AI 结合点</span><p id="diag-spots" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-feature-settings:'tnum' 1;margin:9px 0 0"></p></div>
+      <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:20px"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600)">推进路径</span><p style="font-family:'Cormorant Garamond',serif;font-size:36px;font-feature-settings:'tnum' 1;margin:9px 0 0">3 阶段</p></div>
+    </div>
+    <div style="margin-top:28px;padding:20px;border-left:2px solid var(--color-accent);background:var(--color-neutral-100)">
+      <p id="diag-summary" style="font-size:14.5px;line-height:26px;margin:0;color:color-mix(in srgb, var(--color-text) 82%, transparent)"></p>
+    </div>
+    <div style="margin-top:28px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">AI 结合点清单</span>
+      <div id="diag-spots-list" style="margin-top:9px"></div>
+    </div>
+    <div style="margin-top:28px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">三阶段推进路径</span>
+      <div id="diag-stages" style="margin-top:6px"></div>
+    </div>
+    <div style="display:flex;gap:13.8px;margin-top:28px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="/about" style="text-decoration:none">预约一对一解读 →</a>
+      <button type="button" class="btn btn-ghost" id="diag-restart">重新填写</button>
+    </div>
+  </section>
+
+  <footer class="site-footer" style="margin-top:42px">
+    <span>© 2026 Alan · HVAC × AI</span>
+    <span style="display:flex;gap:20px"><a href="/about" style="color:inherit">联系方式</a><a href="/admin" style="color:inherit">管理后台</a></span>
+  </footer>
+</div>
+
+<script type="application/json" id="diagnosis-data"><%- JSON.stringify(questions) %></script>
+<script src="/js/diagnosis.js?v=<%= assetVer %>" defer></script>
+<%- include('partials/tail') %>

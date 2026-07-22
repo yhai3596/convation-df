@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section style="padding:70px 0 56px">
+    <span class="kicker">企业 AI 服务 · Enterprise AI</span>
+    <h1 style="font-weight:400;font-size:clamp(38px,4.6vw,64px);line-height:1.12;margin:0"><%- ctBr('services.hero_title') %></h1>
+    <p style="font-size:16px;line-height:28px;max-width:56ch;margin:28px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('services.hero_body') %></p>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:56px 0 42px">
+    <span class="kicker" style="margin-bottom:28px">AI 诊断 · 三步</span>
+    <div class="grid-pillars">
+      <% for (let i = 1; i <= 3; i++) { %>
+      <div class="pillar">
+        <p style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:44px;line-height:1;color:var(--color-accent);font-feature-settings:'tnum' 1;margin:0"><%= i %></p>
+        <h2 style="font-weight:400;font-size:24px;line-height:28px;margin:20px 0 0"><%- ct('services.step' + i + '_title') %></h2>
+        <p style="font-size:14.5px;line-height:26px;margin:14px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%- ct('services.step' + i + '_body') %></p>
+      </div>
+      <% } %>
+    </div>
+    <div style="display:flex;gap:13.8px;margin-top:42px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="/diagnosis" style="text-decoration:none" data-track="cta_click" data-track-meta="services_diagnosis">开始 AI 诊断问卷 →</a>
+      <a class="btn btn-ghost" href="/about" style="text-decoration:none">直接联系我</a>
+    </div>
+  </section>
+
+  <hr class="hairline" style="margin-top:42px">
+
+  <section style="padding:56px 0 70px">
+    <span class="kicker" style="margin-bottom:28px">服务内容 · Services</span>
+    <div style="display:flex;flex-direction:column">
+      <% const svcTags = [['tag-accent', '免费'], ['tag-outline', '按项目'], ['tag-outline', '按场次']]; %>
+      <% for (let i = 1; i <= 3; i++) { %>
+      <div class="row-service">
+        <h3 style="font-weight:400;font-size:22px;margin:0"><%- ct('services.svc' + i + '_title') %></h3>
+        <p style="font-size:14.5px;line-height:26px;margin:0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('services.svc' + i + '_desc') %></p>
+        <span class="tag <%= svcTags[i - 1][0] %>"><%= svcTags[i - 1][1] %></span>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+<%- include('partials/tail') %>

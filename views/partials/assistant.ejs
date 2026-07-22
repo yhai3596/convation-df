@@ -1,0 +1,36 @@
+<!-- 智能客户助手（全站悬浮，人工可接管） -->
+<div id="assistant-root" style="position:fixed;right:24px;bottom:24px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:13.8px;font-family:'Lora','Noto Serif SC',serif">
+  <div id="assistant-panel" class="elev-lg" hidden style="width:min(340px,calc(100vw - 48px));display:flex;flex-direction:column;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:13.8px;padding:13.8px 18px;border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Cormorant Garamond','Noto Serif SC',serif;font-weight:600;font-size:16px">智能客户助手</span>
+        <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600)">AI Concierge · 人工可接管</span>
+      </div>
+      <button type="button" id="assistant-close" class="btn btn-icon btn-secondary" aria-label="关闭">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div id="assistant-msgs" style="display:flex;flex-direction:column;gap:13.8px;padding:18px;max-height:280px;overflow-y:auto"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:9.2px;padding:0 18px 13.8px">
+      <button type="button" class="tag tag-outline" data-quick="预约 AI 诊断" style="cursor:pointer;background:transparent">预约 AI 诊断</button>
+      <button type="button" class="tag tag-outline" data-quick="工具怎么用" style="cursor:pointer;background:transparent">工具怎么用</button>
+      <button type="button" class="tag tag-outline" data-quick="课程咨询" style="cursor:pointer;background:transparent">课程咨询</button>
+    </div>
+    <div style="padding:0 18px 13.8px">
+      <span style="display:block;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:8px">系统设置 · 配色</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <button type="button" class="tag tag-outline" data-theme-opt="鎏金纸本" style="cursor:pointer;background:transparent">鎏金纸本</button>
+        <button type="button" class="tag tag-outline" data-theme-opt="黛青石墨" style="cursor:pointer;background:transparent">黛青石墨</button>
+        <button type="button" class="tag tag-outline" data-theme-opt="赭墨陶土" style="cursor:pointer;background:transparent">赭墨陶土</button>
+        <button type="button" class="tag tag-outline" data-theme-opt="极简银白 · Apple风" style="cursor:pointer;background:transparent">极简银白</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:9.2px;padding:13.8px 18px;border-top:1px solid var(--color-divider)">
+      <input class="input" id="assistant-input" type="text" placeholder="输入你的问题……" style="flex:1">
+      <button type="button" id="assistant-send" class="btn btn-primary">发送</button>
+    </div>
+  </div>
+  <button type="button" id="assistant-fab" class="elev-md" aria-label="打开智能客户助手" style="width:54px;height:54px;border-radius:50%;cursor:pointer;display:grid;place-items:center;background:var(--color-bg);border:1px solid var(--color-accent);color:var(--color-accent)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
+  </button>
+</div>

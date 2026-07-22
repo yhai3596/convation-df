@@ -1,0 +1,56 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section style="padding:70px 0 56px">
+    <span class="kicker">案例与培训 · The Record</span>
+    <h1 style="font-weight:400;font-size:clamp(38px,4.6vw,64px);line-height:1.12;margin:0"><%- ctBr('cases.hero_title') %></h1>
+    <p style="font-size:16px;line-height:28px;max-width:56ch;margin:28px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('cases.hero_body') %></p>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:56px 0">
+    <span class="kicker" style="margin-bottom:28px">01 — 企业案例 · Case Studies</span>
+    <div style="display:flex;flex-direction:column">
+      <% for (const cs of cases) { %>
+      <div class="row-case">
+        <div>
+          <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600)"><%= cs.org %></span>
+          <h2 style="font-weight:400;font-size:26px;line-height:1.2;margin:9.2px 0 0"><%= cs.title %></h2>
+        </div>
+        <p style="font-size:14.5px;line-height:26px;margin:0;color:color-mix(in srgb, var(--color-text) 74%, transparent);text-align:justify"><%= cs.description %></p>
+        <div style="text-align:right"><p style="font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1;color:var(--color-accent);font-feature-settings:'tnum' 1;margin:0"><%= cs.metric_value %></p><p style="font-size:11px;letter-spacing:0.06em;color:var(--color-neutral-600);margin:6px 0 0"><%= cs.metric_label %></p></div>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:56px 0 70px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:28px;flex-wrap:wrap;margin-bottom:28px">
+      <span class="kicker" style="margin-bottom:0">02 — 培训现场 · Training</span>
+      <a href="/services" style="font-size:14px">预约企业内训 →</a>
+    </div>
+    <div class="grid-training">
+      <% for (let i = 1; i <= 3; i++) { const img = ctImg('cases.training' + i + '_img'); %>
+      <figure class="plate" style="margin:0;background:var(--color-surface)">
+        <div style="aspect-ratio:4/3">
+          <% if (img) { %><img src="<%- img %>" alt="<%- ct('cases.training' + i + '_caption') %>" style="width:100%;height:100%;object-fit:cover"><% } else { %><div class="img-slot"><span>培训现场照片 · 待上传</span></div><% } %>
+        </div>
+        <figcaption style="padding:9px 6px 4px"><%- ct('cases.training' + i + '_caption') %></figcaption>
+      </figure>
+      <% } %>
+    </div>
+    <div class="stats-inline">
+      <% for (let i = 1; i <= 3; i++) { %>
+      <div><p style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:40px;line-height:1;font-feature-settings:'tnum' 1;<%= i === 1 ? 'color:var(--color-accent);' : '' %>margin:0"><%- ct('cases.stat' + i + '_value') %></p><p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600);margin:9px 0 0"><%- ct('cases.stat' + i + '_label') %></p></div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+<%- include('partials/tail') %>

@@ -1,0 +1,44 @@
+<!-- 诊断报告知识库编辑（Phase D）：结合点/基础评语/阶段模板/摘要模板 -->
+<div class="card" style="padding:24px;margin-top:20px" id="kb-editor">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <span class="card-kicker">诊断报告知识库 · Hermes<% if (kbOverridden) { %> <span style="color:var(--color-accent)">· 已自定义</span><% } %></span>
+    <span style="font-size:12px;color:var(--color-neutral-600)">占位符 {focus} 切入方向 · {goal} 目标 · {spots} 结合点数 · {foundation} 基础评语</span>
+  </div>
+
+  <p style="font-size:13px;color:var(--color-neutral-700);margin:12px 0 4px">四个痛点方向的 AI 结合点清单（每行一条，每组至少 5 条，报告按 5+题1+题4 条数取用）</p>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <% for (const domain of Object.keys(kb.spotLibrary)) { %>
+    <div class="field" data-kb-domain="<%= domain %>">
+      <label><%= domain %></label>
+      <textarea class="input kb-spots" style="min-height:120px"><%= kb.spotLibrary[domain].join('\n') %></textarea>
+    </div>
+    <% } %>
+  </div>
+
+  <p style="font-size:13px;color:var(--color-neutral-700);margin:18px 0 4px">基础评语（4 条，对应问卷第 1 题"数字化基础"四个选项，用作 {foundation}）</p>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <% kb.foundationNotes.forEach(function (n, i) { %>
+    <input class="input kb-foundation" data-i="<%= i %>" value="<%= n %>">
+    <% }); %>
+  </div>
+
+  <p style="font-size:13px;color:var(--color-neutral-700);margin:18px 0 4px">三阶段模板（名称 / 时间窗 / 说明，说明里可用 {focus} {goal}）</p>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <% kb.stageTemplates.forEach(function (s, i) { %>
+    <div class="kb-stage" data-i="<%= i %>" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,4fr);gap:8px">
+      <input class="input kb-stage-name" value="<%= s.name %>" placeholder="名称">
+      <input class="input kb-stage-window" value="<%= s.window %>" placeholder="时间窗">
+      <input class="input kb-stage-desc" value="<%= s.desc %>" placeholder="说明">
+    </div>
+    <% }); %>
+  </div>
+
+  <p style="font-size:13px;color:var(--color-neutral-700);margin:18px 0 4px">摘要模板（必须含 {focus}）</p>
+  <textarea class="input" id="kb-summary" style="min-height:70px"><%= kb.summaryTemplate %></textarea>
+
+  <div style="display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap">
+    <button type="button" class="btn btn-primary" id="kb-save">保存知识库</button>
+    <button type="button" class="btn btn-ghost" id="kb-reset" style="color:#a33d2e">恢复内置默认</button>
+    <span class="form-ok" id="kb-msg" style="min-height:auto"></span>
+  </div>
+</div>

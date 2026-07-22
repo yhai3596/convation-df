@@ -1,0 +1,67 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section style="padding:70px 0 42px;display:flex;align-items:baseline;justify-content:space-between;gap:28px;flex-wrap:wrap">
+    <div>
+      <span class="kicker">AI 资讯 · The Journal</span>
+      <h1 style="font-weight:400;font-size:clamp(38px,4.6vw,64px);line-height:1.12;margin:0"><%- ct('blog.hero_title') %></h1>
+    </div>
+    <div style="display:flex;gap:9.2px;flex-wrap:wrap">
+      <a href="/blog" class="tag <%= !cat ? 'tag-outline' : 'tag-neutral' %>" style="text-decoration:none">全部</a>
+      <% for (const c of cats) { %>
+      <a href="/blog?cat=<%= encodeURIComponent(c) %>" class="tag <%= cat === c ? 'tag-outline' : 'tag-neutral' %>" style="text-decoration:none"><%= c %></a>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <section class="grid-blog">
+    <div style="display:flex;flex-direction:column">
+      <% if (posts.length === 0) { %>
+      <p style="padding:42px 0;color:var(--color-neutral-600)">该分类下暂无文章。</p>
+      <% } %>
+      <% for (const p of posts) { %>
+      <a href="/article/<%= p.slug %>" style="display:block;text-decoration:none;color:inherit;padding:28px 0;border-bottom:1px solid var(--color-divider)">
+        <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700);font-feature-settings:'tnum' 1"><%= fmtDate(p.published_at) %> · <%= p.category %></span>
+        <h2 style="font-weight:400;font-size:28px;line-height:1.2;margin:9.2px 0 0"><%= p.title %></h2>
+        <p style="font-size:14.5px;line-height:26px;margin:9.2px 0 0;color:color-mix(in srgb, var(--color-text) 72%, transparent);max-width:62ch"><%= p.excerpt %></p>
+        <span style="display:inline-block;margin-top:13.8px;font-size:12px;color:var(--color-neutral-600);font-feature-settings:'tnum' 1">阅读 <%= p.read_minutes %> 分钟<% if (p.views > 0) { %> · <%= fmtNum(p.views) %> 次阅读<% } %></span>
+      </a>
+      <% } %>
+    </div>
+
+    <aside style="display:flex;flex-direction:column;gap:28px;padding-top:28px">
+      <div class="card" style="padding:20px;background:var(--color-neutral-100)">
+        <span class="card-kicker">订阅 · Subscribe</span>
+        <p style="font-size:13.5px;line-height:24px;margin:0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('blog.subscribe_note') %></p>
+        <input class="input" type="email" id="blog-subscribe-email" placeholder="you@example.com" aria-label="Email">
+        <button type="button" class="btn btn-primary btn-block" id="blog-subscribe-btn">订阅</button>
+        <p class="form-ok" id="blog-subscribe-msg" style="min-height:0"></p>
+      </div>
+      <div>
+        <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600)">写作方式</span>
+        <p style="font-size:13.5px;line-height:24px;margin:9.2px 0 0;color:color-mix(in srgb, var(--color-text) 72%, transparent)"><%- ct('blog.writing_note') %></p>
+      </div>
+    </aside>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+
+<script>
+document.getElementById('blog-subscribe-btn').addEventListener('click', function () {
+  var email = document.getElementById('blog-subscribe-email').value.trim();
+  var msg = document.getElementById('blog-subscribe-msg');
+  fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      msg.className = res.ok ? 'form-ok' : 'form-error';
+      msg.textContent = res.ok ? '订阅成功。' : (res.d.error || '提交失败');
+    })
+    .catch(function () { msg.className = 'form-error'; msg.textContent = '网络异常，请稍后再试'; });
+});
+</script>
+<%- include('partials/tail') %>

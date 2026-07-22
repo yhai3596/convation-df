@@ -1,0 +1,58 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<div class="container">
+
+  <section style="padding:70px 0 56px">
+    <span class="kicker">工具集 · The Workbench</span>
+    <h1 style="font-weight:400;font-size:clamp(38px,4.6vw,64px);line-height:1.12;margin:0"><%- ctBr('tools.hero_title') %></h1>
+    <p style="font-size:16px;line-height:28px;max-width:56ch;margin:28px 0 0;color:color-mix(in srgb, var(--color-text) 78%, transparent)"><%- ct('tools.hero_body') %></p>
+  </section>
+
+  <hr class="hairline">
+
+  <section style="padding:56px 0 70px">
+    <div class="grid-cards2">
+      <% for (const t of tools) { %>
+      <div class="card" style="padding:28px;gap:13.8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.1em;color:var(--color-accent);font-feature-settings:'tnum' 1">№ <%= String(t.no).padStart(2, '0') %></span>
+          <span class="tag <%= t.status === 'live' ? 'tag-accent' : 'tag-neutral' %>"><%= t.status === 'live' ? '已上线' : '筹备中' %></span>
+        </div>
+        <h2 style="font-weight:400;font-size:28px;line-height:1.15;margin:0"><%= t.name %></h2>
+        <p style="font-size:14.5px;line-height:26px;margin:0;color:color-mix(in srgb, var(--color-text) 78%, transparent);text-align:justify"><%= t.description %></p>
+        <div style="display:flex;gap:13.8px;align-items:center;margin-top:9.2px">
+          <% if (!user) { %>
+          <a class="btn btn-primary" href="/login?next=/tools" style="text-decoration:none">登录使用</a>
+          <span style="font-size:12px;color:var(--color-neutral-600)">需要登录 · Sign-in required</span>
+          <% } else if (t.url) { %>
+          <a class="btn btn-primary" href="<%= t.url %>" target="_blank" rel="noopener" style="text-decoration:none" data-track="tool_click" data-track-meta="<%= t.name %>">打开工具 →</a>
+          <span style="font-size:12px;color:var(--color-neutral-600)">新窗口打开</span>
+          <% } else { %>
+          <button type="button" class="btn btn-primary" data-tool-pending data-track="tool_click" data-track-meta="<%= t.name %>">进入工具</button>
+          <span style="font-size:12px;color:var(--color-neutral-600)">接入中 · 可留言申请内测</span>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="card" style="padding:28px;gap:13.8px;border-style:dashed;grid-column:1 / -1;flex-direction:row;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:20px">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.1em;color:var(--color-neutral-500);font-feature-settings:'tnum' 1">№ <%= String(tools.length + 1).padStart(2, '0') %> —</span>
+          <span style="font-family:'Cormorant Garamond','Noto Serif SC',serif;font-size:22px"><%- ct('tools.more_title') %></span>
+        </div>
+        <span style="font-size:13px;color:var(--color-neutral-600)">订阅资讯，第一时间收到上新通知 → <a href="/blog">AI 资讯</a></span>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+
+<script>
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest ? e.target.closest('[data-tool-pending]') : null;
+  if (btn && window.alanToast) alanToast('该工具正在接入平台，可在「关于」页留言申请内测名额。');
+});
+</script>
+<%- include('partials/tail') %>

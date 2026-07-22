@@ -1,0 +1,103 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en'; %>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up"><%= en ? 'Consulting' : 'Consulenza' %></span>
+    <h1 class="page-h1 fade-up"><%= ct('consulenza.intro_title') %></h1>
+    <p class="page-sub fade-up"><%= ct('consulenza.intro_body') %></p>
+  </div>
+</section>
+
+<!-- AI 通道 -->
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container ai-grid">
+    <div class="fade-up">
+      <span class="kicker"><%= en ? 'AI assistant · 24/7' : 'Assistente AI · 24/7' %></span>
+      <h2><%= ct('home.ai_title') %></h2>
+      <p style="font-size:15.5px"><%= ct('home.ai_body') %></p>
+      <button type="button" class="btn btn-primary" data-open-assistant style="margin-top:14px"><%= en ? 'Start chatting' : 'Inizia a chattare' %></button>
+    </div>
+    <div class="card fade-up">
+      <span class="card-title" style="font-size:16px"><%= en ? 'What you can ask' : 'Cosa puoi chiedere' %></span>
+      <ul class="check-list" style="margin-top:12px">
+        <li><%= en ? 'Which model fits my rooms and budget' : 'Quale modello va bene per i miei spazi e il mio budget' %></li>
+        <li><%= en ? 'Which incentives apply to my case' : 'Quali incentivi valgono nel mio caso' %></li>
+        <li><%= en ? 'What a strange noise or error code means' : 'Cosa significa un rumore strano o un codice errore' %></li>
+        <li><%= en ? 'How to book a survey or a repair' : 'Come prenotare un sopralluogo o una riparazione' %></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 人工通道（读 settings；未配置显示在途提示，T3.2 配置后自动出现）-->
+<section class="sect band-light sect-slim">
+  <div class="container">
+    <div class="sect-head fade-up" style="margin-bottom:22px">
+      <span class="kicker"><%= en ? 'Human channels' : 'Canali umani' %></span>
+      <h2 style="font-size:26px"><%= en ? 'Prefer a person? Fair enough' : 'Preferisci una persona? Giusto così' %></h2>
+    </div>
+    <% if (channels.length) { %>
+    <div class="grid-cards3 fade-up">
+      <% for (const ch of channels) { %>
+      <a class="card card-hover" href="<%= ch.href %>"><span class="card-title" style="font-size:15.5px"><%= ch.label %></span><p class="card-body" style="margin:6px 0 0"><%= ch.value %></p></a>
+      <% } %>
+    </div>
+    <% } else { %>
+    <p class="fade-up" style="text-align:center;max-width:60ch;margin:0 auto;font-size:15px"><%= ct('consulenza.human_pending') %></p>
+    <% } %>
+  </div>
+</section>
+
+<!-- 询价表单（现落 messages 表；T3.4 升级独立询价库+SMTP）-->
+<section class="sect">
+  <div class="container-narrow">
+    <div class="sect-head fade-up" style="text-align:left;margin-bottom:20px">
+      <span class="kicker"><%= en ? 'Request a quote' : 'Richiedi un preventivo' %></span>
+      <h2 style="font-size:26px"><%= en ? 'Tell us what you need' : 'Raccontaci cosa ti serve' %></h2>
+    </div>
+    <form id="qz-form" class="fade-up">
+      <div class="grid-form2">
+        <input class="input" id="qz-name" placeholder="<%= en ? 'Name' : 'Nome' %>" maxlength="40" required>
+        <input class="input" id="qz-email" type="email" placeholder="Email" maxlength="80" required>
+        <input class="input" id="qz-phone" placeholder="<%= en ? 'Phone (optional)' : 'Telefono (facoltativo)' %>" maxlength="30">
+        <select class="input" id="qz-type">
+          <option value="Climatizzatore"><%= en ? 'Air conditioner' : 'Climatizzatore' %></option>
+          <option value="Pompa di calore"><%= en ? 'Heat pump' : 'Pompa di calore' %></option>
+          <option value="Manutenzione"><%= en ? 'Maintenance / repair' : 'Manutenzione / riparazione' %></option>
+          <option value="Altro"><%= en ? 'Other' : 'Altro' %></option>
+        </select>
+      </div>
+      <textarea class="input" id="qz-body" rows="4" style="margin-top:14px" placeholder="<%= en ? 'Rooms, square metres, current system, timing…' : 'Stanze, metri quadri, impianto attuale, tempistiche…' %>" required></textarea>
+      <div style="display:flex;gap:14px;align-items:center;margin-top:14px">
+        <button type="submit" class="btn btn-primary"><%= en ? 'Send request' : 'Invia richiesta' %></button>
+        <p class="form-error" id="qz-msg" style="min-height:0;margin:0"></p>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+<%- include('partials/footer') %>
+<script>
+document.getElementById('qz-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var en = <%= en ? 'true' : 'false' %>;
+  var msg = document.getElementById('qz-msg');
+  var name = document.getElementById('qz-name').value.trim();
+  var email = document.getElementById('qz-email').value.trim();
+  var phone = document.getElementById('qz-phone').value.trim();
+  var type = document.getElementById('qz-type').value;
+  var text = document.getElementById('qz-body').value.trim();
+  var body = '[' + (en ? 'Quote' : 'Preventivo') + ' · ' + type + ']' + (phone ? ' tel: ' + phone : '') + '\n' + text;
+  fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, email: email, body: body }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      msg.className = res.ok ? 'form-ok' : 'form-error';
+      msg.textContent = res.ok ? (en ? 'Sent. We reply within 24 working hours.' : 'Inviata. Rispondiamo entro 24 ore lavorative.') : (res.d.error || (en ? 'Could not send' : 'Invio non riuscito'));
+      if (res.ok) document.getElementById('qz-form').reset();
+    })
+    .catch(function () { msg.className = 'form-error'; msg.textContent = en ? 'Network error' : 'Errore di rete'; });
+});
+</script>
+<%- include('partials/tail') %>

@@ -2,7 +2,22 @@
 // 13 页先以 wip 占位打通全站骨架，逐页替换为正式视图（进度见 tasks.md Phase 2）。
 const express = require('express');
 const { marked } = require('marked');
-const { db } = require('../db');
+const { db, getSetting } = require('../db');
+
+// 客服通道（T3.2：后台 settings 配置；未配置的通道自动隐藏）
+function supportChannels(req) {
+  const en = req.locale === 'en';
+  const list = [];
+  const phone = getSetting('support_phone', '');
+  const info = getSetting('support_email_info', '');
+  const svc = getSetting('support_email_service', '');
+  const wa = getSetting('support_whatsapp', '');
+  if (phone) list.push({ label: en ? 'Phone' : 'Telefono', value: phone, href: 'tel:' + phone.replace(/\s+/g, '') });
+  if (wa) list.push({ label: 'WhatsApp', value: wa, href: 'https://wa.me/' + wa.replace(/\D/g, '') });
+  if (info) list.push({ label: en ? 'Email (info)' : 'Email (informazioni)', value: info, href: 'mailto:' + info });
+  if (svc) list.push({ label: en ? 'Email (after-sales)' : 'Email (assistenza)', value: svc, href: 'mailto:' + svc });
+  return list;
+}
 
 const router = express.Router();
 const t = (req, it, en) => (req.locale === 'en' ? en : it);
@@ -63,10 +78,16 @@ router.get('/referenze', (req, res) => {
   });
 });
 
-router.get('/consulenza', (req, res) => wip(req, res, {
-  title: t(req, 'Consulenza e assistente AI · Convation', 'Consulting and AI assistant · Convation'),
-  name: t(req, 'Consulenza', 'Consulting'),
-}));
+router.get('/consulenza', (req, res) => {
+  res.render('consulenza', {
+    title: t(req, 'Consulenza e assistente AI · Convation', 'Consulting and AI assistant · Convation'),
+    active: '',
+    channels: supportChannels(req),
+    metaDesc: t(req,
+      'Assistente AI 24/7 per domande su climatizzatori, pompe di calore, incentivi e guasti — con canali umani e preventivo su richiesta.',
+      '24/7 AI assistant for questions on air conditioners, heat pumps, incentives and faults — with human channels and quotes on request.'),
+  });
+});
 
 router.get('/notizie', (req, res) => {
   const cat = (req.query.cat || '').slice(0, 40);
@@ -100,10 +121,15 @@ router.get('/notizie/:slug', (req, res) => {
   });
 });
 
-router.get('/faq', (req, res) => wip(req, res, {
-  title: t(req, 'Domande frequenti · Convation', 'FAQ · Convation'),
-  name: t(req, 'Domande frequenti', 'Frequently asked questions'),
-}));
+router.get('/faq', (req, res) => {
+  res.render('faq', {
+    title: t(req, 'Domande frequenti su climatizzatori e pompe di calore · Convation', 'Air conditioner and heat pump FAQ · Convation'),
+    active: '',
+    metaDesc: t(req,
+      'Costi, tempi, permessi, incentivi, manutenzione e garanzia: risposte dirette alle domande più frequenti su climatizzatori e pompe di calore.',
+      'Costs, lead times, permissions, incentives, maintenance and warranty: straight answers to the most common HVAC questions.'),
+  });
+});
 
 router.get('/strumenti', (req, res) => wip(req, res, {
   title: t(req, 'Strumenti HVAC · Convation', 'HVAC tools · Convation'),

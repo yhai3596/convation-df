@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<% const en = locale === 'en';
+   const GROUPS = [
+     [en ? 'Buying and quotes' : 'Acquisto e preventivi', [['home.faq1_q','home.faq1_a'],['home.faq2_q','home.faq2_a'],['faq.g1q3_q','faq.g1q3_a']]],
+     [en ? 'Installation' : 'Installazione', [['faq.g2q1_q','faq.g2q1_a'],['faq.g2q2_q','faq.g2q2_a'],['faq.g2q3_q','faq.g2q3_a']]],
+     [en ? 'Service and maintenance' : 'Assistenza e manutenzione', [['home.faq3_q','home.faq3_a'],['faq.g3q2_q','faq.g3q2_a'],['faq.g3q3_q','faq.g3q3_a']]],
+   ];
+   const ldItems = GROUPS.flatMap(g => g[1]).map(([q, a]) => ({
+     '@type': 'Question', name: ctRaw(q),
+     acceptedAnswer: { '@type': 'Answer', text: ctRaw(a) },
+   }));
+%>
+<main>
+<section class="page-hero">
+  <div class="container">
+    <span class="kicker fade-up">FAQ</span>
+    <h1 class="page-h1 fade-up"><%= en ? 'Frequently asked questions' : 'Domande frequenti' %></h1>
+    <p class="page-sub fade-up"><%= en
+      ? 'The questions we hear every week, answered straight. If yours is missing, the AI assistant or the contact form is one click away.'
+      : 'Le domande che sentiamo ogni settimana, con risposte dirette. Se manca la tua, l\'assistente AI e il modulo contatti sono a un clic.' %></p>
+  </div>
+</section>
+
+<section class="sect" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="container-narrow">
+    <% GROUPS.forEach((g, gi) => { %>
+    <div class="fade-up" style="margin-bottom:34px">
+      <span class="kicker"><%= g[0] %></span>
+      <% g[1].forEach(([q, a], qi) => { %>
+      <details class="faq-item"<%= gi === 0 && qi === 0 ? ' open' : '' %>>
+        <summary><%= ct(q) %></summary>
+        <p><%= ct(a) %></p>
+      </details>
+      <% }) %>
+    </div>
+    <% }) %>
+    <div class="strip" style="background:var(--color-accent-100);border-radius:var(--radius-lg);padding:22px 26px">
+      <p style="margin:0;font-size:15px;max-width:56ch"><%= en ? 'Question not here? Ask the AI assistant or write to us.' : 'La tua domanda non c\'è? Chiedi all\'assistente AI o scrivici.' %></p>
+      <div class="hero-ctas">
+        <button type="button" class="btn btn-primary" data-open-assistant><%= ct('home.cta_ai') %></button>
+        <a class="btn btn-secondary" href="<%= lp('/contatti') %>"><%= en ? 'Contact us' : 'Contattaci' %></a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<script type="application/ld+json"><%- JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: ldItems }) %></script>
+<%- include('partials/footer') %>
+<%- include('partials/tail') %>

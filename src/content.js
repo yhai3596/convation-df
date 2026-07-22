@@ -141,6 +141,7 @@ function ctFor(locale) {
     ct: key => esc(rawL(key)),
     ctBr: key => esc(rawL(key)).replace(/\r?\n/g, '<br>'),
     ctImg: key => { const v = rawL(key); return /^\/(uploads|assets)\/[\w\-./]+$/.test(v) ? v : ''; },
+    raw: rawL, // 未转义原文（JSON-LD 等结构化输出用，禁止直接进 HTML）
   };
 }
 

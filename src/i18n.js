@@ -21,6 +21,7 @@ function middleware(req, res, next) {
   res.locals.ct = c.ct;
   res.locals.ctBr = c.ctBr;
   res.locals.ctImg = c.ctImg;
+  res.locals.ctRaw = c.raw;
   next();
 }
 

@@ -205,6 +205,43 @@ const REGISTRY = [
   ...bi('notizie.subscribe_note', '资讯页', '订阅框说明', TA,
     'Una mail quando pubblichiamo qualcosa che vale il tuo tempo. Niente spam.',
     'One email when we publish something worth your time. No spam.'),
+
+  // —— FAQ 页（三组；组1/组3 复用 home.faq1/2/3）——
+  ...bi('faq.g1q3_q', 'FAQ页', '购买3 · 问', T, 'Posso avere detrazioni o incentivi?', 'Can I get tax deductions or incentives?'),
+  ...bi('faq.g1q3_a', 'FAQ页', '购买3 · 答', TA,
+    'Nella maggior parte dei casi sì: Conto Termico o detrazioni fiscali a seconda dell\'intervento. Nella pagina dedicata spieghiamo cosa spetta e prepariamo noi le pratiche.',
+    'In most cases yes: Conto Termico or tax deductions depending on the job. On the dedicated page we explain what you are entitled to and handle the paperwork.'),
+  ...bi('faq.g2q1_q', 'FAQ页', '安装1 · 问', T, 'Quanto dura l\'installazione?', 'How long does installation take?'),
+  ...bi('faq.g2q1_a', 'FAQ页', '安装1 · 答', TA,
+    'Un mono split standard si installa in mezza giornata; multi split e pompe di calore richiedono da uno a tre giorni a seconda dell\'impianto.',
+    'A standard mono split takes half a day; multi splits and heat pumps take one to three days depending on the system.'),
+  ...bi('faq.g2q2_q', 'FAQ页', '安装2 · 问', T, 'Serve un permesso del condominio?', 'Do I need permission from my building?'),
+  ...bi('faq.g2q2_a', 'FAQ页', '安装2 · 答', TA,
+    'Di norma basta rispettare decoro e limiti di rumorosità: verifichiamo il regolamento condominiale durante il sopralluogo e ti diciamo subito se serve altro.',
+    'Usually you just need to respect the building\'s aesthetics and noise limits: we check the building rules during the site survey and tell you right away if anything else is needed.'),
+  ...bi('faq.g2q3_q', 'FAQ页', '安装3 · 问', T, 'Posso montarlo da solo?', 'Can I install it myself?'),
+  ...bi('faq.g2q3_a', 'FAQ页', '安装3 · 答', TA,
+    'No: la normativa F-Gas richiede un installatore certificato per il circuito frigorifero, e il fai-da-te fa decadere la garanzia.',
+    'No: F-Gas regulations require a certified installer for the refrigerant circuit, and DIY voids the warranty.'),
+  ...bi('faq.g3q2_q', 'FAQ页', '售后2 · 问', T, 'Ogni quanto va fatta la manutenzione?', 'How often is maintenance needed?'),
+  ...bi('faq.g3q2_a', 'FAQ页', '售后2 · 答', TA,
+    'Per uso domestico consigliamo un controllo all\'anno con pulizia di filtri e scambiatori; per uffici e negozi ogni sei mesi.',
+    'For home use we recommend one check-up a year with filter and coil cleaning; for offices and shops every six months.'),
+  ...bi('faq.g3q3_q', 'FAQ页', '售后3 · 问', T, 'Cosa copre la garanzia?', 'What does the warranty cover?'),
+  ...bi('faq.g3q3_a', 'FAQ页', '售后3 · 答', TA,
+    'La garanzia del produttore sui componenti più la nostra sull\'installazione: condizioni scritte nel preventivo, senza asterischi.',
+    'The manufacturer\'s warranty on components plus ours on the installation: terms written into the quote, no fine print.'),
+
+  // —— Consulenza ——
+  ...bi('consulenza.intro_title', '咨询页', '页首标题', T,
+    'Consulenza: persona o AI, scegli tu',
+    'Advice: a person or AI, your choice'),
+  ...bi('consulenza.intro_body', '咨询页', '页首介绍', TA,
+    'Un dubbio su prodotti, incentivi, installazione o un guasto? L\'assistente AI risponde subito, 24 ore su 24. Se preferisci una persona, i canali e il modulo sono qui sotto.',
+    'A question about products, incentives, installation or a fault? The AI assistant answers right away, 24/7. If you prefer a person, the channels and the form are below.'),
+  ...bi('consulenza.human_pending', '咨询页', '人工通道未配置提示', TA,
+    'I canali diretti (telefono, email, WhatsApp) si stanno attivando e compariranno qui. Nel frattempo lascia un messaggio: rispondiamo entro 24 ore lavorative.',
+    'Direct channels (phone, email, WhatsApp) are being activated and will appear here. In the meantime leave a message: we reply within 24 working hours.'),
 ];
 
 module.exports = { REGISTRY };

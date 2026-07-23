@@ -22,14 +22,16 @@ a{color:var(--color-accent)}a:hover{color:var(--color-accent-400)}
 .btn-area{padding:8px 14px;font-size:13.5px;white-space:nowrap}
 .lang-switch{font-size:12.5px;display:inline-flex;gap:6px;color:var(--color-neutral-500)}
 .lang-switch b{color:var(--color-text)}
-.lang-switch a{color:var(--color-neutral-500)}
+.lang-switch a{color:var(--color-neutral-500);position:relative}
+/* 隐形热区：视觉不变，触控面积 ≥44px（DESIGN.md §10） */
+.lang-switch a::after{content:'';position:absolute;left:-8px;right:-8px;top:-14px;bottom:-14px}
 .lang-switch a:hover{color:var(--color-accent);text-decoration:none}
 .hdr-mini{font-size:13px;white-space:nowrap}
 .burger{display:none}
 .nav-drawer{display:none}
 @media (max-width:980px){
   .main-nav,.btn-area,.hdr-mini{display:none}
-  .burger{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;cursor:pointer;color:var(--color-text)}
+  .burger{display:grid;place-items:center;width:44px;height:44px;background:none;border:0;cursor:pointer;color:var(--color-text)}
   .nav-drawer{display:flex;flex-direction:column;gap:2px;padding:10px 20px 22px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)}
   .nav-drawer[hidden]{display:none}
   .nav-drawer a{padding:11px 4px;font-size:16px;color:var(--color-text);border-bottom:1px solid var(--color-neutral-100)}
@@ -52,7 +54,7 @@ a{color:var(--color-accent)}a:hover{color:var(--color-accent-400)}
 .container{max-width:1200px;margin:0 auto;padding:0 clamp(20px,5vw,72px)}
 .container-narrow{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,72px)}
 .hairline{height:1px;border:0;margin:0;background:var(--color-divider)}
-.kicker{display:block;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700);font-feature-settings:'tnum' 1;margin-bottom:14px}
+.kicker{display:block;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent);font-feature-settings:'tnum' 1;margin-bottom:14px}
 .tnum{font-feature-settings:'tnum' 1}
 
 /* 布局网格（桌面按设计稿，移动端折叠） */
@@ -158,6 +160,8 @@ a{color:var(--color-accent)}a:hover{color:var(--color-accent-400)}
   /* 悬浮助手气泡抬升，避让速联条 */
   #assistant-fab{bottom:calc(64px + env(safe-area-inset-bottom)) !important}
   .toast{bottom:calc(120px + env(safe-area-inset-bottom))}
+  /* CMP 横幅抬到速联条之上（横幅内联 bottom:16px，需 !important；表态即散，短暂盖 fab 可接受） */
+  #cookie-banner{bottom:calc(72px + env(safe-area-inset-bottom)) !important}
   body{padding-bottom:56px}
 }
 @media (max-width:920px){

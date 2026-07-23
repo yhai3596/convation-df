@@ -40,8 +40,9 @@ const CB = locale === 'en' ? {
   <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
     <button type="button" class="btn btn-ghost" id="cookie-reject" style="flex:1;min-width:90px"><%= CB.reject %></button>
     <button type="button" class="btn btn-ghost" id="cookie-open-prefs" style="flex:1;min-width:90px"><%= CB.prefs %></button>
-    <button type="button" class="btn btn-primary" id="cookie-accept" style="flex:1;min-width:90px"><%= CB.accept %></button>
-    <button type="button" class="btn btn-primary" id="cookie-save" hidden style="flex:1 1 100%"><%= CB.save %></button>
+    <%# 接受/保存用蓝描边而非行动橙：一屏一橙（hero 已占）+ Garante 反黑模式（接受不得比拒绝更醒目） %>
+    <button type="button" class="btn btn-secondary" id="cookie-accept" style="flex:1;min-width:90px"><%= CB.accept %></button>
+    <button type="button" class="btn btn-secondary" id="cookie-save" hidden style="flex:1 1 100%"><%= CB.save %></button>
   </div>
 </div>
 <script>

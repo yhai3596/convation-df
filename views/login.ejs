@@ -1,46 +1,65 @@
 <%- include('partials/head') %>
-
+<%
+// 登录/注册（安装工与管理员入口）：随 locale 意/英；无微信等第三方登录
+const L = locale === 'en' ? {
+  tabLogin: 'Sign in', tabReg: 'Register',
+  email: 'Email', password: 'Password', name: 'Full name',
+  phName: 'Your name', phPwd: '••••••••', phPwdNew: 'At least 8 characters',
+  remember: 'Remember me', forgot: 'Forgot password?',
+  agreePre: 'I accept the ', terms: 'terms of service', and: ' and the ', privacy: 'privacy policy',
+  submitLogin: 'Sign in', submitReg: 'Create account',
+  back: '← Back to home',
+  toastForgot: 'Password recovery is coming soon. Meanwhile, write to us from the Contact page.',
+} : {
+  tabLogin: 'Accedi', tabReg: 'Registrati',
+  email: 'Email', password: 'Password', name: 'Nome e cognome',
+  phName: 'Il tuo nome', phPwd: '••••••••', phPwdNew: 'Minimo 8 caratteri',
+  remember: 'Ricordami', forgot: 'Password dimenticata?',
+  agreePre: 'Accetto i ', terms: 'termini di servizio', and: ' e la ', privacy: 'privacy policy',
+  submitLogin: 'Accedi', submitReg: 'Crea account',
+  back: '← Torna alla home',
+  toastForgot: 'Il recupero password sarà presto disponibile. Nel frattempo scrivici dalla pagina Contatti.',
+};
+%>
 <div style="min-height:100vh;display:grid;place-items:center;padding:42px 20px;box-sizing:border-box">
   <div style="width:min(400px,100%)">
-    <a href="/" style="text-decoration:none;color:inherit;display:flex;justify-content:center;align-items:baseline;gap:10px;font-family:'Cormorant Garamond','Noto Serif SC',serif;font-weight:600;font-size:26px;margin-bottom:36px">Alan<span style="color:var(--color-accent)">.</span><span style="font-family:'Lora','Noto Serif SC',serif;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--color-neutral-600)">HVAC × AI</span></a>
+    <a href="<%= lp('/') %>" style="text-decoration:none;display:block;text-align:center;font-family:var(--font-heading);font-weight:700;font-size:21px;letter-spacing:0.08em;color:var(--color-text);margin-bottom:36px">CONVATION</a>
 
     <div class="card" style="padding:36px">
       <div style="display:flex;margin-bottom:28px">
-        <button type="button" id="tab-login" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;text-align:center;padding:9px 0;font-size:14px;border-bottom:2px solid var(--color-accent);color:var(--color-accent-700)">登录</button>
-        <button type="button" id="tab-reg" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;text-align:center;padding:9px 0;font-size:14px;border-bottom:2px solid transparent;color:var(--color-text)">注册</button>
+        <button type="button" id="tab-login" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;text-align:center;padding:11px 0;font-size:14px;border-bottom:2px solid var(--color-accent);color:var(--color-accent)"><%= L.tabLogin %></button>
+        <button type="button" id="tab-reg" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;text-align:center;padding:11px 0;font-size:14px;border-bottom:2px solid transparent;color:var(--color-text)"><%= L.tabReg %></button>
       </div>
 
       <form id="form-login" style="display:flex;flex-direction:column;gap:20px">
-        <div class="field"><label>邮箱 · Email</label><input class="input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email"></div>
-        <div class="field"><label>密码 · Password</label><input class="input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"></div>
+        <div class="field"><label><%= L.email %></label><input class="input" type="email" id="login-email" placeholder="nome@esempio.it" autocomplete="email"></div>
+        <div class="field"><label><%= L.password %></label><input class="input" type="password" id="login-password" placeholder="<%= L.phPwd %>" autocomplete="current-password"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked>记住我</label>
-          <a href="#" id="forgot-link">忘记密码？</a>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked><%= L.remember %></label>
+          <a href="#" id="forgot-link"><%= L.forgot %></a>
         </div>
         <p class="form-error" id="login-error"></p>
-        <button type="submit" class="btn btn-primary btn-block">登录</button>
+        <button type="submit" class="btn btn-primary btn-block"><%= L.submitLogin %></button>
       </form>
 
       <form id="form-reg" hidden style="display:flex;flex-direction:column;gap:20px">
-        <div class="field"><label>姓名 · Name</label><input class="input" type="text" id="reg-name" placeholder="您的姓名" autocomplete="name"></div>
-        <div class="field"><label>邮箱 · Email</label><input class="input" type="email" id="reg-email" placeholder="you@example.com" autocomplete="email"></div>
-        <div class="field"><label>密码 · Password</label><input class="input" type="password" id="reg-password" placeholder="至少 8 位" autocomplete="new-password"></div>
-        <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:20px;color:var(--color-neutral-600);cursor:pointer"><input type="checkbox" id="reg-agree" style="margin-top:3px">我同意服务条款与隐私政策，注册后可使用在线工具并购买课程</label>
+        <div class="field"><label><%= L.name %></label><input class="input" type="text" id="reg-name" placeholder="<%= L.phName %>" autocomplete="name"></div>
+        <div class="field"><label><%= L.email %></label><input class="input" type="email" id="reg-email" placeholder="nome@esempio.it" autocomplete="email"></div>
+        <div class="field"><label><%= L.password %></label><input class="input" type="password" id="reg-password" placeholder="<%= L.phPwdNew %>" autocomplete="new-password"></div>
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:20px;color:var(--color-neutral-600);cursor:pointer"><input type="checkbox" id="reg-agree" style="margin-top:3px"><span><%= L.agreePre %><a href="<%= lp('/privacy') %>" target="_blank"><%= L.terms %></a><%= L.and %><a href="<%= lp('/privacy') %>" target="_blank"><%= L.privacy %></a>.</span></label>
         <p class="form-error" id="reg-error"></p>
-        <button type="submit" class="btn btn-primary btn-block">创建账号</button>
+        <button type="submit" class="btn btn-primary btn-block"><%= L.submitReg %></button>
       </form>
-
-      <div style="display:flex;align-items:center;gap:13.8px;margin:28px 0 20px"><span style="flex:1;height:1px;background:var(--color-divider)"></span><span style="font-size:12px;color:var(--color-neutral-600)">或</span><span style="flex:1;height:1px;background:var(--color-divider)"></span></div>
-      <button type="button" class="btn btn-secondary btn-block" id="wechat-btn">微信扫码登录</button>
     </div>
 
-    <p style="text-align:center;font-size:13px;color:var(--color-neutral-600);margin-top:28px"><a href="/">← 返回首页</a></p>
+    <p style="text-align:center;font-size:13px;color:var(--color-neutral-600);margin-top:28px"><a href="<%= lp('/') %>"><%= L.back %></a></p>
   </div>
 </div>
 
 <script>
 (function () {
   var NEXT = <%- JSON.stringify(next) %>;
+  var EN = <%- JSON.stringify(locale === 'en') %>;
   var tabLogin = document.getElementById('tab-login');
   var tabReg = document.getElementById('tab-reg');
   var formLogin = document.getElementById('form-login');
@@ -51,9 +70,9 @@
     formLogin.hidden = !isLogin;
     formReg.hidden = isLogin;
     tabLogin.style.borderBottomColor = isLogin ? 'var(--color-accent)' : 'transparent';
-    tabLogin.style.color = isLogin ? 'var(--color-accent-700)' : 'var(--color-text)';
+    tabLogin.style.color = isLogin ? 'var(--color-accent)' : 'var(--color-text)';
     tabReg.style.borderBottomColor = !isLogin ? 'var(--color-accent)' : 'transparent';
-    tabReg.style.color = !isLogin ? 'var(--color-accent-700)' : 'var(--color-text)';
+    tabReg.style.color = !isLogin ? 'var(--color-accent)' : 'var(--color-text)';
   }
   tabLogin.addEventListener('click', function () { setTab('login'); });
   tabReg.addEventListener('click', function () { setTab('reg'); });
@@ -63,10 +82,10 @@
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
-        if (!res.ok) { errEl.textContent = res.d.error || '操作失败，请稍后再试'; return null; }
+        if (!res.ok) { errEl.textContent = res.d.error || (EN ? 'Something went wrong. Please try again.' : 'Operazione non riuscita. Riprova più tardi.'); return null; }
         return res.d;
       })
-      .catch(function () { errEl.textContent = '网络异常，请稍后再试'; return null; });
+      .catch(function () { errEl.textContent = EN ? 'Network error. Please try again.' : 'Errore di rete. Riprova più tardi.'; return null; });
   }
   function sid() { return window.AlanTrack ? AlanTrack.sid : ''; }
 
@@ -75,7 +94,7 @@
     post('/api/auth/login', {
       email: document.getElementById('login-email').value,
       password: document.getElementById('login-password').value,
-      sid: sid()
+      sid: sid(), lang: EN ? 'en' : 'it'
     }, document.getElementById('login-error')).then(function (d) {
       if (d) location.href = d.user && d.user.role === 'admin' && NEXT === '/' ? '/admin' : NEXT;
     });
@@ -88,18 +107,15 @@
       email: document.getElementById('reg-email').value,
       password: document.getElementById('reg-password').value,
       agree: document.getElementById('reg-agree').checked,
-      sid: sid()
+      sid: sid(), lang: EN ? 'en' : 'it'
     }, document.getElementById('reg-error')).then(function (d) {
       if (d) location.href = NEXT;
     });
   });
 
-  document.getElementById('wechat-btn').addEventListener('click', function () {
-    alanToast('微信扫码登录即将开通，可先使用邮箱注册登录。');
-  });
   document.getElementById('forgot-link').addEventListener('click', function (e) {
     e.preventDefault();
-    alanToast('密码找回功能即将开通，可在「关于」页留言联系 Alan 重置。');
+    alanToast(<%- JSON.stringify(locale === 'en' ? 'Password recovery is coming soon. Meanwhile, write to us from the Contact page.' : 'Il recupero password sarà presto disponibile. Nel frattempo scrivici dalla pagina Contatti.') %>);
   });
 })();
 </script>

@@ -44,9 +44,9 @@
 - [x] T4.3 CMP 横幅：views/partials/cookie-banner.ejs（原生三键 Rifiuta/Preferenze/Accetta 随 locale 双语、偏好面板两行=必要 always-on + 匿名统计 checkbox、存 localStorage cv-consent、页脚新增「Preferenze cookie」入口随时改主意）挂 tail.ejs（admin 不含 tail 不受扰）；analytics.js 重写为同意闸门——未表态/拒绝=零 sid 零请求，同意即刻补发当页 pageview（cv-consent-changed 事件），撤回删 cv-sid+旧 alan-sid；管辖范围只有首方匿名统计（会话 cookie 属技术必要不需同意，站内无广告画像）。验证=内置浏览器全链路：首访横幅意语三键+零存储→无 /api/track 请求→Accetta 后 consent/sid 落库+网络 204+DB 16→17→带同意刷新再+1（合法）→横幅静默+页脚重开偏好+撤回 sid 即删→EN 版英文文案+Reject 后 /en、/prodotti 零新增（DB 停 18）→控制台零报错
 
 ### Phase 5: 走查（⛔ 门禁二）
-- [ ] T5.1 本地起服 → 内置浏览器双端截图对照 DESIGN.md，列 5 个具体问题
-- [ ] T5.2 逐项修复 → 复查 → 用户点头
-- [ ] T5.3 素材催收清单发用户（logo 透明版/反白版、产品图、案例照、P.IVA 法务数据）
+- [x] T5.1 走查完成（截图通道不可用——自主会话浏览器面板不合成帧，改 DOM/计算样式探针取证，符合 skill 证据优先原则）。5 问题清单：① 移动端首访 CMP 横幅（z-80，bottom:16px）盖住速联条（z-60）与助手 fab ~40px；② 首页「一屏一橙」违背——AI 段 Provalo ora（btn-primary 橙）与尾部 CTA 橙相距仅 257px，且 CMP 横幅 Accetta 也是橙、与 hero 橙首屏同框（另有 Garante 反黑模式嫌疑：接受比拒绝醒目）；③ kicker 用蓝阶 700 档 #0B3B6E 而非规范 #0F4C8C（深色带 kicker #A7C8E8=300 档系对比度所需，内联指定）；④ 触控目标不足：语言切换 21px、汉堡 40px（§10 要求 ≥44px）；⑤ 疑似离谱灰 #F0F0F0——查实为探针假象（隐藏元素的 Windows UA buttonface 默认值，真机移动视口下汉堡/速联条按钮均透明背景），tag-neutral #F3F4F5 与纸灰 #F5F4F1 差异不可感知，**裁定不修**。附带查出：login.ejs 全 alan 语境（serif Alan 字标/微信扫码/中文文案）+ api.js 17 条用户可见中文报错——第 3/4 轮悬留，此轮一并清
+- [x] T5.2 修复完成（两轮，每轮 ≤2 项，符合 review-loop 纪律）。R1：CMP 横幅移动端 bottom 抬至 calc(72px+safe-area)（!important 覆盖内联；实测 banner 底 740 < 速联条顶 756，overlap=false）+ 消双橙（Provalo ora→btn-secondary、Servizio di consulenza→btn-ghost、CMP Accetta/Salva→btn-secondary 蓝描边；实测全页可见橙仅 hero 与尾部 CTA 两处、相距 6449px）。R2：.kicker→var(--color-accent) 实测 rgb(15,76,140)=#0F4C8C + 汉堡 44×44 + 语言键 ::after 隐形热区实测有效高 49px。附带：login.ejs 重写为 Convation 双语版（CONVATION Archivo 字标、意/英随 locale、去微信、条款链 /privacy、认证 POST 带 lang）+ api.js 用户可见报错全意语化（认证端点升级 err(it,en) 双语模式、评论报错随文章 lang）。验证 tmp-verify-t52.js 15/15（含正向证据：报错原文断言、api.js error 字段 CJK 扫描清零、双语渲染、首页回归）。**⛔ 门禁二待用户点头**：深色带 kicker #A7C8E8（300 档）保留为对比度必需的记录性偏差，待用户裁决；用户需亲自看双端 http://127.0.0.1:8203
+- [ ] T5.3 素材催收清单发用户（logo 透明版/反白版、产品图、案例照、P.IVA 法务数据）——清单已随门禁二消息发出，待用户回料
 
 ### Phase 6: 收尾（部署另起任务）
 - [ ] T6.1 README/CHANGELOG 重写为 convation 语境；deploy 脚本改域名端口（部署时再动）
@@ -70,6 +70,12 @@
 - 单次写入 ≤10k 字符；小步 commit；杀进程先 netstat 找 PID，禁按名杀
 
 ## 执行日志
+
+### 2026-07-23 - 第 5 轮
+**当前任务**: T5.1+T5.2 完成（Phase 5 走查两轮修复毕，⛔ 门禁二待用户）
+**完成内容**: 5 问题清单（CMP 压速联条/双橙/kicker 跑阶/触控不足/灰色假象排除）→ 两轮修复全实证（overlap=false、全页橙=2 处距 6449px、kicker=#0F4C8C、汉堡 44×44、语言键热区 49px）；悬留清仓：login.ejs 重写 Convation 双语版、api.js 报错全意语化（认证双语 err 模式）；验证 15/15
+**已知悬留**: 深色带 kicker #A7C8E8 记录性偏差待用户裁决；privacy/cookie 占位页与法务数据归 T5.3 素材；课程/工具/案例死路由归 T6.1
+**下一步**: 用户看双端 → 点头过门禁二 → T5.3 素材回料 → Phase 6 收尾
 
 ### 2026-07-23 - 第 4 轮
 **当前任务**: T3.5 完成（Phase 3 全绿）

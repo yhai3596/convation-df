@@ -12,8 +12,8 @@ a{color:var(--color-accent)}a:hover{color:var(--color-accent-400)}
 .site-header.shrunk .header-inner{height:60px}
 .site-header.shrunk{box-shadow:var(--shadow-sm)}
 .brand{display:flex;align-items:center}
-.brand-logo{height:38px;width:auto;transition:height .16s ease}
-.site-header.shrunk .brand-logo{height:31px}
+.brand-logo{height:48px;width:auto;transition:height .16s ease}
+.site-header.shrunk .brand-logo{height:40px}
 .main-nav{display:flex;gap:20px;margin-left:auto}
 .main-nav a{font-size:14.5px;color:var(--color-text);white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent}
 .main-nav a:hover{color:var(--color-accent);text-decoration:none}
